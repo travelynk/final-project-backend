@@ -1,0 +1,70 @@
+name: Continuous Deployment
+
+on:
+  workflow_run:
+    workflows:
+      - CI  # Name of the CI workflow file
+    types:
+      - completed  # Trigger when CI workflow is completed
+
+jobs:
+  CD:
+    runs-on: ubuntu-latest
+
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} # Only run if CI succeeds
+
+    strategy:
+      matrix:
+        node-version: [18, 20]  # Test against multiple Node.js versions
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Generate Prisma Client for Cloud Run
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      # Step 5: Google Cloud Authentication
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCR_SA_KEY }}
+
+      # Step 6: Set up Google Cloud SDK
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      # Step 7: Configure Docker for GCR Authentication
+      - name: Configure Docker for GCR Authentication
+        run: gcloud auth configure-docker gcr.io
+
+      # Step 8: Build and Push Docker Image to Google Container Registry (GCR)
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_NAME=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.CLOUD_RUN_SERVICE_NAME }}
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+      # Step 9: Deploy to Cloud Run
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy api-bank-binar \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.CLOUD_RUN_SERVICE_NAME }} \
+            --platform managed \
+            --region asia-southeast1 \
+            --allow-unauthenticated \
+            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }},JWT_SECRET=${{ secrets.JWT_SECRET }},EMAIL_USER=${{ secrets.EMAIL_USER }},EMAIL_PASS=${{ secrets.EMAIL_PASS }}

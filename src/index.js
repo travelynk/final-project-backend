@@ -1,25 +1,24 @@
-import { config } from "dotenv";
-config();
+import "dotenv/config";
+import { app } from "./configs/app.js";
+import listEndpoints from 'express-list-endpoints';
 
-import express, { json, urlencoded } from "express";
-import morgan from 'morgan';
-const app = express();
+const port = process.env.PORT || 8000;
+const host = process.env.HOST || 'localhost';
 
-const PORT = process.env.PORT;
+try {
+    if (process.env.NODE_ENV == "development") {
+        console.log("================== API - LIST =======================");
+        listEndpoints(app).forEach((route) => {
+            route.methods.forEach((method) => {
+                console.log(`Route => ${method} ${route.path}`);
+            });
+        });
+        console.log("================== API - LIST =======================\n");
+    };
 
-app.use(json());
-app.use(urlencoded({ extended: false }));
-app.use(morgan('combined'));
-
-// app.get('/', async (req, res) => {
-//     try {
-//         res.send('testing');
-//     } catch (error) {
-//         res.status(500).send('Internal Server Error');
-//     }
-// });
-
-
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+    app.listen(port, () => {
+        console.log(`🚀 Server is on ${host}:${port}`);
+    });
+} catch (error) {
+    console.log(`Error: ${error.message}`);
+}

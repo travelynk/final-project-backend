@@ -3,7 +3,7 @@ name: Continuous Deployment
 on:
   workflow_run:
     workflows:
-      - CI  # Name of the CI workflow file
+      - Continuous Integration  # Name of the CI workflow file
     types:
       - completed  # Trigger when CI workflow is completed
 

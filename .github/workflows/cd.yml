@@ -11,9 +11,6 @@ on:
       - completed
 
 jobs:
-  CI:
-    uses: ./.github/workflows/ci.yaml
-    
   CD:
     runs-on: ubuntu-latest
 

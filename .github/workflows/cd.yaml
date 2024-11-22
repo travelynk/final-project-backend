@@ -11,10 +11,11 @@ on:
       - completed
 
 jobs:
+  CI:
+    uses: ./.github/workflows/ci.yaml
+    
   CD:
     runs-on: ubuntu-latest
-
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Check out repository

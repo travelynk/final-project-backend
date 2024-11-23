@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "TraveLynk - API Tiketku V1.0",
-    "description": "API for e-ticket airplanes.\n\nAuthor: TraveLynk Team",
+    "description": "API for Tiketku platform is a place to buy and book flight tickets online, both one way (one flight) and round trip (return). This platform opens and provides various types of domestic and international flights. The platform flow is free based on the creation of the final project team.\n \nAuthor: TraveLynk BE Team",
     "version": "1.0.0"
   },
   "servers": [

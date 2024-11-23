@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://localhost/api/v1",
+      "url": "https://api-tiketku-travelynk-145227191319.asia-southeast1.run.app/api/v1",
       "description": "Production Server"
     },
     {

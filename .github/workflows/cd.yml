@@ -58,7 +58,8 @@ jobs:
             --platform managed \
             --region asia-southeast1 \
             --allow-unauthenticated \
-            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }}, \
-            JWT_SECRET=${{ secrets.JWT_SECRET }}, \
-            EMAIL_USER=${{ secrets.EMAIL_USER }}, \
-            EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+            --set-env-vars \
+              DATABASE_URL=${{ secrets.DATABASE_URL }},\
+              JWT_SECRET=${{ secrets.JWT_SECRET }},\
+              EMAIL_USER=${{ secrets.EMAIL_USER }},\
+              EMAIL_PASS=${{ secrets.EMAIL_PASS }}

@@ -146,40 +146,40 @@ model Terminal {
 }
 
 model Airline {
-  id             Int              @id
+  id             Int              @id @default(autoincrement())
   code           String           @unique @db.VarChar(4)
   name           String           @db.VarChar(50)
-  seatCapacity   Int               @map("seat_capacity")
+  seatCapacity   Int              @map("seat_capacity")
   facility       String?
   airportId      Int              @map("airport_id")
 
   Airport        Airport          @relation(fields: [airportId], references: [id])
   Routes         Route[]
-  AirlinesPlanes AirlinesPlanes[]
+  // AirlinesPlanes AirlinesPlanes[]
 
   @@map("airlines")
 }
 
-model Plane {
-  id             Int              @id @default(autoincrement())
-  name           String           @db.VarChar(50)
-  status         Boolean          @default(true)
+// model Plane {
+//   id             Int              @id @default(autoincrement())
+//   name           String           @db.VarChar(50)
+//   status         Boolean          @default(true)
 
-  AirlinesPlanes AirlinesPlanes[]
+//   AirlinesPlanes AirlinesPlanes[]
 
-  @@map("planes")
-}
+//   @@map("planes")
+// }
 
-model AirlinesPlanes {
-  airlineId Int
-  planeId   Int
+// model AirlinesPlanes {
+//   airlineId Int
+//   planeId   Int
 
-  Airline   Airline @relation(fields: [airlineId], references: [id])
-  Plane     Plane   @relation(fields: [planeId], references: [id])
+//   Airline   Airline @relation(fields: [airlineId], references: [id])
+//   Plane     Plane   @relation(fields: [planeId], references: [id])
 
-  @@id([airlineId, planeId])
-  @@map("airlines_planes")
-}
+//   @@id([airlineId, planeId])
+//   @@map("airlines_planes")
+// }
 
 model Route {
   id                 Int       @id @default(autoincrement())

@@ -23,7 +23,7 @@ enum CountryRegion {
   Afrika
   Australia
   AmerikaUtara   @map("Amerika Utara")
-  AmerikaSelatan @map("Amerika Selatan")
+  AmerikaLatin @map("Amerika Latin")
   Eropa
 }
 

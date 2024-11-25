@@ -5,6 +5,7 @@ import * as IndexController from '../../../controllers/index.js';
 import AuthRouter from './auth.route.js';
 import countryRouter from './country.route.js';
 import cityRoute from './city.route.js';
+import airportRoute from './airport.route.js';
 
 const swaggerDocument = JSON.parse(readFileSync(new URL('../../../docs/api-v1.json', import.meta.url), 'utf-8'));
 
@@ -21,5 +22,6 @@ export default (app) => {
     AuthRouter(router);
     countryRouter(router);
     cityRoute(router);
+    airportRoute(router);
 
 };

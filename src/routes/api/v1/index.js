@@ -6,6 +6,7 @@ import AuthRouter from './auth.route.js';
 import countryRouter from './country.route.js';
 import cityRoute from './city.route.js';
 import airportRoute from './airport.route.js';
+import terminalRoute from './terminal.route.js';
 
 const swaggerDocument = JSON.parse(readFileSync(new URL('../../../docs/api-v1.json', import.meta.url), 'utf-8'));
 
@@ -23,5 +24,6 @@ export default (app) => {
     countryRouter(router);
     cityRoute(router);
     airportRoute(router);
+    terminalRoute(router);
 
 };

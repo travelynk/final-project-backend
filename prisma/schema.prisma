@@ -99,7 +99,7 @@ model Profile {
 }
 
 model Country {
-  code   String        @id @db.Char(4)
+  code   String        @id @db.VarChar(4)
   name   String        @db.VarChar(50)
   region CountryRegion
 
@@ -109,7 +109,7 @@ model Country {
 }
 
 model City {
-  code        String    @id @db.Char(4)
+  code        String    @id @db.VarChar(4)
   name        String    @db.VarChar(50)
   countryCode String    @map("country_code")
 
@@ -121,7 +121,7 @@ model City {
 
 model Airport {
   id        Int        @id @default(autoincrement())
-  code      String     @unique @db.Char(4)
+  code      String     @unique @db.VarChar(4)
   name      String     @db.VarChar(100)
   cityCode  String     @map("city_code")
 
@@ -147,7 +147,7 @@ model Terminal {
 
 model Airline {
   id             Int              @id
-  code           String           @unique @db.Char(4)
+  code           String           @unique @db.VarChar(4)
   name           String           @db.VarChar(50)
   airportId      Int              @map("airport_id")
 
@@ -220,7 +220,7 @@ model Flight {
 model FlightSeat {
   id          Int     @id @default(autoincrement())
   flightId    Int?    @map("flight_id")
-  position    String  @db.Char(4)
+  position    String  @db.VarChar(4)
   isAvailable Boolean @default(true)  @map("is_available")
 
   Flight      Flight? @relation(fields: [flightId], references: [id])
@@ -279,7 +279,7 @@ model PassengerCount {
 model Passenger {
   id             Int        @id @default(autoincrement())
   bookingId      Int        @map("booking_id")
-  title          String     @db.Char(7)
+  title          String     @db.VarChar(7)
   fullName       String     @db.VarChar(100) @map("full_name")
   familyName     String?    @db.VarChar(50)  @map("family_name")
   dob            DateTime

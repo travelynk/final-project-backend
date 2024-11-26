@@ -14,11 +14,7 @@ export const getOne = async (code) => {
 
 export const store = async (data) => {
   return await prisma.country.create({
-    data: {
-      code: data.code,
-      name: data.name,
-      region: data.region,
-    },
+    data
   });
 };
 
@@ -27,11 +23,7 @@ export const update = async (code, data) => {
     where: {
       code,
     },
-    data: {
-      code: data.code,
-      name: data.name,
-      region: data.region,
-    },
+    data,
   });
 };
 

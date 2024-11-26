@@ -76,7 +76,7 @@ describe("User Service", () => {
 
             const result = await register(data);
 
-            expect(result).toBe("An email with instructions to verify your account has been sent.");
+            expect(result).toBe("Email untuk memverifikasi akun Anda telah dikirim.");
 
             expect(prisma.user.create).toHaveBeenCalledWith(expect.objectContaining({
                 data: expect.objectContaining({
@@ -119,7 +119,7 @@ describe("User Service", () => {
             const email = "it@example.com";
             const result = await sendOtp(email);
 
-            expect(result).toBe("An email with instructions to verify your account has been sent.");
+            expect(result).toBe("Email untuk memverifikasi akun Anda telah dikirim.");
             expect(nodemailer.createTransport().sendMail).toHaveBeenCalled();
         });
 

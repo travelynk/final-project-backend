@@ -15,9 +15,8 @@ export const getFlightRoutes = async (req, res, next) => {
 export const getFlightRoute = async (req, res, next) => {
     try {
         const flightRoute = await flightRouteService.getOne(req.params.id);
-        if (!flightRoute) {
-            throw new Error404('Data rute penerbangan tidak ditemukan');
-        }
+        if (!flightRoute) throw new Error404('Data rute penerbangan tidak ditemukan');
+
         res200('Berhasil mengambil data rute penerbangan', flightRoute, res);
     } catch (error) {
         next(error);
@@ -27,9 +26,8 @@ export const getFlightRoute = async (req, res, next) => {
 export const storeFlightRoute = async (req, res, next) => {
     try {
         const { error, value } = FlightRouteValidation.payload.validate(req.body);
-        if (error) {
-            throw new Error400(`${error.details[0].message}`);
-        }
+        if (error) throw new Error400(`${error.details[0].message}`);
+
         const flightRoute = await flightRouteService.store(value);
         res201('Berhasil menambahkan data rute penerbangan', flightRoute, res);
     } catch (error) {
@@ -40,9 +38,8 @@ export const storeFlightRoute = async (req, res, next) => {
 export const updateFlightRoute = async (req, res, next) => {
     try {
         const { error, value } = FlightRouteValidation.payload.validate(req.body);
-        if (error) {
-            throw new Error400(`${error.details[0].message}`);
-        }
+        if (error) throw new Error400(`${error.details[0].message}`);
+
         const flightRoute = await flightRouteService.update(req.params.id, value);
         res200('Berhasil mengubah data rute penerbangan', flightRoute, res);
     } catch (error) {

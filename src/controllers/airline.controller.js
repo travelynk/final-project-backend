@@ -1,67 +1,63 @@
 import * as airlineService from '../services/airline.service.js';
-import * as response from '../utils/response.js';
 import * as AirlineValidation from '../validations/airline.validation.js';
+import { res200, res201 } from '../utils/response.js';
+import { Error400, Error404 } from '../utils/customError.js';
 
-export const getAirlines = async (req, res) => {
+export const getAirlines = async (req, res, next) => {
     try {
         const airlines = await airlineService.getAll();
-        response.res200('Berhasil mengambil semua data maskapai', airlines, res);
+        res200('Berhasil mengambil semua data maskapai', airlines, res);
     } catch (error) {
-        console.log(error.message);
-        response.res500(res);
+        next(error);
     }
 };
 
-export const getAirline = async (req, res) => {
+export const getAirline = async (req, res, next) => {
     try {
         const airline = await airlineService.getOne(req.params.id);
         if (!airline) {
-            return response.res404('Data maskapai tidak ditemukan', res);
+            throw new Error404('Data maskapai tidak ditemukan');
         }
-        response.res200('Berhasil mengambil data maskapai', airline, res);
+        res200('Berhasil mengambil data maskapai', airline, res);
     } catch (error) {
-        console.log(error.message);
-        response.res500(res);
+        next(error);
     }
 };
 
-export const storeAirline = async (req, res) => {
+export const storeAirline = async (req, res, next) => {
     try {
         const { error, value } = AirlineValidation.payload.validate(req.body);
         if (error) {
-            return response.res400(`Validasi error: ${error.details[0].message}`, res);
+            throw new Error400(`${error.details[0].message}`);
         }
         const airline = await airlineService.store(value);
-        response.res201('Berhasil menambahkan data maskapai', airline, res);
+        res201('Berhasil menambahkan data maskapai', airline, res);
     } catch (error) {
-        console.log(error.message);
-        response.res500(res);
+        next(error);
     }
 };
 
-export const updateAirline = async (req, res) => {
+export const updateAirline = async (req, res, next) => {
     try {
         const { error, value } = AirlineValidation.payload.validate(req.body);
         if (error) {
-            return response.res400(`Validasi error: ${error.details[0].message}`, res);
+            throw new Error400(`${error.details[0].message}`);
         }
         const airline = await airlineService.update(req.params.id, value);
-        response.res200('Berhasil mengubah data maskapai', airline, res);
+        res200('Berhasil mengubah data maskapai', airline, res);
     } catch (error) {
-        console.log(error.message);
-        response.res500(res);
+        next(error);
     }
 };
 
-export const destroyAirline = async (req, res) => {
+export const destroyAirline = async (req, res, next) => {
     try {
         const airline = await airlineService.destroy(req.params.id);
         if (!airline) {
-            return response.res404('Data maskapai tidak ditemukan', res);
+            throw new Error404('Data maskapai tidak ditemukan');
         }
-        response.res200('Berhasil menghapus data maskapai', airline, res);
+        res200('Berhasil menghapus data maskapai', airline, res);
     } catch (error) {
-        console.log(error.message);
-        response.res500(res);
+        next(error);
     }
 };

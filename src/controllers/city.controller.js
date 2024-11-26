@@ -1,72 +1,61 @@
 import * as cityService from "../services/city.service.js";
-import * as response from "../utils/response.js";
 import * as CityValidation from "../validations/city.validation.js";
+import { res200, res201 } from "../utils/response.js";
+import { Error400, Error404 } from "../utils/customError.js";
 
-export const getCities = async (req, res) => {
+export const getCities = async (req, res, next) => {
   try {
     const cities = await cityService.getAll();
-    response.res200("Berhasil mengambil semua data kota", cities, res);
+    res200("Berhasil mengambil semua data kota", cities, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };
 
-export const getCity = async (req, res) => {
+export const getCity = async (req, res, next) => {
   try {
     const city = await cityService.getOne(req.params.code);
     if (!city) {
-      response.res404("Data kota tidak ditemukan", res);
-      return;
+      throw new Error404("Data kota tidak ditemukan");
     }
-    response.res200("Berhasil mengambil data kota", city, res);
+    res200("Berhasil mengambil data kota", city, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };
 
-export const storeCity = async (req, res) => {
+export const storeCity = async (req, res, next) => {
   try {
     const { error, value } = CityValidation.createPayload.validate(req.body);
     if (error) {
-      return response.res400(
-        `Validasi error: ${error.details[0].message}`,
-        res
-      );
+      throw new Error400(`${error.details[0].message}`);
     }
     const city = await cityService.store(value);
-    response.res201("Berhasil menambahkan data kota", city, res);
+    res201("Berhasil menambahkan data kota", city, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };
 
-export const updateCity = async (req, res) => {
+export const updateCity = async (req, res, next) => {
   try {
     const { error, value } = CityValidation.updatePayload.validate(req.body);
     if (error) {
-      return response.res400(
-        `Validasi error: ${error.details[0].message}`,
-        res
-      );
+      throw new Error400(`${error.details[0].message}`);
     }
 
     const city = await cityService.update(req.params.code, value);
-    response.res200("Berhasil mengubah data kota", city, res);
+    res200("Berhasil mengubah data kota", city, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };
 
-export const destroyCity = async (req, res) => {
+export const destroyCity = async (req, res, next) => {
   try {
     const city = await cityService.destroy(req.params.code);
-    response.res200("Berhasil menghapus data kota", city, res);
+    res200("Berhasil menghapus data kota", city, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };

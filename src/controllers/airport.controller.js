@@ -1,72 +1,61 @@
 import * as airportService from "../services/airport.service.js";
-import * as response from "../utils/response.js";
 import * as AirportValidation from "../validations/airport.validation.js";
+import { res200, res201 } from "../utils/response.js";
+import { Error404, Error400 } from "../utils/customError.js";
 
-export const getAirports = async (req, res) => {
+export const getAirports = async (req, res, next) => {
   try {
     const airports = await airportService.getAll();
-    response.res200("Berhasil mengambil semua data bandara", airports, res);
+    res200("Berhasil mengambil semua data bandara", airports, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };
 
-export const getAirport = async (req, res) => {
+export const getAirport = async (req, res, next) => {
   try {
     const airport = await airportService.getOne(req.params.id);
     if (!airport) {
-      response.res404("Data bandara tidak ditemukan", res);
-      return;
+      throw new Error404("Data bandara tidak ditemukan");
     }
-    response.res200("Berhasil mengambil data bandara", airport, res);
+    res200("Berhasil mengambil data bandara", airport, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };
 
-export const storeAirport = async (req, res) => {
+export const storeAirport = async (req, res, next) => {
   try {
     const { error, value } = AirportValidation.payload.validate(req.body);
     if (error) {
-      return response.res400(
-        `Validasi error: ${error.details[0].message}`,
-        res
-      );
+      throw new Error400(`${error.details[0].message}`);
     }
     const airport = await airportService.store(value);
-    response.res201("Berhasil menambahkan data bandara", airport, res);
+    res201("Berhasil menambahkan data bandara", airport, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };
 
-export const updateAirport = async (req, res) => {
+export const updateAirport = async (req, res, next) => {
   try {
     const { error, value } = AirportValidation.payload.validate(req.body);
     if (error) {
-      return response.res400(
-        `Validasi error: ${error.details[0].message}`,
-        res
-      );
+      throw new Error400(`${error.details[0].message}`);
     }
 
     const airport = await airportService.update(req.params.id, value);
-    response.res200("Berhasil mengubah data bandara", airport, res);
+    res200("Berhasil mengubah data bandara", airport, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };
 
-export const destroyAirport = async (req, res) => {
+export const destroyAirport = async (req, res, next) => {
   try {
     const airport = await airportService.destroy(req.params.id);
-    response.res200("Berhasil menghapus data bandara", airport, res);
+    res200("Berhasil menghapus data bandara", airport, res);
   } catch (error) {
-    console.log(error.message);
-    response.res500(res);
+    next(error);
   }
 };

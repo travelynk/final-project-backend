@@ -1,6 +1,5 @@
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import * as ErrorHandler from '../errorHandler.js';
-import { Error400 } from '../../utils/customError.js';
 import * as response from '../../utils/response.js';
 
 jest.mock('../../utils/response.js');
@@ -22,25 +21,67 @@ describe('Error Handler Middleware', () => {
     describe('handleNotFound', () => {
         it('should return 404 with message', () => {
             ErrorHandler.handleNotFound(req, res);
+
             expect(response.res404).toHaveBeenCalledWith('Resource not found!', res);
         });
     });
 
     describe('handleOther', () => {
-        it('should return 400 with message for Error400', () => {
-            const err = new Error400('error');
+        it('should return the correct JSON response for Error400', () => {
+            const err = {
+                statusCode: 400,
+                status: false,
+                message: 'Bad Request',
+                data: null,
+            };
+
             ErrorHandler.handleOther(err, req, res, next);
-            expect(response.res400).toHaveBeenCalledWith('error', res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({
+                status: false,
+                message: 'Bad Request',
+                data: null,
+            });
         });
 
-        it('should return 500 with message for other errors', () => {
-            const err = { message: 'error' };
+        it('should return the correct JSON response for other errors', () => {
+            const err = {
+                message: 'Internal Server Error',
+                status: false,
+                data: null,
+            };
+
             ErrorHandler.handleOther(err, req, res, next);
-            expect(response.res500).toHaveBeenCalledWith(res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({
+                status: false,
+                message: 'Internal Server Error',
+                data: null,
+            });
         });
 
-        it('should call next if no error', () => {
+        it('should return default message "Internal Server Error" if no message is provided', () => {
+            const err = {
+                statusCode: 500,
+                status: false,
+                data: null,
+            };
+
+            ErrorHandler.handleOther(err, req, res, next);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({
+                status: false,
+                message: 'Internal Server Error',
+                data: null,
+            });
+        });
+
+        it('should call next() if there is no error (null error)', () => {
             ErrorHandler.handleOther(null, req, res, next);
+
             expect(next).toHaveBeenCalled();
         });
     });

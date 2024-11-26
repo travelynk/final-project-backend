@@ -13,30 +13,9 @@ enum Role {
   buyer
 }
 
-enum Gender {
-  LakiLaki  @map("Laki-laki")
-  Perempuan
-}
-
-enum CountryRegion {
-  Asia
-  Afrika
-  Australia
-  AmerikaUtara   @map("Amerika Utara")
-  AmerikaLatin @map("Amerika Latin")
-  Eropa
-}
-
 enum FlightCategory {
   Internasional
   Domestik
-}
-
-enum SeatClass {
-  Economy
-  PremiumEconomy @map("Premium Economy")
-  Business
-  FirstClass     @map("First Class")
 }
 
 enum FlightType {
@@ -50,22 +29,11 @@ enum BookingStatus {
   Cancelled
 }
 
-enum PaymentMethod {
-  CreditCard @map("Credit Card")
-  Debit
-}
-
 enum PaymentStatus {
   Pending
   Success
   Failed
   Expired
-}
-
-enum TypeNotification {
-  BookingConfirmation @map("Booking Confirmation")
-  PaymentReminder     @map("Payment Reminder")
-  General
 }
 
 // Define the models
@@ -91,7 +59,7 @@ model Profile {
   userId   Int    @map("user_id") @unique
   fullName String @db.VarChar(100) @map("full_name")
   phone    String @db.VarChar(16)
-  gender   Gender
+  gender   String @db.VarChar(10)
 
   User     User   @relation(fields: [userId], references: [id])
 
@@ -101,7 +69,7 @@ model Profile {
 model Country {
   code   String        @id @db.VarChar(4)
   name   String        @db.VarChar(50)
-  region CountryRegion
+  region String        @db.VarChar(20)
 
   Cities City[]
 
@@ -203,7 +171,7 @@ model Flight {
   id            Int          @id @default(autoincrement())
   routeId       Int          @map("route_id")
   type          FlightType   @default(Direct)
-  seatClass     SeatClass    @map("seat_class")
+  seatClass     String       @db.VarChar(25) @map("seat_class")
   price         Float        @default(0)
 
   Route           Route         @relation(fields: [routeId], references: [id])
@@ -297,7 +265,7 @@ model Payment {
   id        Int           @id @default(autoincrement())
   bookingId Int           @map("booking_id")
   total     Float
-  method    PaymentMethod
+  method    String        @db.VarChar(20)
   status    PaymentStatus @default(Pending)
   amount    Float         @default(0)
   createdAt DateTime      @default(now()) @map("created_at")
@@ -311,7 +279,7 @@ model Payment {
 model Notification {
   id        Int              @id @default(autoincrement())
   userId    Int              @map("user_id")
-  type      TypeNotification @default(General)
+  type      String           @db.VarChar(25) @default("General")
   message   String
   isRead    Boolean          @default(false)  @map("is_read")
   createdAt DateTime         @default(now())  @map("created_at")

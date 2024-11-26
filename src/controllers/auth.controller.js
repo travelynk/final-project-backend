@@ -1,6 +1,7 @@
 import * as response from '../utils/response.js';
 import * as AuthValidation from '../validations/auth.validation.js';
 import * as AuthService from '../services/auth.service.js';
+import { Error400 } from '../utils/customError.js';
 
 export const login = async (req, res) => {
     try {
@@ -18,3 +19,48 @@ export const login = async (req, res) => {
         response.res500(res);
     }
 }
+
+export const register = async (req, res, next) => {
+    try {
+        const { error, value } = AuthValidation.register.validate(req.body);
+        if (error) {
+            throw new Error400(error.message);
+        };
+
+        const result = await AuthService.register(value);
+        response.res200(result, null, res);
+    } catch (error) {
+        next(error);
+    };
+};
+
+export const sendOtp = async (req, res, next) => {
+    try {
+        const { error, value } = AuthValidation.sendOtp.validate(req.body);
+
+        if (error) {
+            throw new Error400(error.message);
+        };
+
+        const result = await AuthService.sendOtp(value.email);
+
+        response.res200(result, null, res);
+    } catch (error) {
+        next(error);
+    };
+};
+
+export const verifyOtp = async (req, res, next) => {
+    try {
+        const { error, value } = AuthValidation.verifyOtp.validate(req.body);
+        if (error) {
+            throw new Error400(error.message);
+        };
+
+        const result = await AuthService.verifyOtp(value);
+
+        response.res200(result, null, res);
+    } catch (error) {
+        next(error);
+    };
+};

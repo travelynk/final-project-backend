@@ -27,13 +27,13 @@ export const getCountry = async (req, res) => {
 export const createCountry = async (req, res) => {
   try {
     const { error, value } = CountryValidation.payload.validate(req.body);
-
     if (error) {
-      return this.response.res400(
+      return response.res400(
         `Validation error: ${error.details[0].message}`,
         res
       );
     }
+    
 
     const country = await CountryService.store(value);
 
@@ -49,7 +49,7 @@ export const updateCountry = async (req, res) => {
     const { error, value } = CountryValidation.payload.validate(req.body);
 
     if (error) {
-      return this.response.res400(
+      return response.res400(
         `Validation error: ${error.details[0].message}`,
         res
       );

@@ -85,6 +85,12 @@ export const resetPassword = async (token, password) => {
 
         return { message: "Password reset successfully" };
     } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            // Lemparkan error TokenExpiredError untuk ditangani di controller
+            throw error;
+        }
+
+
         throw new Error('Invalid or expired token');
     }
 };

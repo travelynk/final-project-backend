@@ -15,7 +15,26 @@ export const register = Joi.object({
 });
 
 
+// export const resetPassword = Joi.object({
+//     newPassword: Joi.string().min(6).required(),
+//     confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required(),
+// });
+
 export const resetPassword = Joi.object({
-    newPassword: Joi.string().min(6).required(),
-    confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required(),
+    newPassword: Joi.string()
+        .min(8)
+        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/, 'password complexity')
+        .required()
+        .messages({
+            'string.pattern.name': 'New password must include at least one uppercase letter, one lowercase letter, and one number.',
+            'string.min': 'New password must be at least 8 characters long.',
+            'any.required': 'New password is required.',
+        }),
+    confirmPassword: Joi.string()
+        .valid(Joi.ref('newPassword'))
+        .required()
+        .messages({
+            'any.only': 'Confirm password must match the new password.',
+            'any.required': 'Confirm password is required.',
+        }),
 });

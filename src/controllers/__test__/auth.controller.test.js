@@ -247,7 +247,7 @@ describe('Auth Controller', () => {
 
             expect(response.res200).toHaveBeenCalledWith(
                 'Reset password email sent successfully',
-                { success: true },
+                null,
                 res
             );
         });
@@ -256,6 +256,16 @@ describe('Auth Controller', () => {
             await sendResetPasswordEmail(req, res);
 
             expect(response.res400).toHaveBeenCalledWith('Email is required', res);
+        });
+
+        it('should return 400 for email not found', async () => {
+            req.body = { email: 'test@example.com' };
+
+            AuthService.sendResetPasswordEmail.mockRejectedValue(new Error('User not found'));
+
+            await sendResetPasswordEmail(req, res);
+
+            expect(response.res400).toHaveBeenCalledWith('Email does not exist', res);
         });
 
         it('should return 500 for internal server error', async () => {

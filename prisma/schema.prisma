@@ -74,7 +74,7 @@ model User {
   email         String         @unique @db.VarChar(150)
   password      String         @db.VarChar(255)
   role          Role
-  otp           String?        @db.Char(6)
+  otpSecret     String?        @db.Char(255) @map("otp_secret")
   verified      Boolean        @default(false)
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
@@ -91,7 +91,7 @@ model Profile {
   userId   Int    @map("user_id") @unique
   fullName String @db.VarChar(100) @map("full_name")
   phone    String @db.VarChar(16)
-  gender   Gender
+  gender   Gender?
 
   User     User   @relation(fields: [userId], references: [id])
 

@@ -1,24 +1,7 @@
 import * as response from '../utils/response.js';
 import * as AuthValidation from '../validations/auth.validation.js';
 import * as AuthService from '../services/auth.service.js';
-
-// export const login = async (req, res) => {
-//     try {
-//         const { error, value } = AuthValidation.login.validate(req.body);
-
-//         if (error) {
-//             response.res400(`${error.details[0].message}`, res);
-//         }
-
-//         const token = await AuthService.login(value);
-
-//         response.res200('Login Success', token, res);
-//     } catch (error) {
-//         console.log('Error: ' + error.message);
-//         response.res500(res);
-//     }
-// }
-
+import { Error400 } from '../utils/customError.js';
 
 export const login = async (req, res) => {
     try {
@@ -41,7 +24,6 @@ export const login = async (req, res) => {
 
         return response.res200('Login Success', token, res);
     } catch (error) {
-        // console.error('Error: ' + error.message);
         return response.res500(res);
     }
 };
@@ -58,7 +40,6 @@ export const register = async (req, res) => {
 
         return response.res201('User registered successfully', result, res);
     } catch (error) {
-        // console.error('Error: ' + error.message);
         return response.res500(res);
     }
 };
@@ -77,9 +58,6 @@ export const resetPassword = async (req, res) => {
             return response.res400('Token is required', res);
         }
 
-        // console.log("Value asli:", value)
-        // console.log("Value:", value.newPassword)
-
         // Call service to reset password using token
         const result = await AuthService.resetPassword(token, value);
 
@@ -89,7 +67,6 @@ export const resetPassword = async (req, res) => {
             return response.res400('Token has expired. Please request a new reset password email.', res);
         }
 
-        // console.error('Error: ' + error.message);
         return response.res500(res, error.message);
     }
 };
@@ -106,7 +83,6 @@ export const sendResetPasswordEmail = async (req, res) => {
 
         const result = await AuthService.sendResetPasswordEmail(email);
 
-        // return response.res200('Reset password email sent successfully', result, res);
         return response.res200('Reset password email sent successfully', null, res);
     } catch (error) {
 
@@ -115,7 +91,51 @@ export const sendResetPasswordEmail = async (req, res) => {
             return response.res400('Email does not exist', res);
         }
 
-        // console.error('Error: ' + error.message);
         return response.res500(res, error.message);
     }
+}
+
+export const register = async (req, res, next) => {
+    try {
+        const { error, value } = AuthValidation.register.validate(req.body);
+        if (error) {
+            throw new Error400(error.message);
+        };
+
+        const result = await AuthService.register(value);
+        response.res200(result, null, res);
+    } catch (error) {
+        next(error);
+    };
+};
+
+export const sendOtp = async (req, res, next) => {
+    try {
+        const { error, value } = AuthValidation.sendOtp.validate(req.body);
+
+        if (error) {
+            throw new Error400(error.message);
+        };
+
+        const result = await AuthService.sendOtp(value.email);
+
+        response.res200(result, null, res);
+    } catch (error) {
+        next(error);
+    };
+};
+
+export const verifyOtp = async (req, res, next) => {
+    try {
+        const { error, value } = AuthValidation.verifyOtp.validate(req.body);
+        if (error) {
+            throw new Error400(error.message);
+        };
+
+        const result = await AuthService.verifyOtp(value);
+
+        response.res200(result, null, res);
+    } catch (error) {
+        next(error);
+    };
 };

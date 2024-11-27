@@ -1,9 +1,9 @@
 import * as response from '../utils/response.js';
 import * as AuthValidation from '../validations/auth.validation.js';
 import * as AuthService from '../services/auth.service.js';
-import { Error400 } from '../utils/customError.js';
+import { Error400, Error404 } from '../utils/customError.js';
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     try {
         const { error, value } = AuthValidation.login.validate(req.body);
 
@@ -24,27 +24,11 @@ export const login = async (req, res) => {
 
         return response.res200('Login Success', token, res);
     } catch (error) {
-        return response.res500(res);
+        next(error);
     }
 };
 
-export const register = async (req, res) => {
-    try {
-        const { error, value } = AuthValidation.register.validate(req.body);
-
-        if (error) {
-            return response.res400(`${error.details[0].message}`, res);
-        }
-
-        const result = await AuthService.register(value);
-
-        return response.res201('User registered successfully', result, res);
-    } catch (error) {
-        return response.res500(res);
-    }
-};
-
-export const resetPassword = async (req, res) => {
+export const resetPassword = async (req, res, next) => {
     try {
         const { error, value } = AuthValidation.resetPassword.validate(req.body);
 
@@ -64,16 +48,15 @@ export const resetPassword = async (req, res) => {
         return response.res200(result.message, null, res);
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            return response.res400('Token has expired. Please request a new reset password email.', res);
+            next(new Error400('Token has expired. Please request a new reset password email.'));
         }
 
-        return response.res500(res, error.message);
+        next(error);
     }
 };
 
-
 // New endpoint to send a reset password email
-export const sendResetPasswordEmail = async (req, res) => {
+export const sendResetPasswordEmail = async (req, res, next) => {
     try {
         const { email } = req.body;
 
@@ -81,17 +64,16 @@ export const sendResetPasswordEmail = async (req, res) => {
             return response.res400('Email is required', res);
         }
 
-        const result = await AuthService.sendResetPasswordEmail(email);
+        await AuthService.sendResetPasswordEmail(email);
 
         return response.res200('Reset password email sent successfully', null, res);
     } catch (error) {
-
         // Tangkap error yang spesifik
         if (error.message === 'User not found') {
-            return response.res400('Email does not exist', res);
+            next(new Error404('Email does not exist'));
         }
 
-        return response.res500(res, error.message);
+        next(error);
     }
 }
 

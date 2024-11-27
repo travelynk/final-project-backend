@@ -2,11 +2,8 @@ import prisma from "../configs/database.js";
 import { Error400, Error404, Error409 } from "../utils/customError.js";
 import { generateOTP, generateSecret, verifyOTP } from "../utils/otp.js";
 import bcrypt from "bcrypt";
-import nodemailer from "nodemailer"
-import bcrypt from 'bcrypt';
+import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
-import prisma from '../configs/database.js';
-import nodemailer from 'nodemailer';
 
 export const login = async ({ email, password }) => {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -27,112 +24,41 @@ export const login = async ({ email, password }) => {
     return { token, role: user.role };
 };
 
-export const register = async ({ email, password, fullName, phone, gender }) => {
-    const hashedPassword = await bcrypt.hash(password, 10);
+export const register = async (data) => {
+    const { email, password, fullName, phone } = data;
 
-    const user = await prisma.user.create({
-        data: {
-            email,
-            password: hashedPassword,
-            role: 'buyer',
-            verified: false,
-            Profile: {
-                create: {
-                    fullName,
-                    phone,
-                    gender,
+    const existingEmail = await prisma.user.findUnique({
+        where: { email: email },
+    });
+
+    if (!existingEmail) {
+        const secret = generateSecret();
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await prisma.user.create({
+            data: {
+                email,
+                password: hashedPassword,
+                role: "buyer",
+                otpSecret: secret,
+                verified: false,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                Profile: {
+                    create: { fullName, phone },
                 },
             },
-        },
-        include: { Profile: true },
-    });
-
-    return user;
-};
-
-
-// Updated resetPassword to use the token for resetting password directly
-// Reset password function, using token to update password
-export const resetPassword = async (token, password) => {
-    try {
-        // Verify the token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_FORGET);
-        const { email } = decoded;
-
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-            throw new Error("User not found");
-        }
-
-        // Hash new password and update password
-        const hashedPassword = await bcrypt.hash(password.newPassword, 10);
-
-        await prisma.user.update({
-            where: { email },
-            data: { password: hashedPassword },
+            include: { profile: true },
         });
-
-        return { message: "Password reset successfully" };
-    } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            // Lemparkan error TokenExpiredError untuk ditangani di controller
-            throw error;
-        }
-
-        throw new Error('Invalid or expired token');
-    }
-};
-
-// New function to send a reset password email
-export const sendResetPasswordEmail = async (email) => {
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-        throw new Error("User not found");
-    }
-
-    // Generate token reset password (contoh sederhana)
-    const resetToken = jwt.sign({ email }, process.env.JWT_SECRET_FORGET, { expiresIn: "1h" });
-    const resetLink = `${process.env.DOMAIN_URL}/api/v1/auth/reset-password?token=${resetToken}`;
-    console.log(resetLink);
-
-    // Konfigurasi transporter nodemailer
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true, // Gunakan SSL
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
-    });
-
-    // Data email
-    const mailData = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "Reset Your Password",
-        html: `
-             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #007bff; text-align: center;">Reset Password Request</h1>
-            <p style="font-size: 16px;">Hello,</p>
-            <p style="font-size: 16px;">You requested to reset your password. Please click the button below to proceed:</p>
-            <div style="text-align: center; margin: 20px 0;">
-                <a href="${resetLink}" style="display: inline-block; padding: 12px 25px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Reset Password</a>
-            </div>
-            <p style="font-size: 16px;">If you did not request this, please ignore this email or contact support if you have concerns.</p>
-            <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
-            <p style="font-size: 14px; color: #666; text-align: center;">This email was sent automatically. Please do not reply.</p>
-        </div>
-        `,
     };
 
-    // Kirim email
-    const info = await transporter.sendMail(mailData);
+    if (existingEmail?.verified) {
+        throw new Error409("Alamat email yang Anda masukkan sudah digunakan. Silakan coba dengan alamat email yang berbeda.");
+    };
 
-    console.log(`Reset password email sent to ${email}, Message ID: ${info.messageId}`);
-    return { messageId: info.messageId };
-    // return { message: "Reset password email sent successfully" };
-};
+    const result = await sendOtp(email);
+    return result;
+}
 
 export const verifyOtp = async (data) => {
     const { email, otp } = data;
@@ -200,38 +126,81 @@ export const sendOtp = async (email) => {
     return "Email untuk memverifikasi akun Anda telah dikirim.";
 };
 
-export const register = async (data) => {
-    const { email, password, fullName, phone } = data;
+// Updated resetPassword to use the token for resetting password directly
+// Reset password function, using token to update password
+export const resetPassword = async (token, password) => {
+    try {
+        // Verify the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_FORGET);
+        const { email } = decoded;
 
-    const existingEmail = await prisma.user.findUnique({
-        where: { email: email },
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            throw new Error404("User not found");
+        }
+
+        // Hash new password and update password
+        const hashedPassword = await bcrypt.hash(password.newPassword, 10);
+
+        await prisma.user.update({
+            where: { email },
+            data: { password: hashedPassword },
+        });
+
+        return { message: "Password reset successfully" };
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            // Lemparkan error TokenExpiredError untuk ditangani di controller
+            throw error;
+        }
+
+        throw new Error('Invalid or expired token');
+    }
+};
+
+// New function to send a reset password email
+export const sendResetPasswordEmail = async (email) => {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+        throw new Error404("User not found");
+    }
+
+    // Generate token reset password (contoh sederhana)
+    const resetToken = jwt.sign({ email }, process.env.JWT_SECRET_FORGET, { expiresIn: "1h" });
+    const resetLink = `${process.env.DOMAIN_URL}/api/v1/auth/reset-password?token=${resetToken}`;
+
+    // Konfigurasi transporter nodemailer
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true, // Gunakan SSL
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+        },
     });
 
-    if (!existingEmail) {
-        const secret = generateSecret();
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        await prisma.user.create({
-            data: {
-                email,
-                password: hashedPassword,
-                role: "buyer",
-                otpSecret: secret,
-                verified: false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                Profile: {
-                    create: { fullName, phone },
-                },
-            },
-            include: { Profile: true },
-        });
+    // Data email
+    const mailData = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Reset Your Password",
+        html: `
+             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #007bff; text-align: center;">Reset Password Request</h1>
+            <p style="font-size: 16px;">Hello,</p>
+            <p style="font-size: 16px;">You requested to reset your password. Please click the button below to proceed:</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <a href="${resetLink}" style="display: inline-block; padding: 12px 25px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Reset Password</a>
+            </div>
+            <p style="font-size: 16px;">If you did not request this, please ignore this email or contact support if you have concerns.</p>
+            <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
+            <p style="font-size: 14px; color: #666; text-align: center;">This email was sent automatically. Please do not reply.</p>
+        </div>
+        `,
     };
 
-    if (existingEmail?.verified) {
-        throw new Error409("Alamat email yang Anda masukkan sudah digunakan. Silakan coba dengan alamat email yang berbeda.");
-    };
-
-    const result = await sendOtp(email);
-    return result;
-}
+    // Kirim email
+    const info = await transporter.sendMail(mailData);
+    return { messageId: info.messageId };
+};

@@ -20,7 +20,7 @@ describe("Profile Service", () => {
             const mockUser = {
                 id: 1,
                 email: "it@example.com",
-                Profile: {
+                profile: {
                     fullName: "it User",
                     phone: "1234567890",
                 },
@@ -31,8 +31,8 @@ describe("Profile Service", () => {
             const result = await getProfile(1);
             expect(result).toEqual({
                 id: mockUser.id,
-                fullName: mockUser.Profile.fullName,
-                phone: mockUser.Profile.phone,
+                fullName: mockUser.profile.fullName,
+                phone: mockUser.profile.phone,
                 email: mockUser.email,
             });
         });
@@ -50,7 +50,7 @@ describe("Profile Service", () => {
             const mockUser = {
                 id: 1,
                 email: "it@example.com",
-                Profile: {
+                profile: {
                     fullName: "it User",
                     phone: "1234567890",
                 },
@@ -67,8 +67,8 @@ describe("Profile Service", () => {
             const result = await updateProfile(1, updatedData);
             expect(result).toEqual({
                 id: mockUser.id,
-                fullName: mockUser.Profile.fullName,
-                phone: mockUser.Profile.phone,
+                fullName: mockUser.profile.fullName,
+                phone: mockUser.profile.phone,
                 email: mockUser.email,
             });
 
@@ -78,7 +78,7 @@ describe("Profile Service", () => {
                 },
                 data: {
                     email: updatedData.email,
-                    Profile: {
+                    profile: {
                         update: {
                             fullName: updatedData.fullName,
                             phone: updatedData.phone,
@@ -86,7 +86,7 @@ describe("Profile Service", () => {
                     },
                 },
                 include: {
-                    Profile: true,
+                    profile: true,
                 },
             });
         });

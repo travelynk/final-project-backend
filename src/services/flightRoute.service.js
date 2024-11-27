@@ -22,6 +22,22 @@ export const getOne = async (id) => {
 };
 
 export const store = async (data) => {
+    const departureAirport = await prisma.airport.findUnique({
+        where: {
+            id: data.departureAirportId
+        }
+    });
+
+    if(!departureAirport) throw new Error400('Bandara keberangkatan tidak ditemukan!');
+
+    const arrivalAirport = await prisma.airport.findUnique({
+        where: {
+            id: data.arrivalAirportId
+        }
+    });
+
+    if(!arrivalAirport) throw new Error400('Bandara kedatangan tidak ditemukan!');
+
     const currentRoute = await prisma.route.findFirst({
         where: {
             airlineId: data.airlineId,

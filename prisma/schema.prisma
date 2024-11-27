@@ -123,31 +123,9 @@ model Airline {
 
   airport        Airport          @relation(fields: [airportId], references: [id])
   routes         Route[]
-  // AirlinesPlanes AirlinesPlanes[]
-
+  
   @@map("airlines")
 }
-
-// model Plane {
-//   id             Int              @id @default(autoincrement())
-//   name           String           @db.VarChar(50)
-//   status         Boolean          @default(true)
-
-//   AirlinesPlanes AirlinesPlanes[]
-
-//   @@map("planes")
-// }
-
-// model AirlinesPlanes {
-//   airlineId Int
-//   planeId   Int
-
-//   Airline   Airline @relation(fields: [airlineId], references: [id])
-//   Plane     Plane   @relation(fields: [planeId], references: [id])
-
-//   @@id([airlineId, planeId])
-//   @@map("airlines_planes")
-// }
 
 model Route {
   id                 Int       @id @default(autoincrement())

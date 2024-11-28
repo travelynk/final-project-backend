@@ -1,20 +1,24 @@
 import * as response from '../utils/response.js';
 import * as AuthValidation from '../validations/auth.validation.js';
 import * as AuthService from '../services/auth.service.js';
+import { Error400, Error401, Error404 } from '../utils/customError.js';
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     try {
         const { error, value } = AuthValidation.login.validate(req.body);
-
+        
         if (error) {
-            response.res400(`${error.details[0].message}`, res);
+            return response.res400(`${error.details[0].message}`, res);
         }
 
-        const token = await AuthService.login(value);
+        const result = await AuthService.login(value);
+        
+        if (!result) {
+            return response.res401('Invalid email or password!', res);
+        }
 
-        response.res200('Login Success', token, res);
+        return response.res200('Login Success', result, res);
     } catch (error) {
-        console.log('Error: ' + error.message);
-        response.res500(res);
+        next(error);
     }
-}
+};

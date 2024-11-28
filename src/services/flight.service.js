@@ -16,7 +16,9 @@ export const getOne = async (id) => {
 export const store = async (data) => {
     const currentFlight = await prisma.flight.findFirst({
         where: {
-            routeId: data.routeId,
+            airlineId: data.airlineId,
+            departureAirportId: data.departureAirportId,
+            arrivalAirportId: data.arrivalAirportId,
             departureTime: data.departureTime,
             arrivalTime: data.arrivalTime
         }
@@ -30,20 +32,27 @@ export const store = async (data) => {
 };
 
 export const update = async (id, data) => {
-    const currentFlight = await prisma.flight.findFirst({
+    const flightData = await prisma.flight.findUnique({
+        where: { id: parseInt(id) }
+    });
+
+    if (!flightData) throw new Error404('Penerbangan tidak ditemukan!');
+
+    const isDuplicateFlight = await prisma.flight.findFirst({
         where: {
-            routeId: data.routeId,
+            airlineId: data.airlineId,
+            departureAirportId: data.departureAirportId,
+            arrivalAirportId: data.arrivalAirportId,
             departureTime: data.departureTime,
-            arrivalTime: data.arrivalTime
+            arrivalTime: data.arrivalTime,
+            NOT: { id: parseInt(id) }
         }
     });
 
-    if (currentFlight) throw new Error400('Penerbangan sudah tersedia!');
+    if (isDuplicateFlight) throw new Error400('Penerbangan sudah tersedia!');
 
     return await prisma.flight.update({
-        where: {
-            id: parseInt(id)
-        },
+        where: { id: parseInt(id) },
         data
     });
 };

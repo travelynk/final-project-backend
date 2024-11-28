@@ -16,7 +16,7 @@ export const login = async (req, res, next) => {
         if (!result) {
             return response.res401('Invalid email or password!', res);
         }
-
+        
         return response.res200('Login Success', result, res);
     } catch (error) {
         next(error);

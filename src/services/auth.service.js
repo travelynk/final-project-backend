@@ -44,7 +44,7 @@ export const register = async (data) => {
                 verified: false,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                Profile: {
+                profile: {
                     create: { fullName, phone },
                 },
             },

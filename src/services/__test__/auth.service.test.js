@@ -5,6 +5,7 @@ import { Error400, Error404, Error409 } from "../../utils/customError";
 import { generateOTP, generateSecret, verifyOTP } from "../../utils/otp";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
+import jwt from 'jsonwebtoken';
 
 
 jest.mock("../../configs/database", () => ({
@@ -29,9 +30,13 @@ jest.mock("../../utils/otp", () => ({
 
 jest.mock("bcrypt", () => ({
     hash: jest.fn(),
+    compare: jest.fn(),
 }));
 
-jest.mock("jsonwebtoken");
+jest.mock("jsonwebtoken", () => ({
+    sign: jest.fn(),
+    verify: jest.fn(),
+}));
 
 describe("Auth Service", () => {
     beforeEach(() => {

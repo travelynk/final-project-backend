@@ -1,10 +1,9 @@
 import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
-import { login, register, sendOtp, verifyOtp } from '../../controllers/auth.controller.js';
-import { Error400 } from '../../utils/customError.js';
+import { login, register, sendOtp, verifyOtp, resetPassword, sendResetPasswordEmail } from '../../controllers/auth.controller.js';
+import { Error400, Error404 } from '../../utils/customError.js';
 import * as response from '../../utils/response.js';
 import * as AuthValidation from '../../validations/auth.validation.js';
 import * as AuthService from '../../services/auth.service.js';
-import { login, register, resetPassword, sendResetPasswordEmail } from '../../controllers/auth.controller.js';
 
 jest.mock('../../utils/response.js');
 jest.mock('../../services/auth.service.js');
@@ -69,7 +68,7 @@ describe('Auth Controller', () => {
                 error: { details: [{ message: 'Validation error' }] },
             });
 
-            await login(req, res);
+            await login(req, res, next);
 
             expect(response.res400).toHaveBeenCalledWith('Validation error', res);
         });
@@ -79,8 +78,8 @@ describe('Auth Controller', () => {
                 throw new Error('Internal Error');
             });
 
-            await login(req, res);
-            expect(response.res500).toHaveBeenCalledWith(res);
+            await login(req, res, next);
+            expect(next).toHaveBeenCalledWith(new Error('Internal Error'));
         });
     });
 
@@ -231,9 +230,9 @@ describe('Auth Controller', () => {
                 throw new Error('Internal Error');
             });
 
-            await resetPassword(req, res);
+            await resetPassword(req, res, next);
 
-            expect(response.res500).toHaveBeenCalledWith(res, 'Internal Error');
+            expect(next).toHaveBeenCalledWith(new Error('Internal Error'));
         });
     });
 
@@ -261,11 +260,11 @@ describe('Auth Controller', () => {
         it('should return 400 for email not found', async () => {
             req.body = { email: 'test@example.com' };
 
-            AuthService.sendResetPasswordEmail.mockRejectedValue(new Error('User not found'));
+            AuthService.sendResetPasswordEmail.mockRejectedValue(new Error404('User not found'));
 
-            await sendResetPasswordEmail(req, res);
+            await sendResetPasswordEmail(req, res, next);
 
-            expect(response.res400).toHaveBeenCalledWith('Email does not exist', res);
+            expect(next).toHaveBeenCalledWith(new Error404('User not found'));
         });
 
         it('should return 500 for internal server error', async () => {
@@ -273,9 +272,9 @@ describe('Auth Controller', () => {
 
             AuthService.sendResetPasswordEmail.mockRejectedValue(new Error('Internal Error'));
 
-            await sendResetPasswordEmail(req, res);
+            await sendResetPasswordEmail(req, res, next);
 
-            expect(response.res500).toHaveBeenCalledWith(res, 'Internal Error');
+            expect(next).toHaveBeenCalledWith(new Error('Internal Error'));
         });
     });
   

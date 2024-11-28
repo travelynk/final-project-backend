@@ -7,7 +7,7 @@ export const getProfile = async (id) => {
             id: parseInt(id),
         },
         include: {
-            Profile: true,
+            profile: true,
         },
     });
 
@@ -17,8 +17,8 @@ export const getProfile = async (id) => {
 
     const result = {
         id: user.id,
-        fullName: user.Profile.fullName,
-        phone: user.Profile.phone,
+        fullName: user.profile.fullName,
+        phone: user.profile.phone,
         email: user.email,
     };
 
@@ -35,7 +35,7 @@ export const updateProfile = async (id, data) => {
         },
         data: {
             email: email,
-            Profile: {
+            profile: {
                 update: {
                     fullName: fullName,
                     phone: phone,
@@ -43,7 +43,7 @@ export const updateProfile = async (id, data) => {
             },
         },
         include: {
-            Profile: true,
+            profile: true,
         },
     });
 
@@ -53,8 +53,8 @@ export const updateProfile = async (id, data) => {
 
     const result = {
         id: updatedUser.id,
-        fullName: updatedUser.Profile.fullName,
-        phone: updatedUser.Profile.phone,
+        fullName: updatedUser.profile.fullName,
+        phone: updatedUser.profile.phone,
         email: updatedUser.email,
     };
 

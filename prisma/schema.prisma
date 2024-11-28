@@ -44,6 +44,7 @@ model User {
 
   profile       Profile?
   bookings      Booking[]
+  passengers    Passenger[]
   notifications Notification[]
 
   @@map("users")
@@ -133,12 +134,10 @@ model Flight {
   seatCapacity       Int           @map("seat_capacity")
   facility           String?
   price              Float         @default(0)
-  groupId            Int?          @map("group_id")
 
   airline            Airline       @relation(fields: [airlineId], references: [id])
   departureAirport   Airport       @relation("DepartureAirportRoutes", fields: [departureAirportId], references: [id])
   arrivalAirport     Airport       @relation("ArrivalAirportRoutes", fields: [arrivalAirportId], references: [id])
-  group              FlightGroup?  @relation(fields: [groupId], references: [id])
 
   flightSeats        FlightSeats[]
   bookingSegments    BookingSegments[]
@@ -157,15 +156,6 @@ model FlightSeats {
   passengerSeats  PassengerSeats[]
 
   @@map("flight_seats")
-}
-
-model FlightGroup {
-  id            Int       @id @default(autoincrement())
-  isTransit     Boolean   @default(true) @map("is_transit")
-
-  flights       Flight[]
-
-  @@map("flight_groups")
 }
 
 model Booking {
@@ -193,7 +183,6 @@ model BookingSegments {
   bookingId Int      @map("booking_id")
   flightId  Int      @map("flight_id")
   isReturn  Boolean  @default(false) @map("is_return")
-  order     Int      @default(0)
 
   booking   Booking @relation(fields: [bookingId], references: [id])
   flight    Flight  @relation(fields: [flightId], references: [id])
@@ -216,6 +205,7 @@ model PassengerCount {
 model Passenger {
   id             Int        @id @default(autoincrement())
   bookingId      Int        @map("booking_id")
+  userId         Int        @map("user_id")
   title          String     @db.VarChar(7)
   fullName       String     @db.VarChar(100) @map("full_name")
   familyName     String?    @db.VarChar(50)  @map("family_name")
@@ -226,6 +216,7 @@ model Passenger {
   identityExp    DateTime   @map("identity_exp")
 
   booking        Booking    @relation(fields: [bookingId], references: [id])
+  user           User       @relation(fields: [userId], references: [id])
   seats          PassengerSeats[]
 
   @@map("passengers")

@@ -91,7 +91,7 @@ describe("Auth Service", () => {
                 role: "buyer",
                 otpSecret: "secret",
                 verified: false,
-                Profile: { fullName: data.fullName, phone: data.phone },
+                profile: { fullName: data.fullName, phone: data.phone },
             });
 
             prisma.user.findUnique.mockResolvedValueOnce({
@@ -114,7 +114,7 @@ describe("Auth Service", () => {
                     email: data.email,
                     password: "hashedPassword",
                     otpSecret: "secret",
-                    Profile: {
+                    profile: {
                         create: {
                             fullName: data.fullName,
                             phone: data.phone,

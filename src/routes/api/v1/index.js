@@ -3,6 +3,8 @@ import { Router } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import * as IndexController from '../../../controllers/index.js';
 import AuthRouter from './auth.route.js';
+import ProfileRouter from './profile.route.js';
+import SeatRouter from './seat.route.js';
 
 const swaggerDocument = JSON.parse(readFileSync(new URL('../../../docs/api-v1.json', import.meta.url), 'utf-8'));
 
@@ -17,5 +19,7 @@ export default (app) => {
 
     // all main routers
     AuthRouter(router);
+    ProfileRouter(router);
+    SeatRouter(router);
 
 };

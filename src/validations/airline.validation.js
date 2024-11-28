@@ -12,13 +12,6 @@ export const payload = joi.object({
         'string.max': 'Nama maksimal harus terdiri dari 50 karakter',
         'any.required': 'Nama wajib diisi'
     }),
-    seatCapacity: joi.number().required().messages({
-        'number.base': 'Kapasitas kursi harus berupa angka',
-        'any.required': 'Kapasitas kursi wajib diisi'
-    }),
-    facility: joi.string().empty('').messages({
-        'string.base': 'Fasilitas harus berupa teks'
-    }),
     airportId: joi.number().required().messages({
         'number.base': 'ID bandara harus berupa angka',
         'any.required': 'ID bandara wajib diisi'

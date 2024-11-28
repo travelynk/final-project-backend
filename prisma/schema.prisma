@@ -13,46 +13,15 @@ enum Role {
   buyer
 }
 
-enum Gender {
-  LakiLaki  @map("Laki-laki")
-  Perempuan
-}
-
-enum CountryRegion {
-  Asia
-  Afrika
-  Australia
-  AmerikaUtara   @map("Amerika Utara")
-  AmerikaSelatan @map("Amerika Selatan")
-  Eropa
-}
-
 enum FlightCategory {
   Internasional
   Domestik
-}
-
-enum SeatClass {
-  Economy
-  PremiumEconomy @map("Premium Economy")
-  Business
-  FirstClass     @map("First Class")
-}
-
-enum FlightType {
-  Direct
-  Transit
 }
 
 enum BookingStatus {
   Pending
   Confirmed
   Cancelled
-}
-
-enum PaymentMethod {
-  CreditCard @map("Credit Card")
-  Debit
 }
 
 enum PaymentStatus {
@@ -62,26 +31,21 @@ enum PaymentStatus {
   Expired
 }
 
-enum TypeNotification {
-  BookingConfirmation @map("Booking Confirmation")
-  PaymentReminder     @map("Payment Reminder")
-  General
-}
-
 // Define the models
 model User {
   id            Int            @id @default(autoincrement())
   email         String         @unique @db.VarChar(150)
   password      String         @db.VarChar(255)
   role          Role
-  otp           String?        @db.Char(6)
+  otpSecret     String?        @db.Char(255) @map("otp_secret")
   verified      Boolean        @default(false)
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
 
-  Profile       Profile?
-  Bookings      Booking[]
-  Notifications Notification[]
+  profile       Profile?
+  bookings      Booking[]
+  passengers    Passenger[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -91,45 +55,45 @@ model Profile {
   userId   Int    @map("user_id") @unique
   fullName String @db.VarChar(100) @map("full_name")
   phone    String @db.VarChar(16)
-  gender   Gender
+  gender   String? @db.VarChar(10) // Laki-laki, Perempuan
 
-  User     User   @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [userId], references: [id])
 
   @@map("profiles")
 }
 
 model Country {
-  code   String        @id @db.Char(4)
+  code   String        @id @db.VarChar(4)
   name   String        @db.VarChar(50)
-  region CountryRegion
+  region String        @db.VarChar(20)
 
-  Cities City[]
+  cities City[]
 
   @@map("countries")
 }
 
 model City {
-  code        String    @id @db.Char(4)
+  code        String    @id @db.VarChar(4)
   name        String    @db.VarChar(50)
   countryCode String    @map("country_code")
 
-  Country     Country   @relation(fields: [countryCode], references: [code])
-  Airports    Airport[]
+  country     Country   @relation(fields: [countryCode], references: [code])
+  airports    Airport[]
 
   @@map("cities")
 }
 
 model Airport {
   id        Int        @id @default(autoincrement())
-  code      String     @unique @db.Char(4)
+  code      String     @unique @db.VarChar(4)
   name      String     @db.VarChar(100)
   cityCode  String     @map("city_code")
 
-  City      City       @relation(fields: [cityCode], references: [code])
-  Terminals Terminal[]
-  Airlines  Airline[]
-  DepartureRoutes    Route[] @relation("DepartureAirportRoutes")
-  ArrivalRoutes      Route[] @relation("ArrivalAirportRoutes")
+  city              City        @relation(fields: [cityCode], references: [code])
+  terminals         Terminal[]
+  airlines          Airline[]
+  departureRoutes   Flight[]    @relation("DepartureAirportRoutes")
+  arrivalRoutes     Flight[]    @relation("ArrivalAirportRoutes")
 
   @@map("airports")
 }
@@ -140,138 +104,100 @@ model Terminal {
   airportId Int            @map("airport_id")
   category  FlightCategory
   
-  Airport   Airport        @relation(fields: [airportId], references: [id])
+  airport   Airport        @relation(fields: [airportId], references: [id])
 
   @@map("terminals")
 }
 
 model Airline {
-  id             Int              @id
-  code           String           @unique @db.Char(4)
+  id             Int              @id @default(autoincrement())
+  code           String           @unique @db.VarChar(4)
   name           String           @db.VarChar(50)
   airportId      Int              @map("airport_id")
 
-  Airport        Airport          @relation(fields: [airportId], references: [id])
-  Routes         Route[]
-  AirlinesPlanes AirlinesPlanes[]
+  airport        Airport          @relation(fields: [airportId], references: [id])
+  flight         Flight[]
 
   @@map("airlines")
 }
 
-model Plane {
-  id             Int              @id @default(autoincrement())
-  name           String           @db.VarChar(50)
-  status         Boolean          @default(true)
-
-  AirlinesPlanes AirlinesPlanes[]
-
-  @@map("planes")
-}
-
-model AirlinesPlanes {
-  airlineId Int
-  planeId   Int
-
-  Airline   Airline @relation(fields: [airlineId], references: [id])
-  Plane     Plane   @relation(fields: [planeId], references: [id])
-
-  @@id([airlineId, planeId])
-  @@map("airlines_planes")
-}
-
-model Route {
-  id                 Int       @id @default(autoincrement())
-  airlineId          Int       @map("airline_id")
-  departureAirportId Int       @map("departure_airport_id")
-  arrivalAirportId   Int       @map("arrival_airport_id")
-  estimatedDuration  Int       @map("estimated_duration")
-
-  Airline            Airline   @relation(fields: [airlineId], references: [id])
-  DepartureAirport   Airport   @relation("DepartureAirportRoutes", fields: [departureAirportId], references: [id])
-  ArrivalAirport     Airport   @relation("ArrivalAirportRoutes", fields: [arrivalAirportId], references: [id])
-  Flights            Flight[]
-  Transits           Transit[]
-
-  @@map("routes")
-}
-
 model Flight {
-  id            Int          @id @default(autoincrement())
-  routeId       Int          @map("route_id")
-  departureTime DateTime     @map("departure_time")
-  arrivalTime   DateTime     @map("arrival_time")
-  type          FlightType   @default(Direct)
-  seatClass     SeatClass    @map("seat_class")
-  seatCapacity  Int          @map("seat_capacity")
-  facility      String?
-  price         Float        @default(0)
-  disc          Float        @default(0)
+  id                 Int           @id @default(autoincrement())
+  airlineId          Int           @map("airline_id")
+  flightNum          String        @map("flight_num") @db.VarChar(15)
+  departureAirportId Int           @map("departure_airport_id")
+  arrivalAirportId   Int           @map("arrival_airport_id")
+  departureTime      DateTime      @map("departure_time")
+  arrivalTime        DateTime      @map("arrival_time")
+  estimatedDuration  Int           @map("estimated_duration")
+  seatClass          String        @map("seat_class")
+  seatCapacity       Int           @map("seat_capacity")
+  facility           String?
+  price              Float         @default(0)
 
-  Route           Route         @relation(fields: [routeId], references: [id])
-  FlightSeats     FlightSeat[]
-  OutboundBooking Booking[]     @relation("OutboundFlightBooking")
-  ReturnBooking   Booking[]     @relation("ReturnFlightBooking")
-  Transits        Transit[]
+  airline            Airline       @relation(fields: [airlineId], references: [id])
+  departureAirport   Airport       @relation("DepartureAirportRoutes", fields: [departureAirportId], references: [id])
+  arrivalAirport     Airport       @relation("ArrivalAirportRoutes", fields: [arrivalAirportId], references: [id])
+
+  flightSeats        FlightSeats[]
+  bookingSegments    BookingSegments[]
+  passengerSeats     PassengerSeats[]
 
   @@map("flights")
-  
 }
 
-model FlightSeat {
+model FlightSeats {
   id          Int     @id @default(autoincrement())
   flightId    Int?    @map("flight_id")
-  position    String  @db.Char(4)
-  isAvailable Boolean @default(true)  @map("is_available")
+  position    String  @db.VarChar(4)
+  isAvailable Boolean @default(true) @map("is_available")
 
-  Flight      Flight? @relation(fields: [flightId], references: [id])
-  Passengers  Passenger[]
+  flight          Flight? @relation(fields: [flightId], references: [id])
+  passengerSeats  PassengerSeats[]
 
   @@map("flight_seats")
-}
-
-model Transit {
-  id            Int       @id @default(autoincrement())
-  flightId      Int       @map("flight_id")
-  routeId       Int       @map("route_id")
-  departureTime DateTime  @map("departure_time")
-  arrivalTime   DateTime  @map("arrival_time")
-  
-  Flight        Flight   @relation(fields: [flightId], references: [id])
-  Route         Route    @relation(fields: [routeId], references: [id])
-
-  @@map("transits")
 }
 
 model Booking {
   id               Int             @id @default(autoincrement())
   userId           Int             @map("user_id")
-  outboundFlightId Int             @map("outbound_flight_id")
-  returnFlightId   Int?            @map("return_flight_id")
   roundTrip        Boolean         @default(false) @map("round_trip")
   totalPrice       Float           @default(0) @map("total_price")
   tax              Float           @default(0)
+  disc             Float           @default(0)
   status           BookingStatus   @default(Pending)
   createdAt        DateTime        @default(now())  @map("created_at")
   updatedAt        DateTime        @updatedAt @map("updated_at")
 
-  User             User            @relation(fields: [userId], references: [id])
-  OutboundFlight   Flight          @relation("OutboundFlightBooking", fields: [outboundFlightId], references: [id])
-  ReturnFlight     Flight?         @relation("ReturnFlightBooking", fields: [returnFlightId], references: [id])
-  PassengerCount   PassengerCount?
-  Passengers       Passenger[]
-  Payments         Payment[]
+  user             User            @relation(fields: [userId], references: [id])
+  passengerCount   PassengerCount?
+  passengers       Passenger[]
+  payments         Payment[]
+  segments         BookingSegments[]
 
   @@map("bookings")
 }
 
-model PassengerCount {
-  id        Int     @id @default(autoincrement())
-  bookingId Int     @map("booking_id") @unique
-  adult     Int
-  child     Int
-  baby      Int
+model BookingSegments {
+  id        Int      @id @default(autoincrement())
+  bookingId Int      @map("booking_id")
+  flightId  Int      @map("flight_id")
+  isReturn  Boolean  @default(false) @map("is_return")
 
-  Booking   Booking @relation(fields: [bookingId], references: [id])
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  flight    Flight  @relation(fields: [flightId], references: [id])
+
+  @@map("booking_segments")
+}
+
+model PassengerCount {
+  id          Int     @id @default(autoincrement())
+  bookingId   Int     @map("booking_id") @unique
+  adult       Int
+  child       Int
+  infant      Int
+
+  booking   Booking @relation(fields: [bookingId], references: [id])
 
   @@map("passenger_counts")
 }
@@ -279,7 +205,8 @@ model PassengerCount {
 model Passenger {
   id             Int        @id @default(autoincrement())
   bookingId      Int        @map("booking_id")
-  title          String     @db.Char(7)
+  userId         Int        @map("user_id")
+  title          String     @db.VarChar(7)
   fullName       String     @db.VarChar(100) @map("full_name")
   familyName     String?    @db.VarChar(50)  @map("family_name")
   dob            DateTime
@@ -287,25 +214,40 @@ model Passenger {
   identityNumber String     @db.VarChar(20) @map("identity_number")
   issuingCountry String     @db.VarChar(50) @map("issuing_country")
   identityExp    DateTime   @map("identity_exp")
-  seatId         Int        @map("seat_id")
 
-  Booking        Booking    @relation(fields: [bookingId], references: [id])
-  FlightSeat     FlightSeat @relation(fields: [seatId], references: [id])
+  booking        Booking    @relation(fields: [bookingId], references: [id])
+  user           User       @relation(fields: [userId], references: [id])
+  seats          PassengerSeats[]
 
   @@map("passengers")
 }
 
-model Payment {
-  id        Int           @id @default(autoincrement())
-  bookingId Int           @map("booking_id")
-  total     Float
-  method    PaymentMethod
-  status    PaymentStatus @default(Pending)
-  amount    Float         @default(0)
-  createdAt DateTime      @default(now()) @map("created_at")
-  updatedAt DateTime      @updatedAt      @map("updated_at")
+model PassengerSeats {
+  id          Int     @id @default(autoincrement())
+  passengerId Int     @map("passenger_id")
+  flightId    Int     @map("flight_id")
+  seatId      Int     @map("seat_id")
 
-  Booking   Booking       @relation(fields: [bookingId], references: [id])
+  passenger   Passenger   @relation(fields: [passengerId], references: [id])
+  flight      Flight      @relation(fields: [flightId], references: [id])
+  seat        FlightSeats  @relation(fields: [seatId], references: [id])
+
+  @@map("passenger_seats")
+}
+
+model Payment {
+  id               Int           @id @default(autoincrement())
+  bookingId        Int           @map("booking_id")
+  transactionId    String        @unique @db.VarChar(100) @map("transaction_id")
+  reference_number String        @db.VarChar(100) @map("reference_number")
+  total            Float
+  method           String        @db.VarChar(20)
+  status           PaymentStatus @default(Pending)
+  amount           Float         @default(0)
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt      @map("updated_at")
+
+  booking          Booking       @relation(fields: [bookingId], references: [id])
 
   @@map("payments")
 }
@@ -313,13 +255,13 @@ model Payment {
 model Notification {
   id        Int              @id @default(autoincrement())
   userId    Int              @map("user_id")
-  type      TypeNotification @default(General)
+  type      String           @default("General")
   message   String
   isRead    Boolean          @default(false)  @map("is_read")
   createdAt DateTime         @default(now())  @map("created_at")
   updatedAt DateTime         @updatedAt       @map("updated_at")
 
-  User      User             @relation(fields: [userId], references: [id])
+  user      User             @relation(fields: [userId], references: [id])
 
   @@map("notifications")
 }

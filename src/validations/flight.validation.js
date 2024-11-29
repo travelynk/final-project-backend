@@ -23,10 +23,11 @@ export const flightSchema = joi.object({
         'any.required': 'Waktu keberangkatan diperlukan',
         'date.base': 'Waktu keberangkatan harus berupa tanggal yang valid'
     }),
-    arrivalTime: joi.date().required().invalid(joi.ref("departureTime")).messages({
+    arrivalTime: joi.date().required().invalid(joi.ref("departureTime")).greater(joi.ref('departureTime')).messages({
         'any.required': 'Waktu kedatangan diperlukan',
         'date.base': 'Waktu kedatangan harus berupa tanggal yang valid',
-        'any.invalid': 'Waktu kedatangan tidak boleh sama dengan waktu keberangkatan'
+        'any.invalid': 'Waktu kedatangan tidak boleh sama dengan waktu keberangkatan',
+        'date.greater': 'Waktu kedatangan harus lebih besar dari waktu keberangkatan'
         
     }),
     estimatedDuration: joi.number().required().messages({

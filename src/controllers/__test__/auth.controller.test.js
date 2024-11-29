@@ -1,6 +1,6 @@
 import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
 import { login, register, sendOtp, verifyOtp, resetPassword, sendResetPasswordEmail } from '../../controllers/auth.controller.js';
-import { Error400, Error404 } from '../../utils/customError.js';
+import { Error400, Error401, Error404 } from '../../utils/customError.js';
 import * as response from '../../utils/response.js';
 import * as AuthValidation from '../../validations/auth.validation.js';
 import * as AuthService from '../../services/auth.service.js';

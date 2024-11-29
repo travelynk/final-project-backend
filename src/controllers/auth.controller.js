@@ -11,12 +11,19 @@ export const login = async (req, res, next) => {
             return response.res400(`${error.details[0].message}`, res);
         }
 
-        const token = await AuthService.login(value);
+        const result = await AuthService.login(value);
+        if(!result) {
+            throw new Error400('Invalid email or password!');
+        }
 
-        response.res200('Login Success', token, res);
+        response.res200('Login Success', result, res);
     } catch (error) {
-        console.log('Error: ' + error.message);
-        response.res500(res);
+        if (error.massage === 'Account has not been verified') {
+            next(new Error401('Account has not been verified'));
+        }
+        else {
+            next(error);
+        }
     }
 }
 

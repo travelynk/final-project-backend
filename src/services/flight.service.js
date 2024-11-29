@@ -18,6 +18,7 @@ export const store = async (data) => {
     const currentFlight = await prisma.flight.findFirst({
         where: {
             airlineId: data.airlineId,
+            flightNum: data.flightNum,
             departureAirportId: data.departureAirportId,
             arrivalAirportId: data.arrivalAirportId,
             departureTime: data.departureTime,

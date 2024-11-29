@@ -1,32 +1,31 @@
 import * as response from '../utils/response.js';
 import * as AuthValidation from '../validations/auth.validation.js';
 import * as AuthService from '../services/auth.service.js';
-import { Error400, Error404 } from '../utils/customError.js';
+import { Error400, Error401, Error404 } from '../utils/customError.js';
 
 export const login = async (req, res, next) => {
     try {
         const { error, value } = AuthValidation.login.validate(req.body);
-
+        
         if (error) {
             return response.res400(`${error.details[0].message}`, res);
         }
 
-        const token = await AuthService.login(value);
-
-        if (!token) {
-            return response.res401('Invalid email or password', res);
+        const result = await AuthService.login(value);
+        if(!result) {
+            throw new Error400('Invalid email or password!');
         }
 
-        // Verifikasi jika token ada, namun user belum diverifikasi
-        if (token.error && token.error === 'Account is not verified') {
-            return response.res401('Account is not verified. Please check your email for verification.', res);
-        }
-
-        return response.res200('Login Success', token, res);
+        response.res200('Login Success', result, res);
     } catch (error) {
-        next(error);
+        if (error.massage === 'Account has not been verified') {
+            next(new Error401('Account has not been verified'));
+        }
+        else {
+            next(error);
+        }
     }
-};
+}
 
 export const resetPassword = async (req, res, next) => {
     try {

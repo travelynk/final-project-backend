@@ -10,7 +10,10 @@
     "test": "jest --coverage",
     "generate-openapi": "dotenv -e .env.local -- node ./openapi.js",
     "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix"
+    "lint:fix": "eslint ./src --fix",
+    "db:reset": "npx prisma migrate reset --preview-feature",
+    "db:migrate": "npx prisma migrate dev --preview-feature",
+    "db:studio": "npx prisma studio"
   },
   "keywords": [],
   "author": "",

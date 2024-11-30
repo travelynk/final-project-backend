@@ -28,7 +28,16 @@ export const store = async (data, file) => {
     });
 };
 
-export const update = async (id, data, file) => {
+export const update = async (id, data) => {
+    return await prisma.airline.update({
+        where: {
+            id: parseInt(id)
+        },
+        data
+    });
+};
+
+export const updateImage = async (id, file) => {
     const uploadFile = await imagekit.upload({
         file: file.buffer.toString('base64'),
         fileName: file.originalname,
@@ -40,7 +49,6 @@ export const update = async (id, data, file) => {
             id: parseInt(id)
         },
         data: {
-            ...data,
             image: uploadFile.url
         }
     });

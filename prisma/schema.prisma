@@ -113,6 +113,7 @@ model Airline {
   id             Int              @id @default(autoincrement())
   code           String           @unique @db.VarChar(4)
   name           String           @db.VarChar(50)
+  image          String           @db.VarChar(255)
   airportId      Int              @map("airport_id")
 
   airport        Airport          @relation(fields: [airportId], references: [id])

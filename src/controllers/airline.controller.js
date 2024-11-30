@@ -46,11 +46,20 @@ export const updateAirline = async (req, res, next) => {
         if (error) {
             throw new Error400(`${error.details[0].message}`);
         }
+        const airline = await AirlineService.update(req.params.id, value);
+        res200('Berhasil mengubah data maskapai', airline, res);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateImageAirline = async (req, res, next) => {
+    try {
         if (!req.file) {
             throw new Error400('Silakan pilih gambar untuk diunggah');
         }
-        const airline = await AirlineService.update(req.params.id, value, req.file);
-        res200('Berhasil mengubah data maskapai', airline, res);
+        const airline = await AirlineService.updateImage(req.params.id, req.file);
+        res200('Berhasil mengubah gambar maskapai', airline, res);
     } catch (error) {
         next(error);
     }

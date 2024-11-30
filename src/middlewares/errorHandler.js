@@ -1,25 +1,21 @@
 import * as response from '../utils/response.js';
-import { Error400, Error404 } from '../utils/customError.js';
 
 export const handleNotFound = (req, res) => {
     response.res404('Resource not found!', res);
 };
 
 export const handleOther = (err, req, res, next) => {
-    if (err) {
-        if (err instanceof Error400) {
-            console.log('Bad Request: ' + err.message);
-            response.res400(err.message, res);
-        } else if(err instanceof Error404) {
-            console.log('Not Found: ' + err.message);
-            response.res404(err.message, res);
-        } else {
-            console.log('Server error: ' + err.message);
-            response.res500(res);
-        }
-    } else {
-        next();
+    if (!err) {
+        return next(); 
     }
+  
+    const statusCode = err.statusCode || 500;
+    res.statusCode = statusCode;
+      
+    res.status(statusCode).json({
+        status: err.status || false,
+        message: err.message || "Internal Server Error",
+        data: err.data || null,
+        // sentryId: res.sentry,
+    });
 };
-
-// nanti sesuaiin lagi aja ini contoh aja

@@ -141,7 +141,6 @@ model Flight {
 
   flightSeats        FlightSeats[]
   bookingSegments    BookingSegments[]
-  passengerSeats     PassengerSeats[]
 
   @@map("flights")
 }
@@ -153,7 +152,7 @@ model FlightSeats {
   isAvailable Boolean @default(true) @map("is_available")
 
   flight          Flight? @relation(fields: [flightId], references: [id])
-  passengerSeats  PassengerSeats[]
+  bookingSegments BookingSegments[]
 
   @@map("flight_seats")
 }
@@ -171,22 +170,42 @@ model Booking {
 
   user              User            @relation(fields: [userId], references: [id])
   passengerCount    PassengerCount?
-  passengers        Passenger[]
   payments          Payment[]
   segments          BookingSegments[]
-  passengerBookings PassengerBookings[]
 
   @@map("bookings")
 }
 
-model BookingSegments {
-  id        Int      @id @default(autoincrement())
-  bookingId Int      @map("booking_id")
-  flightId  Int      @map("flight_id")
-  isReturn  Boolean  @default(false) @map("is_return")
+model Passenger {
+  id             Int        @id @default(autoincrement())
+  userId         Int        @map("user_id")
+  title          String     @db.VarChar(7)
+  fullName       String     @db.VarChar(100) @map("full_name")
+  familyName     String?    @db.VarChar(50)  @map("family_name")
+  dob            DateTime
+  nationality    String     @db.VarChar(50)
+  identityNumber String     @db.VarChar(20) @map("identity_number") @unique
+  issuingCountry String     @db.VarChar(50) @map("issuing_country")
+  identityExp    DateTime   @map("identity_exp")
 
-  booking   Booking @relation(fields: [bookingId], references: [id])
-  flight    Flight  @relation(fields: [flightId], references: [id])
+  user           User       @relation(fields: [userId], references: [id])
+  bookingSegments BookingSegments[]
+
+  @@map("passengers")
+}
+
+model BookingSegments {
+  id          Int      @id @default(autoincrement())
+  bookingId   Int      @map("booking_id")
+  flightId    Int      @map("flight_id")
+  isReturn    Boolean  @default(false) @map("is_return")
+  passengerId Int     @map("passenger_id")
+  seatId      Int     @map("seat_id")
+
+  booking     Booking @relation(fields: [bookingId], references: [id])
+  flight      Flight  @relation(fields: [flightId], references: [id])
+  passenger   Passenger   @relation(fields: [passengerId], references: [id])
+  flightSeat  FlightSeats  @relation(fields: [seatId], references: [id])
 
   @@map("booking_segments")
 }
@@ -201,51 +220,6 @@ model PassengerCount {
   booking   Booking @relation(fields: [bookingId], references: [id])
 
   @@map("passenger_counts")
-}
-
-model Passenger {
-  id             Int        @id @default(autoincrement())
-  bookingId      Int        @map("booking_id")
-  userId         Int        @map("user_id")
-  title          String     @db.VarChar(7)
-  fullName       String     @db.VarChar(100) @map("full_name")
-  familyName     String?    @db.VarChar(50)  @map("family_name")
-  dob            DateTime
-  nationality    String     @db.VarChar(50)
-  identityNumber String     @db.VarChar(20) @map("identity_number") @unique
-  issuingCountry String     @db.VarChar(50) @map("issuing_country")
-  identityExp    DateTime   @map("identity_exp")
-
-  booking        Booking    @relation(fields: [bookingId], references: [id])
-  user           User       @relation(fields: [userId], references: [id])
-  seats          PassengerSeats[]
-  bookings       PassengerBookings[]
-
-  @@map("passengers")
-}
-
-model PassengerBookings {
-  id          Int     @id @default(autoincrement())
-  passengerId Int     @map("passenger_id")
-  bookingId   Int     @map("booking_id")
-
-  passenger   Passenger   @relation(fields: [passengerId], references: [id])
-  booking     Booking     @relation(fields: [bookingId], references: [id])
-
-  @@map("passenger_bookings")
-}
-
-model PassengerSeats {
-  id          Int     @id @default(autoincrement())
-  passengerId Int     @map("passenger_id")
-  flightId    Int     @map("flight_id")
-  seatId      Int     @map("seat_id")
-
-  passenger   Passenger   @relation(fields: [passengerId], references: [id])
-  flight      Flight      @relation(fields: [flightId], references: [id])
-  seat        FlightSeats  @relation(fields: [seatId], references: [id])
-
-  @@map("passenger_seats")
 }
 
 model Payment {

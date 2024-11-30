@@ -1,11 +1,11 @@
-import * as airportService from "../services/airport.service.js";
+import * as AirportService from "../services/airport.service.js";
 import * as AirportValidation from "../validations/airport.validation.js";
 import { res200, res201 } from "../utils/response.js";
 import { Error404, Error400 } from "../utils/customError.js";
 
 export const getAirports = async (req, res, next) => {
   try {
-    const airports = await airportService.getAll();
+    const airports = await AirportService.getAll();
     res200("Berhasil mengambil semua data bandara", airports, res);
   } catch (error) {
     next(error);
@@ -14,7 +14,7 @@ export const getAirports = async (req, res, next) => {
 
 export const getAirport = async (req, res, next) => {
   try {
-    const airport = await airportService.getOne(req.params.id);
+    const airport = await AirportService.getOne(req.params.id);
     if (!airport) {
       throw new Error404("Data bandara tidak ditemukan");
     }
@@ -30,7 +30,7 @@ export const storeAirport = async (req, res, next) => {
     if (error) {
       throw new Error400(`${error.details[0].message}`);
     }
-    const airport = await airportService.store(value);
+    const airport = await AirportService.store(value);
     res201("Berhasil menambahkan data bandara", airport, res);
   } catch (error) {
     next(error);
@@ -44,7 +44,7 @@ export const updateAirport = async (req, res, next) => {
       throw new Error400(`${error.details[0].message}`);
     }
 
-    const airport = await airportService.update(req.params.id, value);
+    const airport = await AirportService.update(req.params.id, value);
     res200("Berhasil mengubah data bandara", airport, res);
   } catch (error) {
     next(error);
@@ -53,7 +53,7 @@ export const updateAirport = async (req, res, next) => {
 
 export const destroyAirport = async (req, res, next) => {
   try {
-    const airport = await airportService.destroy(req.params.id);
+    const airport = await AirportService.destroy(req.params.id);
     res200("Berhasil menghapus data bandara", airport, res);
   } catch (error) {
     next(error);

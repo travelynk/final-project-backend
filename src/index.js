@@ -2,6 +2,7 @@ import "dotenv/config";
 import { app } from "./configs/app.js";
 import listEndpoints from 'express-list-endpoints';
 
+
 const port = process.env.PORT || 8000;
 const host = process.env.HOST || 'localhost';
 

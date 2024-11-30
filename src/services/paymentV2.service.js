@@ -47,7 +47,7 @@ export const createPayment = async (bookingId, bank) => {
     });
     
 
-    return chargeResponse.redirect_url;
+    return chargeResponse;
 };
 
 export const cancelPayment = async (transactionId) => {
@@ -64,7 +64,9 @@ export const cancelPayment = async (transactionId) => {
 };
 
 export const checkPaymentStatus = async (transactionId) => {
+    console.log(transactionId)
     const statusResponse = await coreApi.transaction.status(transactionId);
+    console.log(statusResponse);
     const paymentStatus = statusResponse.transaction_status;
 
     await prisma.payment.update({

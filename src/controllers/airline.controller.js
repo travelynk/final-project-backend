@@ -30,7 +30,10 @@ export const storeAirline = async (req, res, next) => {
         if (error) {
             throw new Error400(`${error.details[0].message}`);
         }
-        const airline = await airlineService.store(value);
+        if (!req.file) {
+            throw new Error400('Silakan pilih gambar untuk diunggah');
+        }
+        const airline = await airlineService.store(value, req.file);
         res201('Berhasil menambahkan data maskapai', airline, res);
     } catch (error) {
         next(error);
@@ -43,7 +46,10 @@ export const updateAirline = async (req, res, next) => {
         if (error) {
             throw new Error400(`${error.details[0].message}`);
         }
-        const airline = await airlineService.update(req.params.id, value);
+        if (!req.file) {
+            throw new Error400('Silakan pilih gambar untuk diunggah');
+        }
+        const airline = await airlineService.update(req.params.id, value, req.file);
         res200('Berhasil mengubah data maskapai', airline, res);
     } catch (error) {
         next(error);

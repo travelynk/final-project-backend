@@ -25,7 +25,7 @@ export const getCountry = async (req, res, next) => {
   }
 };
 
-export const createCountry = async (req, res, next) => {
+export const storeCountry = async (req, res, next) => {
   try {
     const { error, value } = CountryValidation.payload.validate(req.body);
     
@@ -48,14 +48,14 @@ export const updateCountry = async (req, res, next) => {
 
     const country = await CountryService.update(req.params.code, value);
 
-    res200("Berhasil memperbarui data negara", country, res);
+    res200("Berhasil mengubah data negara", country, res);
   } catch (error) {
     if(error.code === 'P2002') return next(new Error400('Kode negara sudah digunakan'));
     next(error);
   }
 };
 
-export const deleteCountry = async (req, res, next) => {
+export const destroyCountry = async (req, res, next) => {
   try {
     const country = await CountryService.destroy(req.params.code);
 

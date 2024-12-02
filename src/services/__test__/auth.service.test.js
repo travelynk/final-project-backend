@@ -108,6 +108,13 @@ describe("Auth Service", () => {
           await expect(login(mockData)).rejects.toThrowError(Error400);
           await expect(login(mockData)).rejects.toThrow("Invalid password!");
         });
+
+        it("should throw Error500 if an unexpected error occurs", async () => {
+            prisma.user.findUnique.mockRejectedValue(new Error("Database error"));
+      
+            await expect(login(mockData)).rejects.toThrow("Internal Server Error");
+        });
+
     });
   
    describe('register', () => {
@@ -252,6 +259,7 @@ describe("Auth Service", () => {
 
             await expect(resetPassword("invalidToken", { newPassword: "newPassword123" })).rejects.toThrow("Invalid or expired token");
         });
+
     });
 
     describe("sendResetPasswordEmail", () => {

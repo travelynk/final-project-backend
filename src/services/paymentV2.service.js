@@ -46,7 +46,7 @@ export const createPayment = async (bookingId, bank) => {
             amount: parseFloat(chargeResponse.gross_amount),
         },
     });
-    
+
 
     return chargeResponse;
 };
@@ -65,11 +65,29 @@ export const cancelPayment = async (transactionId) => {
 };
 
 export const checkPaymentStatus = async (transactionId) => {
-      try {
-    const transactionStatus = await snap.transaction.status(transactionId);
-    return transactionStatus;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+    try {
+        // Ambil status transaksi dari Midtrans
+        const transactionStatus = await snap.transaction.status(transactionId);
+
+        // console.log(transactionStatus);
+
+        // Ubah status ke format Prisma
+
+        const status = transactionStatus.transaction_status;
+        const statusFormatted = status.charAt(0).toUpperCase() + status.slice(1);
+
+        // console.log(statusFormatted);
+        // console.log(transactionId);
+
+        await prisma.payment.update({
+            where: { transactionId },
+            data: { status: statusFormatted },
+        });
+
+
+        return transactionStatus;
+    } catch (error) {
+        throw new Error(error.message);
+    }
 };
 

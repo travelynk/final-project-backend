@@ -1,7 +1,7 @@
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import { login, verifyOtp, sendOtp, register, resetPassword, sendResetPasswordEmail } from "../auth.service.js";
 import prisma from "../../configs/database";
-import { Error400, Error404, Error409 } from "../../utils/customError";
+import { Error400, Error401, Error404, Error409 } from "../../utils/customError";
 import { generateOTP, generateSecret, verifyOTP } from "../../utils/otp";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
@@ -44,35 +44,77 @@ describe("Auth Service", () => {
     });
 
     describe("login", () => {
-        it("should return null if user is not found", async () => {
-            prisma.user.findUnique.mockResolvedValue(null);
+        const mockUser = {
+            id: 1,
+            email: "test@example.com",
+            password: "hashedPassword",
+            role: "buyer",
+            verified: true,
+        };
+        const mockData = {
+            email: "test@example.com",
+            password: "password123", 
+        };
 
-            const result = await login({ email: "test@example.com", password: "password123" });
-
-            expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: "test@example.com" } });
-            expect(result).toBeNull();
-        });
-
-        it("should return null if password is invalid", async () => {
-            prisma.user.findUnique.mockResolvedValue({ email: "test@example.com", password: "hashedPassword" });
-            bcrypt.compare.mockResolvedValue(false);
-
-            const result = await login({ email: "test@example.com", password: "wrongpassword" });
-
-            expect(bcrypt.compare).toHaveBeenCalledWith("wrongpassword", "hashedPassword");
-            expect(result).toBeNull();
-        });
-
-        it("should return a token if login is successful", async () => {
-            prisma.user.findUnique.mockResolvedValue({ id: 1, email: "test@example.com", password: "hashedPassword", role: "buyer" });
+        it("should return token and user info when login success", async () => {
+            prisma.user.findUnique.mockResolvedValue(mockUser);
             bcrypt.compare.mockResolvedValue(true);
             jwt.sign.mockReturnValue("mockToken");
+        
+            const result = await login(mockData);
+            
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({
+                where: { email: mockData.email },
+            });
 
-            const result = await login({ email: "test@example.com", password: "password123" });
+            expect(bcrypt.compare).toHaveBeenCalledWith(mockData.password, mockUser.password);
 
-            expect(jwt.sign).toHaveBeenCalledWith({ id: 1, role: "buyer" }, process.env.JWT_SECRET, { expiresIn: "1h" });
-            expect(result).toEqual({ token: "mockToken", role: "buyer" });
+            expect(jwt.sign).toHaveBeenCalledWith(
+              { id: mockUser.id, role: mockUser.role },
+              process.env.JWT_SECRET,
+              { expiresIn: "1d" }
+            );
+
+            expect(result).toEqual({
+              token: "mockToken",
+              user: { email: mockUser.email, role: mockUser.role },
+            });
         });
+  
+        it("should throw Error400 if email or password are not filled", async () => {
+            await expect(login({ email: null, password: "password123" })).rejects.toThrowError(Error400);
+            await expect(login({ email: "test@example.com", password: null })).rejects.toThrowError(Error400);        
+        });
+      
+        it("should throw Error400 if user email is not found", async () => {
+          prisma.user.findUnique.mockResolvedValue(null);
+      
+          await expect(login(mockData)).rejects.toThrowError(Error400);
+          await expect(login(mockData)).rejects.toThrow("Invalid email!");
+        });
+
+        it("should throw Error401 if user is not verified", async () => {
+            const unverifiedUser = { ...mockUser, verified: false };
+            prisma.user.findUnique.mockResolvedValue(unverifiedUser);
+
+            await expect(login(mockData)).rejects.toThrowError(Error401);
+            await expect(login(mockData)).rejects.toThrow("Account has not been verified");
+        });
+
+        it("should throw Error400 if password is incorrect", async () => {
+          prisma.user.findUnique.mockResolvedValue(mockUser);
+          bcrypt.compare.mockResolvedValue(false);
+      
+          await expect(login(mockData)).rejects.toThrowError(Error400);
+          await expect(login(mockData)).rejects.toThrow("Invalid password!");
+        });
+
+        it("should throw Error500 if an unexpected error occurs", async () => {
+            prisma.user.findUnique.mockRejectedValue(new Error("Database error"));
+      
+            await expect(login(mockData)).rejects.toThrow("Internal Server Error");
+        });
+
     });
   
    describe('register', () => {
@@ -217,6 +259,7 @@ describe("Auth Service", () => {
 
             await expect(resetPassword("invalidToken", { newPassword: "newPassword123" })).rejects.toThrow("Invalid or expired token");
         });
+
     });
 
     describe("sendResetPasswordEmail", () => {

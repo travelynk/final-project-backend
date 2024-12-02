@@ -18,11 +18,11 @@ export const res201 = (message, data, res) => {
     });
 }
 
-export const res400 = (msg, res) => {
+export const res400 = (message, res) => {
     res.status(400).json({
         status: {
             code: 400,
-            message: "Bad Request! " + msg,
+            message,
         },
         data: null,
     });

@@ -32,33 +32,16 @@ describe('Auth Controller', () => {
             req.body = { email: 'test@example.com', password: 'password' };
 
             jest.spyOn(AuthValidation.login, 'validate').mockReturnValue({ error: null, value: req.body });
-            AuthService.login.mockResolvedValue('mock-token');
+            AuthService.login.mockResolvedValue({
+                token: 'mock-token',
+                user: { email: 'test@example.com', role: 'buyer'},
+            });
 
             await login(req, res);
 
-            expect(response.res200).toHaveBeenCalledWith('Login Success', 'mock-token', res);
-        });
-
-        it('should return 401 for invalid credentials', async () => {
-            req.body = { email: 'test@example.com', password: 'password' };
-
-            jest.spyOn(AuthValidation.login, 'validate').mockReturnValue({ error: null, value: req.body });
-            AuthService.login.mockResolvedValue(null);
-
-            await login(req, res);
-
-            expect(response.res401).toHaveBeenCalledWith('Invalid email or password', res);
-        });
-
-        it('should return 401 for unverified account', async () => {
-            req.body = { email: 'test@example.com', password: 'password' };
-            jest.spyOn(AuthValidation.login, 'validate').mockReturnValue({ error: null, value: req.body });
-            AuthService.login.mockResolvedValue({ error: 'Account is not verified' });
-
-            await login(req, res);
-
-            expect(response.res401).toHaveBeenCalledWith(
-                'Account is not verified. Please check your email for verification.',
+            expect(response.res200).toHaveBeenCalledWith(
+                'Login Success', 
+                { token: 'mock-token', user: { email: 'test@example.com', role: 'buyer' }},
                 res
             );
         });
@@ -73,12 +56,35 @@ describe('Auth Controller', () => {
             expect(response.res400).toHaveBeenCalledWith('Validation error', res);
         });
 
+        it('should return 401 for invalid email or password', async () => {
+            req.body = { email: 'test@example.com', password: 'wrongpassword' };
+
+            jest.spyOn(AuthValidation.login, 'validate').mockReturnValue({ error: null, value: req.body });
+            AuthService.login.mockResolvedValue(null);
+
+            await login(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(new Error('Invalid email or password!'));
+        });
+
+        it('should return 401 for unverified account', async () => {
+            req.body = { email: 'test@example.com', password: 'password' };
+            
+            jest.spyOn(AuthValidation.login, 'validate').mockReturnValue({ error: null, value: req.body });
+            AuthService.login.mockRejectedValue(new Error('Account has not been verified'));
+
+            await login(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(new Error('Account has not been verified'));
+        });
+
         it('should return 500 for internal server error', async () => {
             jest.spyOn(AuthValidation.login, 'validate').mockImplementation(() => {
                 throw new Error('Internal Error');
             });
 
             await login(req, res, next);
+
             expect(next).toHaveBeenCalledWith(new Error('Internal Error'));
         });
     });
@@ -277,5 +283,4 @@ describe('Auth Controller', () => {
             expect(next).toHaveBeenCalledWith(new Error('Internal Error'));
         });
     });
-  
 });

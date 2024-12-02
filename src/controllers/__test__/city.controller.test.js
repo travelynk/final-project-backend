@@ -92,7 +92,7 @@ describe("City Controller", () => {
         });
     });
 
-    describe("storeAirport", () => {
+    describe("storeCity", () => {
         test('calls res201 on successful data creation', async () => {
             // Mock validasi dan service berhasil
             const validatedValue = {

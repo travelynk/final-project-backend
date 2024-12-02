@@ -18,7 +18,7 @@ export const login = async (req, res, next) => {
 
         response.res200('Login Success', result, res);
     } catch (error) {
-        if (error.massage === 'Account has not been verified') {
+        if (error.message === 'Account has not been verified') {
             next(new Error401('Account has not been verified'));
         }
         else {

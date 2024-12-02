@@ -16,7 +16,14 @@ jest.mock("../../validations/country.validation.js", () => ({
 describe("Country Controller", () => {
     let req, res, next, data;
     beforeEach(() => {
-        req = {};
+        req = {
+            params: {},
+            body: {
+                "code": "ID",
+                "name": "Indonesia",
+                "region" : "Asia"
+            }
+        };
         res = {};
         next = jest.fn();
         data = {
@@ -91,19 +98,13 @@ describe("Country Controller", () => {
 
     describe("storeCountry", () => {
         test('calls res201 on successful data creation', async () => {
-            // Mock validasi dan service berhasil
-            const validatedValue = {
-                "code": "ID",
-                "name": "Indonesia",
-                "region" : "Asia"
-            };
-            const storedData = { id: 1, ...validatedValue };
-            CountryValidation.payload.validate.mockReturnValue({ value: validatedValue });
+            const storedData = { id: 1, ...req.body };
+            CountryValidation.payload.validate.mockReturnValue({ value: req.body });
             CountryService.store.mockResolvedValue(storedData);
 
             await CountryController.storeCountry(req, res, next);
 
-            expect(CountryService.store).toHaveBeenCalledWith(validatedValue);
+            expect(CountryService.store).toHaveBeenCalledWith(req.body);
             expect(res201).toHaveBeenCalledWith(
                 'Berhasil menambahkan data negara baru',
                 storedData,
@@ -160,11 +161,6 @@ describe("Country Controller", () => {
     describe("updateCountry", () => {
         test("should update one country", async () => {
             req.params = { id: 1 };
-            req.body = {
-                "code": "ID",
-                "name": "Indonesia",
-                "region" : "Asia"
-            };
             CountryValidation.payload.validate.mockReturnValue({ value: req.body });
             CountryService.update.mockResolvedValue(data);
 
@@ -196,10 +192,6 @@ describe("Country Controller", () => {
 
         test("should return error", async () => {
             req.params = { id: 1 };
-            req.body = { 
-                "name": "Jakartas",
-                "countryCode": "ID"
-             };
             const error = new Error("error message");
             CountryValidation.payload.validate.mockReturnValue({ value: req.body });
             CountryService.update.mockRejectedValue(error);
@@ -211,10 +203,6 @@ describe("Country Controller", () => {
 
         test("should return error 400", async () => {
             req.params = { id: 1 };
-            req.body = { 
-                "name": "Jakartas",
-                "countryCode": "ID"
-             };
             const error = new Error("error message");
             error.code = "P2002";
             CountryValidation.payload.validate.mockReturnValue({ value: req.body });

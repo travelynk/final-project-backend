@@ -19,7 +19,14 @@ jest.mock("../../validations/city.validation.js", () => ({
 describe("City Controller", () => {
     let req, res, next, data;
     beforeEach(() => {
-        req = {};
+        req = {
+            params: {},
+            body: {
+                "code": "JKT",
+                "name": "Jakarta",
+                "countryCode": "ID"
+            }
+        };
         res = {};
         next = jest.fn();
         data = {
@@ -94,19 +101,13 @@ describe("City Controller", () => {
 
     describe("storeCity", () => {
         test('calls res201 on successful data creation', async () => {
-            // Mock validasi dan service berhasil
-            const validatedValue = {
-                "code": "JKT",
-                "name": "Jakarta",
-                "countryCode": "ID"
-            };
-            const storedData = { id: 1, ...validatedValue };
-            CityValidation.createPayload.validate.mockReturnValue({ value: validatedValue });
+            const storedData = { id: 1, ...req.body };
+            CityValidation.createPayload.validate.mockReturnValue({ value: req.body });
             CityService.store.mockResolvedValue(storedData);
 
             await CityController.storeCity(req, res, next);
 
-            expect(CityService.store).toHaveBeenCalledWith(validatedValue);
+            expect(CityService.store).toHaveBeenCalledWith(req.body);
             expect(res201).toHaveBeenCalledWith(
                 'Berhasil menambahkan data kota',
                 storedData,

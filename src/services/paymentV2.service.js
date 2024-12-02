@@ -1,4 +1,5 @@
-import { coreApi } from "../configs/midtransClient.js";
+import { coreApi, snap } from "../configs/midtransClient.js";
+
 import prisma from "../configs/database.js";
 
 export const createPayment = async (bookingId, bank) => {
@@ -64,15 +65,11 @@ export const cancelPayment = async (transactionId) => {
 };
 
 export const checkPaymentStatus = async (transactionId) => {
-    console.log(transactionId)
-    const statusResponse = await coreApi.transaction.status(transactionId);
-    console.log(statusResponse);
-    const paymentStatus = statusResponse.transaction_status;
-
-    await prisma.payment.update({
-        where: { transactionId },
-        data: { status: paymentStatus },
-    });
-
-    return statusResponse;
+      try {
+    const transactionStatus = await snap.transaction.status(transactionId);
+    return transactionStatus;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
+

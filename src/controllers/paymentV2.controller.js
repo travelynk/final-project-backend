@@ -1,3 +1,5 @@
+import { snap } from "../configs/midtransClient.js"; // Pastikan path sesuai dengan struktur folder
+
 import * as paymentService from "../services/paymentV2.service.js";
 
 export const createPayment = async (req, res) => {
@@ -29,3 +31,4 @@ export const checkPaymentStatus = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+

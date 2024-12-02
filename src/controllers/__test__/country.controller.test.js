@@ -101,7 +101,7 @@ describe("Country Controller", () => {
             CountryValidation.payload.validate.mockReturnValue({ value: validatedValue });
             CountryService.store.mockResolvedValue(storedData);
 
-            await CountryController.createCountry(req, res, next);
+            await CountryController.storeCountry(req, res, next);
 
             expect(CountryService.store).toHaveBeenCalledWith(validatedValue);
             expect(res201).toHaveBeenCalledWith(
@@ -116,7 +116,7 @@ describe("Country Controller", () => {
             const validationError = { details: [{ message: 'Validation error' }] };
             CountryValidation.payload.validate.mockReturnValue({ error: validationError });
 
-            await CountryController.createCountry(req, res, next);
+            await CountryController.storeCountry(req, res, next);
 
             expect(CountryService.store).not.toHaveBeenCalled();
             expect(res201).not.toHaveBeenCalled();
@@ -134,7 +134,7 @@ describe("Country Controller", () => {
             CountryValidation.payload.validate.mockReturnValue({ value: validatedValue });
             CountryService.store.mockRejectedValue(serviceError);
 
-            await CountryController.createCountry(req, res, next);
+            await CountryController.storeCountry(req, res, next);
 
             expect(next).toHaveBeenCalledWith(serviceError);
         });
@@ -149,7 +149,7 @@ describe("Country Controller", () => {
             CountryValidation.payload.validate.mockReturnValue({ value: validatedValue });
             CountryService.store.mockRejectedValue(serviceError);
 
-            await CountryController.createCountry(req, res, next);
+            await CountryController.storeCountry(req, res, next);
 
             expect(next).toHaveBeenCalledWith(expect.any(Error400));
             expect(next.mock.calls[0][0].message).toBe('Kode negara sudah digunakan');
@@ -174,7 +174,7 @@ describe("Country Controller", () => {
             expect(CountryValidation.payload.validate).toHaveBeenCalledWith(req.body);
             expect(CountryService.update).toHaveBeenCalledTimes(1);
             expect(res200).toHaveBeenCalledWith(
-                "Berhasil memperbarui data negara",
+                "Berhasil mengubah data negara",
                 data,
                 res
             );
@@ -208,7 +208,7 @@ describe("Country Controller", () => {
 
             expect(next).toHaveBeenCalledWith(error);
         });
-        
+
         test("should return error 400", async () => {
             req.params = { id: 1 };
             req.body = { 
@@ -232,7 +232,7 @@ describe("Country Controller", () => {
             req.params = { id: 1 };
             CountryService.destroy.mockResolvedValue(data);
 
-            await CountryController.deleteCountry(req, res, next);
+            await CountryController.destroyCountry(req, res, next);
 
             expect(CountryService.destroy).toHaveBeenCalledTimes(1);
             expect(res200).toHaveBeenCalledWith(
@@ -247,7 +247,7 @@ describe("Country Controller", () => {
             const error = new Error("error message");
             CountryService.destroy.mockRejectedValue(error);
 
-            await CountryController.deleteCountry(req, res, next);
+            await CountryController.destroyCountry(req, res, next);
 
             expect(next).toHaveBeenCalledWith(error);
         });

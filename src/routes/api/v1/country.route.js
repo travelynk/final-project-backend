@@ -5,7 +5,7 @@ export default (router) => {
 
     router.get(prefix + '/', CountryController.getCountries);
     router.get(prefix + '/:code', CountryController.getCountry);
-    router.post(prefix + '/', CountryController.createCountry);
+    router.post(prefix + '/', CountryController.storeCountry);
     router.put(prefix + '/:code', CountryController.updateCountry);
-    router.delete(prefix + '/:code', CountryController.deleteCountry);
+    router.delete(prefix + '/:code', CountryController.destroyCountry);
 }

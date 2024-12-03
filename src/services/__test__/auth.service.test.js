@@ -90,7 +90,7 @@ describe("Auth Service", () => {
           prisma.user.findUnique.mockResolvedValue(null);
       
           await expect(login(mockData)).rejects.toThrowError(Error400);
-          await expect(login(mockData)).rejects.toThrow("Invalid email!");
+          await expect(login(mockData)).rejects.toThrow("Email tidak valid!");
         });
 
         it("should throw Error401 if user is not verified", async () => {
@@ -98,7 +98,7 @@ describe("Auth Service", () => {
             prisma.user.findUnique.mockResolvedValue(unverifiedUser);
 
             await expect(login(mockData)).rejects.toThrowError(Error401);
-            await expect(login(mockData)).rejects.toThrow("Account has not been verified");
+            await expect(login(mockData)).rejects.toThrow("Akun belum diverifikasi");
         });
 
         it("should throw Error400 if password is incorrect", async () => {
@@ -106,7 +106,7 @@ describe("Auth Service", () => {
           bcrypt.compare.mockResolvedValue(false);
       
           await expect(login(mockData)).rejects.toThrowError(Error400);
-          await expect(login(mockData)).rejects.toThrow("Invalid password!");
+          await expect(login(mockData)).rejects.toThrow("Kata sandi tidak valid!");
         });
 
         it("should throw Error500 if an unexpected error occurs", async () => {

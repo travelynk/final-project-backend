@@ -90,7 +90,7 @@ describe("Auth Service", () => {
           prisma.user.findUnique.mockResolvedValue(null);
       
           await expect(login(mockData)).rejects.toThrowError(Error400);
-          await expect(login(mockData)).rejects.toThrow("Invalid email!");
+          await expect(login(mockData)).rejects.toThrow("Email tidak valid!");
         });
 
         it("should throw Error401 if user is not verified", async () => {
@@ -98,7 +98,7 @@ describe("Auth Service", () => {
             prisma.user.findUnique.mockResolvedValue(unverifiedUser);
 
             await expect(login(mockData)).rejects.toThrowError(Error401);
-            await expect(login(mockData)).rejects.toThrow("Account has not been verified");
+            await expect(login(mockData)).rejects.toThrow("Akun belum diverifikasi");
         });
 
         it("should throw Error400 if password is incorrect", async () => {
@@ -106,7 +106,7 @@ describe("Auth Service", () => {
           bcrypt.compare.mockResolvedValue(false);
       
           await expect(login(mockData)).rejects.toThrowError(Error400);
-          await expect(login(mockData)).rejects.toThrow("Invalid password!");
+          await expect(login(mockData)).rejects.toThrow("Kata sandi tidak valid!");
         });
 
         it("should throw Error500 if an unexpected error occurs", async () => {
@@ -249,15 +249,37 @@ describe("Auth Service", () => {
                 where: { email: "test@example.com" },
                 data: { password: "newHashedPassword" },
             });
-            expect(result).toEqual({ message: "Password reset successfully" });
+            expect(result).toEqual({ message: "Berhasil mereset password" });
         });
 
-        it("should throw an error if the token is invalid", async () => {
+        it("should throw an Error401 if the token is invalid", async () => {
             jwt.verify.mockImplementation(() => {
-                throw new Error("Invalid or expired token");
+                const error = new Error("Invalid token");
+                error.name = "JsonWebTokenError";
+                throw error;
             });
+    
+            await expect(
+                resetPassword("invalidToken", { newPassword: "newPassword123" })
+            ).rejects.toThrow(Error401);
+    
+            await expect(
+                resetPassword("invalidToken", { newPassword: "newPassword123" })
+            ).rejects.toThrow("Token tidak valid atau telah kedaluwarsa. Silakan minta email reset kata sandi yang baru.");
+        });
 
-            await expect(resetPassword("invalidToken", { newPassword: "newPassword123" })).rejects.toThrow("Invalid or expired token");
+        it("should throw an Error404 if the user is not found", async () => {
+            jwt.verify.mockReturnValue({ email: "test@mail.com", iat: Date.now() });
+            prisma.user.findUnique.mockResolvedValue(null);
+
+            await expect(resetPassword("validToken", { newPassword: "newPassword123" })).rejects.toThrowError(Error404);
+        });
+
+        it("should throw an Error500 if an unexpected error occurs", async () => {
+            jwt.verify.mockReturnValue({ email: "tes@mail.com", iat: Date.now() });
+            prisma.user.findUnique.mockRejectedValue(new Error("Database error"));
+
+            await expect(resetPassword("validToken", { newPassword: "newPassword123" })).rejects.toThrow("Internal Server Error");
         });
 
     });

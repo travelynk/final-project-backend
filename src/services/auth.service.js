@@ -172,11 +172,13 @@ export const resetPassword = async (token, password) => {
 
         return { message: "Berhasil mereset password" };
     } catch (error) {
-        if (error.name === 'JsonWebTokenError') {
+        if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
             throw new Error401('Token tidak valid atau telah kedaluwarsa. Silakan minta email reset kata sandi yang baru.');
+        } else if(error instanceof Error404) {
+            throw error;
+        } else {
+            throw new Error('Internal Server Error');
         }
-
-        throw new Error('Internal Server Error');
     }
 };
 

@@ -92,7 +92,6 @@ model Airport {
 
   city              City        @relation(fields: [cityCode], references: [code])
   terminals         Terminal[]
-  airlines          Airline[]
   departureRoutes   Flight[]    @relation("DepartureAirportRoutes")
   arrivalRoutes     Flight[]    @relation("ArrivalAirportRoutes")
 
@@ -115,9 +114,7 @@ model Airline {
   code           String           @unique @db.VarChar(4)
   name           String           @db.VarChar(50)
   image          String           @db.VarChar(255)
-  airportId      Int              @map("airport_id")
 
-  airport        Airport          @relation(fields: [airportId], references: [id])
   flight         Flight[]
 
   @@map("airlines")

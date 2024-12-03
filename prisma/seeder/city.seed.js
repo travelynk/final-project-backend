@@ -1,8 +1,7 @@
-import prisma from '../../src/configs/database.js'
 import excel from 'xlsx';
 const { readFile, utils } = excel;
 
-async function main() {
+export default async function city(prisma) {
     // Membaca data dari file Excel
     const workbook = readFile('./prisma/seeder/data.xlsx');
     const sheetName = workbook.SheetNames[2];
@@ -13,7 +12,7 @@ async function main() {
 
     // Menambahkan data ke database menggunakan Prisma
     for (const item of data) {
-        console.log(`Menambahkan data ${item.code} ${item.name} ${item.countryCode} ke database...`);
+        // console.log(`Menambahkan data ${item.code} ${item.name} ${item.countryCode} ke database...`);
         try {
             await prisma.city.create({
                 data: {
@@ -27,13 +26,5 @@ async function main() {
         }
     }
 
-    console.log('Data telah berhasil di-seed ke database!');
-}
-
-main()
-    .catch(e => {
-        throw e;
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+    console.log(`Data ${sheetName} telah berhasil di-seed ke database!\n`);
+};

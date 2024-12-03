@@ -53,19 +53,19 @@ export const resetPassword = async (req, res, next) => {
 // New endpoint to send a reset password email
 export const sendResetPasswordEmail = async (req, res, next) => {
     try {
-        const { email } = req.body;
+        const { error, value } = AuthValidation.sendOtp.validate(req.body);
 
-        if (!email) {
-            return response.res400('Email is required', res);
-        }
+        if (error) {
+            throw new Error400(error.message);
+        };
 
-        await AuthService.sendResetPasswordEmail(email);
+        await AuthService.sendResetPasswordEmail(value.email);
 
-        return response.res200('Reset password email sent successfully', null, res);
+        return response.res200('Email untuk mereset kata sandi berhasil dikirim', null, res);
     } catch (error) {
         // Tangkap error yang spesifik
-        if (error.message === 'User not found') {
-            next(new Error404('Email does not exist'));
+        if (error.message === 'Pengguna tidak di temukan') {
+            next(new Error404('Email tidak ditemukan'));
         }
 
         next(error);

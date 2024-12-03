@@ -1,6 +1,6 @@
 import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
 import { login, register, sendOtp, verifyOtp, resetPassword, sendResetPasswordEmail } from '../../controllers/auth.controller.js';
-import { Error400, Error404 } from '../../utils/customError.js';
+import { Error400, Error401, Error404 } from '../../utils/customError.js';
 import * as response from '../../utils/response.js';
 import * as AuthValidation from '../../validations/auth.validation.js';
 import * as AuthService from '../../services/auth.service.js';
@@ -40,7 +40,7 @@ describe('Auth Controller', () => {
             await login(req, res);
 
             expect(response.res200).toHaveBeenCalledWith(
-                'Login Success', 
+                'Login berhasil', 
                 { token: 'mock-token', user: { email: 'test@example.com', role: 'buyer' }},
                 res
             );
@@ -64,19 +64,21 @@ describe('Auth Controller', () => {
 
             await login(req, res, next);
 
-            expect(next).toHaveBeenCalledWith(new Error('Invalid email or password!'));
+            expect(next).toHaveBeenCalledWith(new Error401('Email atau kata sandi tidak valid!'));
         });
 
         it('should return 401 for unverified account', async () => {
             req.body = { email: 'test@example.com', password: 'password' };
             
             jest.spyOn(AuthValidation.login, 'validate').mockReturnValue({ error: null, value: req.body });
-            AuthService.login.mockRejectedValue(new Error('Account has not been verified'));
+            AuthService.login.mockRejectedValue(new Error401('Akun belum diverifikasi'));
 
             await login(req, res, next);
 
-            expect(next).toHaveBeenCalledWith(new Error('Account has not been verified'));
+            expect(next).toHaveBeenCalledWith(new Error401('Akun belum diverifikasi'));
         });
+
+        
 
         it('should return 500 for internal server error', async () => {
             jest.spyOn(AuthValidation.login, 'validate').mockImplementation(() => {
@@ -218,7 +220,7 @@ describe('Auth Controller', () => {
 
             await resetPassword(req, res);
 
-            expect(response.res400).toHaveBeenCalledWith('Token is required', res);
+            expect(response.res400).toHaveBeenCalledWith('Token diperlukan', res);
         });
 
         it('should return 400 for validation error', async () => {

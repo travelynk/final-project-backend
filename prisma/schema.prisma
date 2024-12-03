@@ -16,6 +16,7 @@ enum Role {
 enum FlightCategory {
   Internasional
   Domestik
+  Multi
 }
 
 enum BookingStatus {

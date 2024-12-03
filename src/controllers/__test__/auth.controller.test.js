@@ -253,26 +253,20 @@ describe('Auth Controller', () => {
             await sendResetPasswordEmail(req, res);
 
             expect(response.res200).toHaveBeenCalledWith(
-                'Reset password email sent successfully',
+                'Email untuk mereset kata sandi berhasil dikirim',
                 null,
                 res
             );
         });
 
-        it('should return 400 for missing email', async () => {
-            await sendResetPasswordEmail(req, res);
-
-            expect(response.res400).toHaveBeenCalledWith('Email is required', res);
-        });
-
         it('should return 400 for email not found', async () => {
             req.body = { email: 'test@example.com' };
 
-            AuthService.sendResetPasswordEmail.mockRejectedValue(new Error404('User not found'));
+            AuthService.sendResetPasswordEmail.mockRejectedValue(new Error404('Pengguna tidak di temukan'));
 
             await sendResetPasswordEmail(req, res, next);
 
-            expect(next).toHaveBeenCalledWith(new Error404('User not found'));
+            expect(next).toHaveBeenCalledWith(new Error404('Pengguna tidak di temukan'));
         });
 
         it('should return 500 for internal server error', async () => {
@@ -283,6 +277,15 @@ describe('Auth Controller', () => {
             await sendResetPasswordEmail(req, res, next);
 
             expect(next).toHaveBeenCalledWith(new Error('Internal Error'));
+        });
+
+        it('should return 400 for validation error', async () => {
+            const mockError = { message: 'Validation error' };
+            jest.spyOn(AuthValidation.sendOtp, 'validate').mockReturnValue({ error: mockError });
+
+            await sendResetPasswordEmail(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
     });
 });

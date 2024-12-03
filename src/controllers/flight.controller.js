@@ -60,40 +60,40 @@ export const destroyFlight = async (req, res, next) => {
     }
 };
 
-// export const getAvailableFlight = async (req, res, next) => {
-//     try {
-//         const route = (req.query.rf).split('.');
-//         const schedule = (req.query.dt).split('.');
-//         const passengers = (req.query.ps).split('.');
-//         const seatClass = req.query.sc;
+export const getAvailableFlight = async (req, res, next) => {
+    try {
+        const route = (req.query.rf).split('.');
+        const schedule = (req.query.dt).split('.');
+        const passengers = (req.query.ps).split('.');
+        const seatClass = req.query.sc;
     
-//         if (route.length !== 2) throw new Error400('Rute tidak valid!');
-//         if (schedule.length > 2 || schedule.length <= 0) throw new Error400('Jadwal tidak valid!');
-//         if (passengers.length !== 3) throw new Error400('Jumlah penumpang tidak valid!');
+        if (route.length !== 2) throw new Error400('Rute tidak valid!');
+        if (schedule.length > 2 || schedule.length <= 0) throw new Error400('Jadwal tidak valid!');
+        if (passengers.length !== 3) throw new Error400('Jumlah penumpang tidak valid!');
 
-//         //check schedule [0] and [1] (if available) must be in the format of 'YYYY-MM-DD' not a number or not a string random
-//         if (schedule.length === 2) {
-//             if (isNaN(Date.parse(schedule[0])) || isNaN(Date.parse(schedule[1]))) {
-//                 throw new Error400('Jadwal tidak valid!');
-//             }
-//         } else {
-//             if (isNaN(Date.parse(schedule[0]))) {
-//                 throw new Error400('Jadwal tidak valid!');
-//             }
-//         }
+        //check schedule [0] and [1] (if available) must be in the format of 'YYYY-MM-DD' not a number or not a string random
+        if (schedule.length === 2) {
+            if (isNaN(Date.parse(schedule[0])) || isNaN(Date.parse(schedule[1]))) {
+                throw new Error400('Jadwal tidak valid!');
+            }
+        } else {
+            if (isNaN(Date.parse(schedule[0]))) {
+                throw new Error400('Jadwal tidak valid!');
+            }
+        }
 
-//         if(schedule[0] > schedule[1]) throw new Error400('Jadwal tidak valid! tidak boleh sama');
+        if(schedule[0] > schedule[1]) throw new Error400('Jadwal tidak valid! tidak boleh sama atau lebih besar dari tanggal kedua');
 
-//         const data = {
-//             route,
-//             schedule,
-//             passengers,
-//             seatClass
-//         };
+        const data = {
+            route,
+            schedule,
+            passengers,
+            seatClass
+        };
 
-//         const flights = await FlightService.getAvailableFlight(data);
-//         res200('Berhasil mengambil data penerbangan yang tersedia', flights, res);
-//     } catch (error) {
-//         next(error);
-//     }
-// };
+        const flights = await FlightService.getAvailableFlight(data);
+        res200('Berhasil mengambil data penerbangan yang tersedia', flights, res);
+    } catch (error) {
+        next(error);
+    }
+};

@@ -249,15 +249,37 @@ describe("Auth Service", () => {
                 where: { email: "test@example.com" },
                 data: { password: "newHashedPassword" },
             });
-            expect(result).toEqual({ message: "Password reset successfully" });
+            expect(result).toEqual({ message: "Berhasil mereset password" });
         });
 
-        it("should throw an error if the token is invalid", async () => {
+        it("should throw an Error401 if the token is invalid", async () => {
             jwt.verify.mockImplementation(() => {
-                throw new Error("Invalid or expired token");
+                const error = new Error("Invalid token");
+                error.name = "JsonWebTokenError";
+                throw error;
             });
+    
+            await expect(
+                resetPassword("invalidToken", { newPassword: "newPassword123" })
+            ).rejects.toThrow(Error401);
+    
+            await expect(
+                resetPassword("invalidToken", { newPassword: "newPassword123" })
+            ).rejects.toThrow("Token tidak valid atau telah kedaluwarsa. Silakan minta email reset kata sandi yang baru.");
+        });
 
-            await expect(resetPassword("invalidToken", { newPassword: "newPassword123" })).rejects.toThrow("Invalid or expired token");
+        it("should throw an Error404 if the user is not found", async () => {
+            jwt.verify.mockReturnValue({ email: "test@mail.com", iat: Date.now() });
+            prisma.user.findUnique.mockResolvedValue(null);
+
+            await expect(resetPassword("validToken", { newPassword: "newPassword123" })).rejects.toThrowError(Error404);
+        });
+
+        it("should throw an Error500 if an unexpected error occurs", async () => {
+            jwt.verify.mockReturnValue({ email: "tes@mail.com", iat: Date.now() });
+            prisma.user.findUnique.mockRejectedValue(new Error("Database error"));
+
+            await expect(resetPassword("validToken", { newPassword: "newPassword123" })).rejects.toThrow("Internal Server Error");
         });
 
     });

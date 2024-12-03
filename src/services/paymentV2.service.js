@@ -51,17 +51,42 @@ export const createPayment = async (bookingId, bank) => {
 };
 
 export const cancelPayment = async (transactionId) => {
-    const cancelResponse = await coreApi.cancel(transactionId);
+    try {
 
-    if (cancelResponse.status_code !== "200")
-        throw new Error("Failed to cancel payment");
+               // Periksa status transaksi
+               const transactionStatus = await snap.transaction.status(transactionId);
 
-    await prisma.payment.update({
-        where: { transactionId },
-        data: { status: "Cancelled" },
-    });
+               // Periksa apakah status transaksi memungkinkan pembatalan
+               if (transactionStatus.transaction_status !== 'pending') {
+                   throw new Error(
+                       `Transaction cannot be cancelled. Current status: ${transactionStatus.transaction_status}.`
+                   );
+               }
+       
+               // Batalkan transaksi jika statusnya pending
+               const cancelResponse = await snap.transaction.cancel(transactionId);
+       
+               // Perbarui status di database
+               await prisma.payment.update({
+                   where: { transactionId },
+                   data: { status: 'Expired' }, // Gunakan 'Expired' untuk menandai pembatalan
+               });
+       
+               return cancelResponse;
+           } catch (error) {
+               console.error('Error cancelling payment:', error.response?.data || error.message);
+               throw new Error(error.response?.data?.status_message || error.message);
+           }
 
-    return cancelResponse;
+    // if (cancelResponse.status_code !== "200")
+    //     throw new Error("Failed to cancel payment");
+
+    // await prisma.payment.update({
+    //     where: { transactionId },
+    //     data: { status: "Cancelled" },
+    // });
+
+    // return cancelResponse;
 };
 
 export const checkPaymentStatus = async (transactionId) => {

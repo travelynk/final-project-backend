@@ -13,13 +13,13 @@ export const login = async (req, res, next) => {
 
         const result = await AuthService.login(value);
         if(!result) {
-            throw new Error400('Invalid email or password!');
+            throw new Error400('Email atau kata sandi tidak valid!');
         }
 
-        response.res200('Login Success', result, res);
+        response.res200('Login berhasil', result, res);
     } catch (error) {
-        if (error.message === 'Account has not been verified') {
-            next(new Error401('Account has not been verified'));
+        if (error instanceof Error401) {
+            next(new Error401('Akun belum diverifikasi'));
         }
         else {
             next(error);

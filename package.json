@@ -13,7 +13,11 @@
     "lint:fix": "eslint ./src --fix",
     "db:reset": "npx prisma migrate reset --preview-feature",
     "db:migrate": "npx prisma migrate dev --preview-feature",
-    "db:studio": "npx prisma studio"
+    "db:studio": "npx prisma studio",
+    "db:seed": "npx prisma db seed"
+  },
+  "prisma": {
+    "seed": "node ./prisma/seeder/main.seed.js"
   },
   "keywords": [],
   "author": "",

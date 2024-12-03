@@ -150,7 +150,6 @@ export const sendOtp = async (email) => {
     return "Email untuk memverifikasi akun Anda telah dikirim.";
 };
 
-// Updated resetPassword to use the token for resetting password directly
 // Reset password function, using token to update password
 export const resetPassword = async (token, password) => {
     try {
@@ -173,12 +172,11 @@ export const resetPassword = async (token, password) => {
 
         return { message: "Berhasil mereset password" };
     } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            // Lemparkan error TokenExpiredError untuk ditangani di controller
-            throw error;
+        if (error.name === 'JsonWebTokenError') {
+            throw new Error401('Token tidak valid atau telah kedaluwarsa. Silakan minta email reset kata sandi yang baru.');
         }
 
-        throw new Error('Token tidak valid atau telah kedaluwarsa');
+        throw new Error('Internal Server Error');
     }
 };
 

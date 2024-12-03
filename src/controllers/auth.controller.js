@@ -38,7 +38,7 @@ export const resetPassword = async (req, res, next) => {
         const { token } = req.query; // Token is passed as query parameter
 
         if (!token) {
-            return response.res400('Token is required', res);
+            return response.res400('Token diperlukan', res);
         }
 
         // Call service to reset password using token
@@ -46,10 +46,6 @@ export const resetPassword = async (req, res, next) => {
 
         return response.res200(result.message, null, res);
     } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            next(new Error400('Token has expired. Please request a new reset password email.'));
-        }
-
         next(error);
     }
 };

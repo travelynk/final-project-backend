@@ -8,5 +8,5 @@ export default (router) => {
     router.post(prefix + '/verify-otp',  AuthController.verifyOtp);
     router.post(prefix + '/send-otp',  AuthController.sendOtp);
     router.post(prefix + '/reset-password',  AuthController.resetPassword);
-    router.post(prefix + '/send-email', AuthController.sendResetPasswordEmail);
+    router.post(prefix + '/reset-password/send-email', AuthController.sendResetPasswordEmail);
 };

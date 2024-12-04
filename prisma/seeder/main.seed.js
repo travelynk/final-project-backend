@@ -4,14 +4,16 @@ import country from './country.seed.js';
 import city from './city.seed.js';
 import airport from './airport.seed.js';
 import terminal from './terminal.seed.js';
+import airline from './airline.seed.js';
 
 async function main() {
     try {
-        user(prisma);
-        country(prisma);
-        city(prisma);
-        airport(prisma);
-        terminal(prisma);
+        await user(prisma);
+        await country(prisma);
+        await city(prisma);
+        await airport(prisma);
+        await terminal(prisma);
+        await airline(prisma);
     } catch (error) {
         console.log(error.message);
     }

@@ -1,10 +1,10 @@
 import excel from 'xlsx';
 const { readFile, utils } = excel;
 
-export default async function airport(prisma) {
+export default async function airline(prisma) {
     // Membaca data dari file Excel
     const workbook = readFile('./prisma/seeder/data.xlsx');
-    const sheetName = workbook.SheetNames[3];
+    const sheetName = workbook.SheetNames[5];
     const sheet = workbook.Sheets[sheetName];
 
     // Mengonversi data Excel ke format JSON
@@ -14,13 +14,11 @@ export default async function airport(prisma) {
     for (const item of data) {
         // console.log(`Menambahkan data ${item.code}-${item.name}-${item.cityCode} ke database...`);
         try {
-            await prisma.airport.create({
+            await prisma.airline.create({
                 data: {
                     code: item.code,
                     name: item.name,
-                    cityCode: item.cityCode,
-                    lat: item.latitude,
-                    long: item.longitude,
+                    image: item.image,
                 },
             });
         } catch (error) {

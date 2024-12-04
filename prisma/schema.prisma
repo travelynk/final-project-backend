@@ -167,6 +167,7 @@ model Voucher {
     id          Int         @id @default(autoincrement())
     code        String      @unique @db.VarChar(8)
     type        typeVoucher
+    value       Float
     minPurchase Float       @map("min_purchase")
     maxVoucher  Int         @map("max_voucher")
     startDate   DateTime    @map("start_date")

@@ -1,12 +1,10 @@
 import { jest, beforeEach, describe, test, expect, afterEach } from "@jest/globals";
 import * as CountryService from "../../services/country.service.js";
 import * as CountryValidation from "../../validations/country.validation.js";
-import { res200, res201 } from "../../utils/response.js";
 import { Error404, Error400 } from "../../utils/customError.js";
 import * as CountryController from "../country.controller.js";
 
 jest.mock("../../services/country.service.js");
-jest.mock("../../utils/response.js");
 jest.mock("../../validations/country.validation.js", () => ({
     payload: {
         validate: jest.fn()
@@ -21,15 +19,18 @@ describe("Country Controller", () => {
             body: {
                 "code": "ID",
                 "name": "Indonesia",
-                "region" : "Asia"
+                "region": "Asia"
             }
         };
-        res = {};
+        res = {
+            status: jest.fn(() => res),
+            json: jest.fn(),
+        };
         next = jest.fn();
         data = {
             "code": "ID",
             "name": "Indonesia",
-            "region" : "Asia"
+            "region": "Asia"
         };
     });
 
@@ -44,11 +45,14 @@ describe("Country Controller", () => {
             await CountryController.getCountries(req, res, next);
 
             expect(CountryService.getAll).toHaveBeenCalledTimes(1);
-            expect(res200).toHaveBeenCalledWith(
-                "Berhasil mengambil semua data negara",
-                [data],
-                res
-            );
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: {
+                    code: 200,
+                    message: "Berhasil mengambil semua data negara",
+                },
+                data: [data]
+            });
         });
 
         test("should return error", async () => {
@@ -69,11 +73,14 @@ describe("Country Controller", () => {
             await CountryController.getCountry(req, res, next);
 
             expect(CountryService.getOne).toHaveBeenCalledTimes(1);
-            expect(res200).toHaveBeenCalledWith(
-                "Berhasil mengambil satu data negara",
-                data,
-                res
-            );
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: {
+                    code: 200,
+                    message: "Berhasil mengambil satu data negara",
+                },
+                data: data
+            });
         });
 
         test("should return error", async () => {
@@ -105,11 +112,14 @@ describe("Country Controller", () => {
             await CountryController.storeCountry(req, res, next);
 
             expect(CountryService.store).toHaveBeenCalledWith(req.body);
-            expect(res201).toHaveBeenCalledWith(
-                'Berhasil menambahkan data negara baru',
-                storedData,
-                res
-            );
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.json).toHaveBeenCalledWith({
+                status: {
+                    code: 201,
+                    message: "Berhasil menambahkan data negara baru",
+                },
+                data: storedData
+            });
         });
 
         test('calls next with Error400 if validation fails', async () => {
@@ -120,7 +130,7 @@ describe("Country Controller", () => {
             await CountryController.storeCountry(req, res, next);
 
             expect(CountryService.store).not.toHaveBeenCalled();
-            expect(res201).not.toHaveBeenCalled();
+            expect(res.status).not.toHaveBeenCalled();
             expect(next).toHaveBeenCalledTimes(1);
             expect(next.mock.calls[0][0]).toBeInstanceOf(Error400);
             expect(next.mock.calls[0][0].message).toBe('Validation error');
@@ -169,11 +179,14 @@ describe("Country Controller", () => {
             expect(CountryValidation.payload.validate).toHaveBeenCalledTimes(1);
             expect(CountryValidation.payload.validate).toHaveBeenCalledWith(req.body);
             expect(CountryService.update).toHaveBeenCalledTimes(1);
-            expect(res200).toHaveBeenCalledWith(
-                "Berhasil mengubah data negara",
-                data,
-                res
-            );
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: {
+                    code: 200,
+                    message: "Berhasil mengubah data negara",
+                },
+                data: data
+            });
         });
 
         test('calls next with Error400 if validation fails', async () => {
@@ -184,7 +197,7 @@ describe("Country Controller", () => {
             await CountryController.updateCountry(req, res, next);
 
             expect(CountryService.update).not.toHaveBeenCalled();
-            expect(res201).not.toHaveBeenCalled();
+            expect(res.status).not.toHaveBeenCalled();
             expect(next).toHaveBeenCalledTimes(1);
             expect(next.mock.calls[0][0]).toBeInstanceOf(Error400);
             expect(next.mock.calls[0][0].message).toBe('Validation error');
@@ -223,11 +236,15 @@ describe("Country Controller", () => {
             await CountryController.destroyCountry(req, res, next);
 
             expect(CountryService.destroy).toHaveBeenCalledTimes(1);
-            expect(res200).toHaveBeenCalledWith(
-                "Berhasil menghapus negara",
-                data,
-                res
-            );
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: {
+                    code: 200,
+                    message: "Berhasil menghapus negara",
+                },
+                data: data
+            });
+
         });
 
         test("should return error", async () => {

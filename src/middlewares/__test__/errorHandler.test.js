@@ -1,8 +1,5 @@
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import * as ErrorHandler from '../errorHandler.js';
-import * as response from '../../utils/response.js';
-
-jest.mock('../../utils/response.js');
 
 describe('Error Handler Middleware', () => {
     let req;
@@ -22,7 +19,15 @@ describe('Error Handler Middleware', () => {
         it('should return 404 with message', () => {
             ErrorHandler.handleNotFound(req, res);
 
-            expect(response.res404).toHaveBeenCalledWith('Resource not found!', res);
+            // expect(response.res404).toHaveBeenCalledWith('Resource not found!', res);
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({
+                status: {
+                    code: 404,
+                    message: 'Resource not found!',
+                },
+                data: null,
+            });
         });
     });
 

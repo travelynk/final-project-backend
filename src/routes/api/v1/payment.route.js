@@ -1,20 +1,13 @@
-// import express from 'express';
-// import { createTransactionHandler } from '../../../controllers/payment.controller.js';
 
-// const router = express.Router();
-
-// router.post('/createpayment', createTransactionHandler);
-
-// export default router;
-
-
-//
-import * as PayController from '../../../controllers/payment.controller.js';
+import * as paymentController from '../../../controllers/payment.controller.js';
 
 export default (router) => {
-    const prefix = '/pay';
-  
-    router.post(prefix + '/create', PayController.createTransactionHandler);
-    router.get(prefix + '/check', PayController.getTransactionStatusHandler);
-  
+    const prefix = '/payments';
+
+    router.post(prefix + '/debit', paymentController.createDebitPayment);
+    router.delete(prefix + '/:transactionId', paymentController.cancelPayment);
+    router.get(prefix + '/:transactionId', paymentController.checkPaymentStatus);
+    router.post(prefix + '/gopay', paymentController.createGoPayPayment);
+    router.post(prefix + '/credit-card', paymentController.createCreditCardPayment);
+
 };

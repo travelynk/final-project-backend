@@ -13,13 +13,13 @@ export const login = async (req, res, next) => {
 
         const result = await AuthService.login(value);
         if(!result) {
-            throw new Error400('Invalid email or password!');
+            throw new Error400('Email atau kata sandi tidak valid!');
         }
 
-        response.res200('Login Success', result, res);
+        response.res200('Login berhasil', result, res);
     } catch (error) {
-        if (error.massage === 'Account has not been verified') {
-            next(new Error401('Account has not been verified'));
+        if (error instanceof Error401) {
+            next(new Error401('Akun belum diverifikasi'));
         }
         else {
             next(error);
@@ -38,7 +38,7 @@ export const resetPassword = async (req, res, next) => {
         const { token } = req.query; // Token is passed as query parameter
 
         if (!token) {
-            return response.res400('Token is required', res);
+            return response.res400('Token diperlukan', res);
         }
 
         // Call service to reset password using token
@@ -46,10 +46,6 @@ export const resetPassword = async (req, res, next) => {
 
         return response.res200(result.message, null, res);
     } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            next(new Error400('Token has expired. Please request a new reset password email.'));
-        }
-
         next(error);
     }
 };
@@ -57,19 +53,19 @@ export const resetPassword = async (req, res, next) => {
 // New endpoint to send a reset password email
 export const sendResetPasswordEmail = async (req, res, next) => {
     try {
-        const { email } = req.body;
+        const { error, value } = AuthValidation.sendOtp.validate(req.body);
 
-        if (!email) {
-            return response.res400('Email is required', res);
-        }
+        if (error) {
+            throw new Error400(error.message);
+        };
 
-        await AuthService.sendResetPasswordEmail(email);
+        await AuthService.sendResetPasswordEmail(value.email);
 
-        return response.res200('Reset password email sent successfully', null, res);
+        return response.res200('Email untuk mereset kata sandi berhasil dikirim', null, res);
     } catch (error) {
         // Tangkap error yang spesifik
-        if (error.message === 'User not found') {
-            next(new Error404('Email does not exist'));
+        if (error.message === 'Pengguna tidak di temukan') {
+            next(new Error404('Email tidak ditemukan'));
         }
 
         next(error);

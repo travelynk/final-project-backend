@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "TraveLynk - API Tiketku V1.0",
-    "description": "API for Tiketku platform is a place to buy and book flight tickets online, both one way (one flight) and round trip (return). This platform opens and provides various types of domestic and international flights. The platform flow is free based on the creation of the final project team.\n \nAuthor: TraveLynk BE Team",
+    "title": "TraveLynk - Tiketku API V1.0",
+    "description": "API for Tiketku platform is a place to buy and book flight tickets online, both one way (one flight) and round trip (return). This platform opens and provides various types of domestic and international flights. The platform flow is free based on the creation of the final project team.\n\nAuthor: TraveLynk BE Team ✨💖",
     "version": "1.0.0"
   },
   "servers": [
@@ -15,29 +15,65 @@
       "description": "Development Server"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "noauthAuth": {
+        "type": "http",
+        "scheme": "noauth"
+      }
+    }
+  },
   "tags": [
     {
-      "name": "Auth"
+      "name": "Auth",
+      "description": "API authentication and authorization"
     },
     {
-      "name": "Other"
+      "name": "Country",
+      "description": "Countries management:\n\nuser => Get Countries, Get Country\n\nadmin => All of them"
+    },
+    {
+      "name": "City",
+      "description": "Cities management:\n\nuser => Get Cities, Get City\n\nadmin => All of them"
+    },
+    {
+      "name": "Airport",
+      "description": "Airports management:\n\nuser => Get Airports, Get Airport\n\nadmin => All of them"
+    },
+    {
+      "name": "Terminal",
+      "description": "Terminals management:\n\nuser => Get Terminals, Get Terminal\n\nadmin => All of them"
+    },
+    {
+      "name": "Airline",
+      "description": "Airlines management:\n\nuser => Get Airlines, Get Airline\n\nadmin => All of them"
+    },
+    {
+      "name": "Flight",
+      "description": "Flights management:\n\nuser => Get Available Flights, Get Flight\n\nadmin => All of them"
+    },
+    {
+      "name": "Other",
+      "description": "Other endpoint"
     }
   ],
   "paths": {
-    "/login": {
+    "/auth/register": {
       "post": {
         "tags": [
           "Auth"
         ],
-        "summary": "Login",
+        "summary": "Register",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "example": {
+                  "fullName": "Fulan bin fulan",
+                  "phone": "62812345678999",
                   "email": "fulan@gmail.com",
-                  "password": "password"
+                  "password": "password123"
                 }
               }
             }
@@ -62,19 +98,221 @@
               "Content-Length": {
                 "schema": {
                   "type": "integer",
-                  "example": "78"
+                  "example": "98"
                 }
               },
               "ETag": {
                 "schema": {
                   "type": "string",
-                  "example": "W/\"4e-Ph8MjD1qk3xtz+AkoQ5pp7hIwUs\""
+                  "example": "W/\"62-inbvWqZAuCTU8AhFxzriHRfi8sI\""
                 }
               },
               "Date": {
                 "schema": {
                   "type": "string",
-                  "example": "Fri, 22 Nov 2024 19:10:31 GMT"
+                  "example": "Mon, 02 Dec 2024 13:09:47 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Email untuk memverifikasi akun Anda telah dikirim."
+                  },
+                  "data": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "89"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"59-ls6w0V0n9/zZDfRkgnsmy8SmoqU\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 02 Dec 2024 13:10:57 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "Password harus terdiri dari minimal 10 karakter.",
+                  "data": null
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "136"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"88-zpNB8jfrEjWYgNcw31u1ZrVkCZY\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 02:41:42 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "Alamat email yang Anda masukkan sudah digunakan. Silakan coba dengan alamat email yang berbeda.",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "fulan@gmail.com",
+                  "password": "password123"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "276"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"114-xitmQMUG6OJC2gsqY0sDX/WdBHY\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 02:48:58 GMT"
                 }
               },
               "Connection": {
@@ -101,7 +339,11 @@
                     "message": "Login Success"
                   },
                   "data": {
-                    "token": "jwt token"
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImJ1eWVyIiwiaWF0IjoxNzMzMTk0MTM4LCJleHAiOjE3MzMyODA1Mzh9.5VHaFFTciV_4L_2PsT_or836iuw7jKgDqH-5QYuVDJk",
+                    "user": {
+                      "email": "fulan@gmail.com",
+                      "role": "buyer"
+                    }
                   }
                 }
               }
@@ -125,19 +367,19 @@
               "Content-Length": {
                 "schema": {
                   "type": "integer",
-                  "example": "92"
+                  "example": "91"
                 }
               },
               "ETag": {
                 "schema": {
                   "type": "string",
-                  "example": "W/\"5c-me00OoFrYnrxhFlGVICd1VxKqa4\""
+                  "example": "W/\"5b-uO9d/OAg3UrQFP8L/o8U65cB7BA\""
                 }
               },
               "Date": {
                 "schema": {
                   "type": "string",
-                  "example": "Fri, 22 Nov 2024 19:03:54 GMT"
+                  "example": "Tue, 03 Dec 2024 02:57:06 GMT"
                 }
               },
               "Connection": {
@@ -161,9 +403,3786 @@
                 "example": {
                   "status": {
                     "code": 400,
-                    "message": "Bad Request! \"email\" must be a valid email"
+                    "message": "Email harus berupa alamat email yang valid."
                   },
                   "data": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Reset Password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "newPassword": "Password123",
+                  "confirmPassword": "Password123"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOJIUzI1NiJ9.eyJyZWZyZXNoX3Rva2VuX2V4cGlyZX"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "73"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"49-OJ4SZ+Acvc40pwm6ib0T8xSzXFI\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:22:06 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mereset password"
+                  },
+                  "data": null
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "130"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"82-VF4m+Cadk+0Y4A6w6wys5ed0RgQ\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:20:55 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "Token tidak valid atau telah kedaluwarsa. Silakan minta email reset kata sandi yang baru.",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify-otp": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Verify Otp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "fulan@gmail.com",
+                  "otp": "245632"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "74"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"4a-3srPYiX7nz7g0l2KzMpRgjqz2FQ\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:26:55 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "OTP berhasil diverifikasi."
+                  },
+                  "data": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "102"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"66-DwH1zrkQB7AD7mk0/vqM0z9mWtA\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:26:20 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "OTP yang dikirimkan sudah tidak valid atau telah kedaluwarsa.",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/send-otp": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Send OTP",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "fulan@gmail.com"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "98"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"62-inbvWqZAuCTU8AhFxzriHRfi8sI\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:27:27 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Email untuk memverifikasi akun Anda telah dikirim."
+                  },
+                  "data": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "84"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"54-caVz8Sqx6kcyqCuPTSHhwNeTEF4\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:40:37 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "Email harus berupa alamat email yang valid.",
+                  "data": null
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "131"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"83-cqy1zBGp0HcAQLHML/3gC2NPgL4\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:27:48 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "Pengguna tidak ditemukan. Pastikan informasi yang Anda masukkan sudah benar dan coba lagi.",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password/send-email": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Send Email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "fulan@gmail.com"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "95"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"5f-5sjO9SRPocQ1o38VdoT63QBffRo\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:39:38 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Email untuk mereset kata sandi berhasil dikirim"
+                  },
+                  "data": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "84"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"54-caVz8Sqx6kcyqCuPTSHhwNeTEF4\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:37:03 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "Email harus berupa alamat email yang valid.",
+                  "data": null
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "55"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"37-KHPIwrfEdH6dtswTi5uhMH/b6MY\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:36:37 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "Pengguna tidak di temukan",
+                  "data": null
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "77"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"4d-bapI7DPFSULMekqM7wYEfzny9LY\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:37:31 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "Internal Server Error",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/countries": {
+      "post": {
+        "tags": [
+          "Country"
+        ],
+        "summary": "Store Country",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "code": "ID",
+                  "name": "Indonesia",
+                  "region": "Asia"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "129"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"81-ayK/xyJixxI7IYoyK1ivIzRGYfc\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 26 Nov 2024 11:28:47 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 201,
+                    "message": "Berhasil menambahkan data negara baru"
+                  },
+                  "data": {
+                    "code": "ID",
+                    "name": "Indonesia",
+                    "region": "Asia"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Country"
+        ],
+        "summary": "Get Countries",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "130"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"82-46VU6SWUwRVPZN3TxHsCMSO67QE\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 26 Nov 2024 11:29:08 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil semua data negara"
+                  },
+                  "data": [
+                    {
+                      "code": "ID",
+                      "name": "Indonesia",
+                      "region": "Asia"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/countries/ID": {
+      "get": {
+        "tags": [
+          "Country"
+        ],
+        "summary": "Get Country",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "127"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"7f-avIBQcdBdDcRTzcYAtV0e/PFQwE\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 26 Nov 2024 11:29:31 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil satu data negara"
+                  },
+                  "data": {
+                    "code": "ID",
+                    "name": "Indonesia",
+                    "region": "Asia"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Country"
+        ],
+        "summary": "Update Country",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "code": "ID",
+                  "name": "Indonesia",
+                  "region": "Asia"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "126"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"7e-3V3+KV00ip2Hmyl99mRj+PKJGm0\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 10:32:37 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil memperbarui data negara"
+                  },
+                  "data": {
+                    "code": "ID  ",
+                    "name": "Indonesia",
+                    "region": "Asia"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/countries/MY": {
+      "delete": {
+        "tags": [
+          "Country"
+        ],
+        "summary": "Destroy Country",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "118"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"76-OC0Vn+FkzmmPFA9QdjDXjZnXrgY\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 10:34:15 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil menghapus negara"
+                  },
+                  "data": {
+                    "code": "MY  ",
+                    "name": "Malaysia",
+                    "region": "Asia"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cities": {
+      "post": {
+        "tags": [
+          "City"
+        ],
+        "summary": "Store City",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "code": "JKT",
+                  "name": "Jakarta",
+                  "countryCode": "ID"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "125"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"7d-LfgLs70P6Lvwzze2H/V8lIOfYQU\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:03:50 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 201,
+                    "message": "Berhasil menambahkan data kota"
+                  },
+                  "data": {
+                    "code": "JKT ",
+                    "name": "Jakarta",
+                    "countryCode": "ID"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "City"
+        ],
+        "summary": "Get Cities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "131"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"83-YSOhCNgORMkZ14NUhKt/cpH4tFg\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:04:19 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil semua data kota"
+                  },
+                  "data": [
+                    {
+                      "code": "JKT ",
+                      "name": "Jakarta",
+                      "countryCode": "ID"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cities/JKT": {
+      "get": {
+        "tags": [
+          "City"
+        ],
+        "summary": "Get City",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "123"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"7b-OsKrGnnVVlqu+7Ola34iAe5eKmk\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:04:32 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil data kota"
+                  },
+                  "data": {
+                    "code": "JKT ",
+                    "name": "Jakarta",
+                    "countryCode": "ID"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "73"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"49-iGqdfruxoTCckU9qZJLgJMPqtFE\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:04:52 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 404,
+                    "message": "Data kota tidak ditemukan"
+                  },
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "City"
+        ],
+        "summary": "Update City",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Jakartas",
+                  "countryCode": "ID"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "123"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"7b-2wRLJJWqZav7NWc5aGT9W8QKGr4\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:07:02 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengubah data kota"
+                  },
+                  "data": {
+                    "code": "JKT ",
+                    "name": "Jakartas",
+                    "countryCode": "ID"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cities/BDG": {
+      "delete": {
+        "tags": [
+          "City"
+        ],
+        "summary": "Destroy City",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "123"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"7b-GfYghS0Dd+MI+bnDIK83riUMiGI\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:17:19 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil menghapus data kota"
+                  },
+                  "data": {
+                    "code": "BDG ",
+                    "name": "Bandung",
+                    "countryCode": "ID"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/airports": {
+      "post": {
+        "tags": [
+          "Airport"
+        ],
+        "summary": "Store Airport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "code": "CGK",
+                  "name": "Soekarno-Hatta International Airport",
+                  "cityCode": "JKT"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "162"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"a2-SBK/JIu7ZbU87N4fbU2FWoNVm5M\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:30:59 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 201,
+                    "message": "Berhasil menambahkan data bandara"
+                  },
+                  "data": {
+                    "id": 1,
+                    "code": "CGK ",
+                    "name": "Soekarno-Hatta International Airport",
+                    "cityCode": "JKT"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Airport"
+        ],
+        "summary": "Get Airports",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "167"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"a7-AYwpJr3zmkHs27wbStAqe13oKZk\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:45:20 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil semua data bandara"
+                  },
+                  "data": [
+                    {
+                      "id": 1,
+                      "code": "CGK",
+                      "name": "Soekarno-Hatta International Airport",
+                      "cityCode": "JKT"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/airports/1": {
+      "get": {
+        "tags": [
+          "Airport"
+        ],
+        "summary": "Get Airport",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "159"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"9f-hOrr0PIjhGgmD7/TrQeZrvRbdW4\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:45:29 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil data bandara"
+                  },
+                  "data": {
+                    "id": 1,
+                    "code": "CGK",
+                    "name": "Soekarno-Hatta International Airport",
+                    "cityCode": "JKT"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Airport"
+        ],
+        "summary": "Update City",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "code": "CGK",
+                  "name": "Soekarno-Hatta International Airports",
+                  "cityCode": "JKT"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "159"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"9f-ErbxCwqpp12LJcPqdfrb++YlGl4\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:45:39 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengubah data bandara"
+                  },
+                  "data": {
+                    "id": 1,
+                    "code": "CGK",
+                    "name": "Soekarno-Hatta International Airports",
+                    "cityCode": "JKT"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/airports/2": {
+      "delete": {
+        "tags": [
+          "Airport"
+        ],
+        "summary": "Destroy City",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "128"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"80-JB8BMGZBLsIGe7SWEhxXrpfHr7s\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:46:44 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil menghapus data bandara"
+                  },
+                  "data": {
+                    "id": 2,
+                    "code": "TEST",
+                    "name": "TEST",
+                    "cityCode": "JKT"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/terminals": {
+      "post": {
+        "tags": [
+          "Terminal"
+        ],
+        "summary": "Store Terminal",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Terminal 1A",
+                  "airportId": "1",
+                  "category": "Internasional"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "148"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"94-tQDSjoa/6Y/uXNbQUVWdktFDSEE\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:57:36 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 201,
+                    "message": "Berhasil menambahkan data terminal"
+                  },
+                  "data": {
+                    "id": 1,
+                    "name": "Terminal 1A",
+                    "airportId": 1,
+                    "category": "Internasional"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Terminal"
+        ],
+        "summary": "Get Airports",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "154"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"9a-W6tkp7ZKGPHUzefxrg/g6AUJPnk\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:57:54 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil semua data terminal"
+                  },
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Terminal 1A",
+                      "airportId": 1,
+                      "category": "Internasional"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/terminals/1": {
+      "get": {
+        "tags": [
+          "Terminal"
+        ],
+        "summary": "Get Airport",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "146"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"92-XTFaObnVlEtHhTANjdKXxwUqRTc\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:58:09 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil data terminal"
+                  },
+                  "data": {
+                    "id": 1,
+                    "name": "Terminal 1A",
+                    "airportId": 1,
+                    "category": "Internasional"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Terminal"
+        ],
+        "summary": "Update City",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Terminal 1As",
+                  "airportId": "1",
+                  "category": "Internasional"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "146"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"92-YihySiSx33N0L5mJAjiAreUQsx0\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:58:46 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengubah data terminal"
+                  },
+                  "data": {
+                    "id": 1,
+                    "name": "Terminal 1As",
+                    "airportId": 1,
+                    "category": "Internasional"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/terminals/2": {
+      "delete": {
+        "tags": [
+          "Terminal"
+        ],
+        "summary": "Destroy City",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "141"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"8d-TCAGBRynXGK1tmBRXFGdG/Nik1M\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Mon, 25 Nov 2024 11:59:18 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil menghapus data terminal"
+                  },
+                  "data": {
+                    "id": 2,
+                    "name": "Terminal 1B",
+                    "airportId": 1,
+                    "category": "Domestik"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/airlines": {
+      "post": {
+        "tags": [
+          "Airline"
+        ],
+        "summary": "Store Airline",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "example": "GR"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Garuda Air"
+                  },
+                  "airportId": {
+                    "type": "integer",
+                    "example": "1"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "214"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"d6-s+RtbhgDGRr1SRVYyNslsmWKlC4\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Sat, 30 Nov 2024 07:54:32 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 201,
+                    "message": "Berhasil menambahkan data maskapai"
+                  },
+                  "data": {
+                    "id": 1,
+                    "code": "GR",
+                    "name": "Garuda Air",
+                    "image": "https://ik.imagekit.io/travelynk/airlines/logo-garuda-air_fjgueYbxE.png",
+                    "airportId": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Airline"
+        ],
+        "summary": "Get Airports",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "220"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"dc-43eB2tFtT3uTAPelmFk+6EO1HMI\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Sat, 30 Nov 2024 07:57:48 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil semua data maskapai"
+                  },
+                  "data": [
+                    {
+                      "id": 1,
+                      "code": "GR",
+                      "name": "Garuda Air",
+                      "image": "https://ik.imagekit.io/travelynk/airlines/logo-garuda-air_fjgueYbxE.png",
+                      "airportId": 1
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/airlines/1": {
+      "get": {
+        "tags": [
+          "Airline"
+        ],
+        "summary": "Get Airport",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "212"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"d4-aOVNp91HAwjPsmaBh/QXSnVx2q0\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Sat, 30 Nov 2024 07:57:58 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil data maskapai"
+                  },
+                  "data": {
+                    "id": 1,
+                    "code": "GR",
+                    "name": "Garuda Air",
+                    "image": "https://ik.imagekit.io/travelynk/airlines/logo-garuda-air_fjgueYbxE.png",
+                    "airportId": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Airline"
+        ],
+        "summary": "Update Data Airline",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "code": "GR",
+                  "name": "Garuda Air Indonesia",
+                  "airportId": "1"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "221"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"dd-DzXj6s8HHeZK/Vj5AZczZYIcTMU\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Sat, 30 Nov 2024 08:09:19 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengubah data maskapai"
+                  },
+                  "data": {
+                    "id": 1,
+                    "code": "GR",
+                    "name": "Garuda Air Indonesia",
+                    "image": "https://ik.imagekit.io/travelynk/airlines/logo-garuda-air_fjgueYbxE.png",
+                    "airportId": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/airlines/image/1": {
+      "patch": {
+        "tags": [
+          "Airline"
+        ],
+        "summary": "Update Image Airline",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "240"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"f0-fPqRmatgxoXUMwk/fSLIT8llxb4\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Sat, 30 Nov 2024 08:10:18 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengubah gambar maskapai"
+                  },
+                  "data": {
+                    "id": 1,
+                    "code": "GR",
+                    "name": "Garuda Air Indonesia",
+                    "image": "https://ik.imagekit.io/travelynk/airlines/989347fbe707a9262bcac9984219e7af_C-hVWYQ3X.jpg",
+                    "airportId": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/airlines/2": {
+      "delete": {
+        "tags": [
+          "Airline"
+        ],
+        "summary": "Destroy City",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "128"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"80-W4mkwIjOtNbgEKwsjgqbnp8tXgY\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Thu, 28 Nov 2024 06:59:14 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil menghapus data maskapai"
+                  },
+                  "data": {
+                    "id": 2,
+                    "code": "AA",
+                    "name": "Air Asia",
+                    "airportId": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flights": {
+      "post": {
+        "tags": [
+          "Flight"
+        ],
+        "summary": "Store Flight",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "airlineId": 1,
+                  "flightNum": "GA123",
+                  "departureAirportId": 1,
+                  "arrivalAirportId": 2,
+                  "departureTime": "2021-08-01T00:30:00.000Z",
+                  "arrivalTime": "2021-08-01T01:00:00.000Z",
+                  "estimatedDuration": 60,
+                  "seatClass": "Economy",
+                  "seatCapacity": 80,
+                  "facility": "WIFI",
+                  "price": 1000000
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "364"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"16c-IAjViyaF3mmUbH7lp1JXvOMSBDs\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Thu, 28 Nov 2024 07:02:59 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 201,
+                    "message": "Berhasil menambahkan data penerbangan"
+                  },
+                  "data": {
+                    "id": 3,
+                    "airlineId": 1,
+                    "flightNum": "GA123",
+                    "departureAirportId": 1,
+                    "arrivalAirportId": 2,
+                    "departureTime": "2021-08-01T00:00:00.000Z",
+                    "arrivalTime": "2021-08-01T01:00:00.000Z",
+                    "estimatedDuration": 60,
+                    "seatClass": "Economy",
+                    "seatCapacity": 100,
+                    "facility": "WIFI",
+                    "price": 1000000
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Flight"
+        ],
+        "summary": "Get Flight",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "1157"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"485-z93+r4r3AC8fqyMWHhLWdh36Gds\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:43:17 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil semua data penerbangan"
+                  },
+                  "data": [
+                    {
+                      "id": 1,
+                      "airlineId": 1,
+                      "flightNum": "GA001",
+                      "departureAirportId": 1,
+                      "arrivalAirportId": 2,
+                      "departureTime": "2021-08-01T00:00:00.000Z",
+                      "arrivalTime": "2021-08-01T01:00:00.000Z",
+                      "estimatedDuration": 1,
+                      "seatClass": "Economy",
+                      "seatCapacity": 80,
+                      "facility": "WIFI",
+                      "price": 1000000
+                    },
+                    {
+                      "id": 3,
+                      "airlineId": 1,
+                      "flightNum": "GA002",
+                      "departureAirportId": 2,
+                      "arrivalAirportId": 4,
+                      "departureTime": "2021-08-01T03:00:00.000Z",
+                      "arrivalTime": "2021-08-01T06:00:00.000Z",
+                      "estimatedDuration": 3,
+                      "seatClass": "Economy",
+                      "seatCapacity": 60,
+                      "facility": "WIFI",
+                      "price": 1000000
+                    },
+                    {
+                      "id": 5,
+                      "airlineId": 1,
+                      "flightNum": "GA003",
+                      "departureAirportId": 5,
+                      "arrivalAirportId": 2,
+                      "departureTime": "2021-08-01T01:00:00.000Z",
+                      "arrivalTime": "2021-08-01T01:30:00.000Z",
+                      "estimatedDuration": 60,
+                      "seatClass": "Economy",
+                      "seatCapacity": 60,
+                      "facility": "WIFI",
+                      "price": 1500000
+                    },
+                    {
+                      "id": 6,
+                      "airlineId": 1,
+                      "flightNum": "GA004",
+                      "departureAirportId": 1,
+                      "arrivalAirportId": 5,
+                      "departureTime": "2021-08-01T01:00:00.000Z",
+                      "arrivalTime": "2021-08-01T01:30:00.000Z",
+                      "estimatedDuration": 0.5,
+                      "seatClass": "Economy",
+                      "seatCapacity": 60,
+                      "facility": "WIFI",
+                      "price": 1000000
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flights/search": {
+      "get": {
+        "tags": [
+          "Flight"
+        ],
+        "summary": "Get Available Flight",
+        "parameters": [
+          {
+            "name": "rf",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Route Flight = departureCityCode.ArrivalCityCode",
+            "example": "JKT.DPS"
+          },
+          {
+            "name": "dt",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Schedule Flight = outboundTime.returnTime",
+            "example": "2021-08-01.2021-08-01"
+          },
+          {
+            "name": "ps",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Passenger Count = adult.child.infant",
+            "example": "2.1.0"
+          },
+          {
+            "name": "sc",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Seat Class = Economy/Premium Economy/Business/First Class",
+            "example": "Economy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "1378"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"562-0ClH7bQU7nzdCBwVYLxj1k1qnx8\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:48:00 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil data penerbangan yang tersedia"
+                  },
+                  "data": {
+                    "outboundFlights": [
+                      {
+                        "id": 1,
+                        "flightNum": "GA001",
+                        "departureTime": "2021-08-01T00:00:00.000Z",
+                        "arrivalTime": "2021-08-01T01:00:00.000Z",
+                        "estimatedDuration": 1,
+                        "seatClass": "Economy",
+                        "seatCapacity": 80,
+                        "facility": "WIFI",
+                        "price": 1000000,
+                        "airline": {
+                          "id": 1,
+                          "code": "GR",
+                          "name": "Garuda Air Indonesia",
+                          "image": "https://ik.imagekit.io/travelynk/airlines/989347fbe707a9262bcac9984219e7af_C-hVWYQ3X.jpg",
+                          "airportId": 1
+                        },
+                        "departureAirport": {
+                          "id": 1,
+                          "code": "CGK",
+                          "name": "Soekarno-Hatta International Airport",
+                          "cityCode": "JKT"
+                        },
+                        "arrivalAirport": {
+                          "id": 2,
+                          "code": "DPS",
+                          "name": "Bali International Airport",
+                          "cityCode": "DPS"
+                        },
+                        "availableSeats": 80,
+                        "passengers": [
+                          "2",
+                          "1",
+                          "0"
+                        ]
+                      },
+                      {
+                        "id": 5,
+                        "flightNum": "GA003",
+                        "departureTime": "2021-08-01T01:00:00.000Z",
+                        "arrivalTime": "2021-08-01T01:30:00.000Z",
+                        "estimatedDuration": 60,
+                        "seatClass": "Economy",
+                        "seatCapacity": 60,
+                        "facility": "WIFI",
+                        "price": 1500000,
+                        "airline": {
+                          "id": 1,
+                          "code": "GR",
+                          "name": "Garuda Air Indonesia",
+                          "image": "https://ik.imagekit.io/travelynk/airlines/989347fbe707a9262bcac9984219e7af_C-hVWYQ3X.jpg",
+                          "airportId": 1
+                        },
+                        "departureAirport": {
+                          "id": 5,
+                          "code": "HLI",
+                          "name": "Halim Perdana Kusuma Airport",
+                          "cityCode": "JKT"
+                        },
+                        "arrivalAirport": {
+                          "id": 2,
+                          "code": "DPS",
+                          "name": "Bali International Airport",
+                          "cityCode": "DPS"
+                        },
+                        "availableSeats": 60,
+                        "passengers": [
+                          "2",
+                          "1",
+                          "0"
+                        ]
+                      }
+                    ],
+                    "returnFlights": []
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "76"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"4c-CdvNzDm6qGoRBB0XJuIDrqPwPVM\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Tue, 03 Dec 2024 04:49:47 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": false,
+                  "message": "Penerbangan pulang tidak ditemukan!",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flights/3": {
+      "get": {
+        "tags": [
+          "Flight"
+        ],
+        "summary": "Get Flight",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "362"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"16a-EbKQFdw8rf1RdlSOxVpmdRrSYxY\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Thu, 28 Nov 2024 07:08:53 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengambil data penerbangan"
+                  },
+                  "data": {
+                    "id": 3,
+                    "airlineId": 1,
+                    "flightNum": "GA123",
+                    "departureAirportId": 1,
+                    "arrivalAirportId": 2,
+                    "departureTime": "2021-08-01T00:00:00.000Z",
+                    "arrivalTime": "2021-08-01T01:00:00.000Z",
+                    "estimatedDuration": 60,
+                    "seatClass": "Economy",
+                    "seatCapacity": 100,
+                    "facility": "WIFI",
+                    "price": 1000000
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "80"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"50-b1iwgAaCO9AjaRdkh0msixYQQ/E\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Thu, 28 Nov 2024 07:08:29 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 404,
+                    "message": "Data penerbangan tidak ditemukan"
+                  },
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flights/1": {
+      "put": {
+        "tags": [
+          "Flight"
+        ],
+        "summary": "Update Flight",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "airlineId": 1,
+                  "flightNum": "GA123",
+                  "departureAirportId": 1,
+                  "arrivalAirportId": 2,
+                  "departureTime": "2021-08-01T11:30:00.000Z",
+                  "arrivalTime": "2021-08-01T01:00:00.000Z",
+                  "estimatedDuration": 60,
+                  "seatClass": "Economy",
+                  "seatCapacity": 80,
+                  "facility": "WIFI",
+                  "price": 1000000
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "371"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"173-Q468CcJDDuoi4C87e43co6QI3iw\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Thu, 28 Nov 2024 07:23:36 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil mengubah data penerbangan"
+                  },
+                  "data": {
+                    "id": 3,
+                    "airlineId": 1,
+                    "flightNum": "GA123",
+                    "departureAirportId": 1,
+                    "arrivalAirportId": 2,
+                    "departureTime": "2021-08-01T00:00:00.000Z",
+                    "arrivalTime": "2021-08-01T01:00:00.000Z",
+                    "estimatedDuration": 60,
+                    "seatClass": "Economy",
+                    "seatCapacity": 100,
+                    "facility": "WIFI and Snack",
+                    "price": 1000000
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flights/4": {
+      "delete": {
+        "tags": [
+          "Flight"
+        ],
+        "summary": "Destroy Flight",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string",
+                  "example": "Express"
+                }
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/json; charset=utf-8"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer",
+                  "example": "362"
+                }
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string",
+                  "example": "W/\"16a-I7pfqFkeL2xgAbDy4waExNIi5Xk\""
+                }
+              },
+              "Date": {
+                "schema": {
+                  "type": "string",
+                  "example": "Thu, 28 Nov 2024 07:53:24 GMT"
+                }
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string",
+                  "example": "timeout=5"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "message": "Berhasil menghapus data penerbangan"
+                  },
+                  "data": {
+                    "id": 4,
+                    "airlineId": 1,
+                    "flightNum": "GA123",
+                    "departureAirportId": 1,
+                    "arrivalAirportId": 2,
+                    "departureTime": "2021-08-01T00:30:00.000Z",
+                    "arrivalTime": "2021-08-01T01:00:00.000Z",
+                    "estimatedDuration": 60,
+                    "seatClass": "Economy",
+                    "seatCapacity": 100,
+                    "facility": "WIFI",
+                    "price": 1000000
+                  }
                 }
               }
             }

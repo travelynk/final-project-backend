@@ -1,27 +1,45 @@
 import Joi from 'joi';
 
 export const login = Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).max(20).required(),
+  email: Joi.string()
+    .email()
+    .required()
+    .messages({
+      'string.base': 'Email harus berupa teks.',
+      'string.empty': 'Email tidak boleh kosong.',
+      'string.email': 'Email harus berupa alamat email yang valid.',
+      'any.required': 'Email diperlukan.',
+    }),
+  password: Joi.string()
+    .min(8)
+    .max(20)
+    .required()
+    .messages({
+      'string.base': 'Password harus berupa teks.',
+      'string.empty': 'Password tidak boleh kosong.',
+      'string.min': 'Password harus terdiri dari minimal 8 karakter.',
+      'string.max': 'Password harus terdiri dari maksimal 20 karakter.',
+      'any.required': 'Password diperlukan.',
+    }),
 });
 
 export const resetPassword = Joi.object({
-    newPassword: Joi.string()
-        .min(8)
-        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/, 'password complexity')
-        .required()
-        .messages({
-            'string.pattern.name': 'New password must include at least one uppercase letter, one lowercase letter, and one number.',
-            'string.min': 'New password must be at least 8 characters long.',
-            'any.required': 'New password is required.',
-        }),
-    confirmPassword: Joi.string()
-        .valid(Joi.ref('newPassword'))
-        .required()
-        .messages({
-            'any.only': 'Confirm password must match the new password.',
-            'any.required': 'Confirm password is required.',
-        }),
+  newPassword: Joi.string()
+    .min(8)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/, 'password complexity')
+    .required()
+    .messages({
+      'string.pattern.name': 'Kata sandi baru harus mencakup setidaknya satu huruf besar, satu huruf kecil, dan satu angka.',
+      'string.min': 'Kata sandi baru harus terdiri dari minimal 8 karakter.',
+      'any.required': 'Kata sandi baru diperlukan.',
+    }),
+  confirmPassword: Joi.string()
+    .valid(Joi.ref('newPassword'))
+    .required()
+    .messages({
+      'any.only': 'Konfirmasi kata sandi harus cocok dengan kata sandi baru.',
+      'any.required': 'Konfirmasi kata sandi diperlukan.',
+    }),
 });
 
 export const register = Joi.object({

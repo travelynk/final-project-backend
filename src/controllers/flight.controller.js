@@ -1,11 +1,11 @@
-import * as flightService from '../services/flight.service.js';
+import * as FlightService from '../services/flight.service.js';
 import * as FlightValidation from '../validations/flight.validation.js';
 import { res200, res201 } from '../utils/response.js';
 import { Error404, Error400 } from '../utils/customError.js';
 
 export const getFlights = async (req, res, next) => {
     try {
-        const flights = await flightService.getAll();
+        const flights = await FlightService.getAll();
         res200('Berhasil mengambil semua data penerbangan', flights, res);
     } catch (error) {
         next(error);
@@ -14,7 +14,7 @@ export const getFlights = async (req, res, next) => {
 
 export const getFlight = async (req, res, next) => {
     try {
-        const flight = await flightService.getOne(req.params.id);
+        const flight = await FlightService.getOne(req.params.id);
         if (!flight) {
             throw new Error404('Data penerbangan tidak ditemukan');
         }
@@ -30,7 +30,7 @@ export const storeFlight = async (req, res, next) => {
         if (error) {
             throw new Error400(`${error.details[0].message}`);
         }
-        const flight = await flightService.store(value);
+        const flight = await FlightService.store(value);
         res201('Berhasil menambahkan data penerbangan', flight, res);
     } catch (error) {
         next(error);
@@ -43,7 +43,7 @@ export const updateFlight = async (req, res, next) => {
         if (error) {
             throw new Error400(`${error.details[0].message}`);
         }
-        const flight = await flightService.update(req.params.id, value);
+        const flight = await FlightService.update(req.params.id, value);
         res200('Berhasil mengubah data penerbangan', flight, res);
     } catch (error) {
         console.log(error)
@@ -53,7 +53,7 @@ export const updateFlight = async (req, res, next) => {
 
 export const destroyFlight = async (req, res, next) => {
     try {
-        const flight = await flightService.destroy(req.params.id);
+        const flight = await FlightService.destroy(req.params.id);
         res200('Berhasil menghapus data penerbangan', flight, res);
     } catch (error) {
         next(error);
@@ -82,7 +82,7 @@ export const getAvailableFlight = async (req, res, next) => {
             }
         }
 
-        if(schedule[0] > schedule[1]) throw new Error400('Jadwal tidak valid! tidak boleh sama');
+        if(schedule[0] > schedule[1]) throw new Error400('Jadwal tidak valid! tidak boleh sama atau lebih besar dari tanggal kedua');
 
         const data = {
             route,
@@ -91,7 +91,7 @@ export const getAvailableFlight = async (req, res, next) => {
             seatClass
         };
 
-        const flights = await flightService.getAvailableFlight(data);
+        const flights = await FlightService.getAvailableFlight(data);
         res200('Berhasil mengambil data penerbangan yang tersedia', flights, res);
     } catch (error) {
         next(error);

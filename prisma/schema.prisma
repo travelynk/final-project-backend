@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"] // Tambahkan target ini
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -16,6 +16,7 @@ enum Role {
 enum FlightCategory {
   Internasional
   Domestik
+  Multi
 }
 
 enum BookingStatus {
@@ -26,9 +27,14 @@ enum BookingStatus {
 
 enum PaymentStatus {
   Pending
-  Success
+  Settlement
   Failed
   Expired
+}
+
+enum typeVoucher {
+  percentage
+  fixed
 }
 
 // Define the models
@@ -91,7 +97,6 @@ model Airport {
 
   city              City        @relation(fields: [cityCode], references: [code])
   terminals         Terminal[]
-  airlines          Airline[]
   departureRoutes   Flight[]    @relation("DepartureAirportRoutes")
   arrivalRoutes     Flight[]    @relation("ArrivalAirportRoutes")
 
@@ -113,9 +118,8 @@ model Airline {
   id             Int              @id @default(autoincrement())
   code           String           @unique @db.VarChar(4)
   name           String           @db.VarChar(50)
-  airportId      Int              @map("airport_id")
+  image          String           @db.VarChar(255)
 
-  airport        Airport          @relation(fields: [airportId], references: [id])
   flight         Flight[]
 
   @@map("airlines")
@@ -157,18 +161,35 @@ model FlightSeats {
   @@map("flight_seats")
 }
 
+model Voucher {
+    id          Int         @id @default(autoincrement())
+    code        String      @unique @db.VarChar(8)
+    type        typeVoucher
+    minPurchase Float       @map("min_purchase")
+    maxVoucher  Int         @map("max_voucher")
+    startDate   DateTime    @map("start_date")
+    endDate     DateTime    @map("end_date")
+    createdAt   DateTime    @default(now()) @map("created_at")
+    updatedAt   DateTime    @updatedAt @map("updated_at")
+
+    booking     Booking[]
+
+    @@map("vouchers")
+}
+
 model Booking {
-  id               Int             @id @default(autoincrement())
-  userId           Int             @map("user_id")
-  roundTrip        Boolean         @default(false) @map("round_trip")
-  totalPrice       Float           @default(0) @map("total_price")
-  tax              Float           @default(0)
-  disc             Float           @default(0)
-  status           BookingStatus   @default(Pending)
-  createdAt        DateTime        @default(now())  @map("created_at")
-  updatedAt        DateTime        @updatedAt @map("updated_at")
+  id               Int              @id @default(autoincrement())
+  userId           Int              @map("user_id")
+  roundTrip        Boolean          @default(false) @map("round_trip")
+  totalPrice       Float            @default(0) @map("total_price")
+  tax              Float            @default(0)
+  voucherCode      String           @map("voucher_code") @db.VarChar(8)
+  status           BookingStatus    @default(Pending)
+  createdAt        DateTime         @default(now())  @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
 
   user              User            @relation(fields: [userId], references: [id])
+  voucher           Voucher?        @relation(fields: [voucherCode], references: [code])
   passengerCount    PassengerCount?
   payments          Payment[]
   segments          BookingSegments[]

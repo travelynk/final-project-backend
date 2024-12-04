@@ -94,6 +94,8 @@ model Airport {
   code      String     @unique @db.VarChar(4)
   name      String     @db.VarChar(100)
   cityCode  String     @map("city_code")
+  lat       Float      
+  long      Float      
 
   city              City        @relation(fields: [cityCode], references: [code])
   terminals         Terminal[]

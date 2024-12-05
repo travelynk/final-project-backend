@@ -3,7 +3,7 @@ import { createDebitPayment, cancelPayment, checkPaymentStatus, createGoPayPayme
 import * as paymentService from '../../services/payment.service.js';
 import * as PaymentValidation from '../../validations/payment.validation.js';
 import * as response from '../../utils/response.js';
-import { Error400, Error404 } from '../../utils/customError.js';
+import { Error404 } from '../../utils/customError.js';
 
 jest.mock('../../services/payment.service.js');
 jest.mock('../../utils/response.js');

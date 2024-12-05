@@ -2,7 +2,6 @@
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
-~$*.xlsx
 
 # Logs
 logs

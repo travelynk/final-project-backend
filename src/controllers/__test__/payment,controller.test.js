@@ -3,7 +3,7 @@ import { createDebitPayment, cancelPayment, checkPaymentStatus, createGoPayPayme
 import * as paymentService from '../../services/payment.service.js';
 import * as PaymentValidation from '../../validations/payment.validation.js';
 import * as response from '../../utils/response.js';
-import { Error404 } from '../../utils/customError.js';
+import { Error400, Error404 } from '../../utils/customError.js';
 
 jest.mock('../../services/payment.service.js');
 jest.mock('../../utils/response.js');
@@ -32,7 +32,7 @@ describe('Payment Controller', () => {
 
             await createDebitPayment(req, res, next);
 
-            expect(response.res400).toHaveBeenCalledWith('Validation error', res);
+            expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
 
         it('should return 200 on successful debit payment creation', async () => {
@@ -118,7 +118,7 @@ describe('Payment Controller', () => {
 
             await createGoPayPayment(req, res, next);
 
-            expect(response.res400).toHaveBeenCalledWith('Validation error', res);
+            expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
 
         it('should return 200 on successful GoPay payment creation', async () => {
@@ -148,8 +148,7 @@ describe('Payment Controller', () => {
 
             await createCreditCardPayment(req, res, next);
 
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({ error: 'Validation error' });
+            expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
 
         it('should return 201 on successful credit card payment creation', async () => {

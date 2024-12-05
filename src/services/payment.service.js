@@ -67,7 +67,6 @@ export const cancelPayment = async (transactionId) => {
 
         return cancelResponse;
     } catch (error) {
-        console.error('Error cancelling payment:', error.response?.data || error.message);
         throw new Error(error.response?.data?.status_message || error.message);
     }
 };

@@ -1,10 +1,12 @@
 import express, { json, urlencoded } from "express";
 import morgan from 'morgan';
+import cors from 'cors';
 import apiV1 from '../routes/api/v1/index.js';
 import * as ErrorHandler from '../middlewares/errorHandler.js';
 
 export const app = express();
 
+app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(morgan('dev'));

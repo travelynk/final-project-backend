@@ -30,6 +30,7 @@ enum PaymentStatus {
   Settlement
   Failed
   Expired
+  Cancelled
 }
 
 enum typeVoucher {

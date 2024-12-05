@@ -8,7 +8,7 @@ export const createDebitPayment = async (bookingId, bank) => {
         include: { payments: true, user: { include: { profile: true } } },
     });
 
-    if (!booking) throw new Error("Booking not found");
+    if (!booking) throw new Error("Pemesanan tidak ditemukan");
 
     const paymentData = {
         payment_type: "bank_transfer",
@@ -50,6 +50,15 @@ export const createDebitPayment = async (bookingId, bank) => {
 
 export const cancelPayment = async (transactionId) => {
     try {
+        const currentPayment = await prisma.payment.findUnique({
+            where: { transactionId },
+        })
+
+        if (!currentPayment) {
+            throw new Error("Pembayaran tidak ditemukan");
+        }
+
+
         const transactionStatus = await snap.transaction.status(transactionId);
 
         if (transactionStatus.transaction_status !== 'pending') {
@@ -62,18 +71,25 @@ export const cancelPayment = async (transactionId) => {
 
         await prisma.payment.update({
             where: { transactionId },
-            data: { status: 'Expired' },
+            // data: { status: 'Expired' },
+            data: { status: 'Cancelled' },
         });
 
         return cancelResponse;
     } catch (error) {
-        console.error('Error cancelling payment:', error.response?.data || error.message);
         throw new Error(error.response?.data?.status_message || error.message);
     }
 };
 
 export const checkPaymentStatus = async (transactionId) => {
     try {
+        const currentPayment = await prisma.payment.findUnique({
+            where: { transactionId },
+        }) 
+        if (!currentPayment) {
+            throw new Error("Pembayaran tidak ditemukan");
+        }
+
         const transactionStatus = await snap.transaction.status(transactionId);
 
         const status = transactionStatus.transaction_status;
@@ -85,6 +101,7 @@ export const checkPaymentStatus = async (transactionId) => {
         });
 
         return transactionStatus;
+
     } catch (error) {
         throw new Error(error.message);
     }
@@ -96,7 +113,7 @@ export const createGoPayPayment = async (bookingId) => {
         include: { payments: true, user: { include: { profile: true } } },
     });
 
-    if (!booking) throw new Error("Booking not found");
+    if (!booking) throw new Error("Pemesanan tidak ditemukan");
 
     const paymentData = {
         payment_type: "gopay",
@@ -157,7 +174,7 @@ export const createCardPayment = async (bookingId, cardToken) => {
         include: { payments: true, user: { include: { profile: true } } },
     });
 
-    if (!booking) throw new Error("Booking not found");
+    if (!booking) throw new Error("Pemesanan tidak ditemukan");
 
 
     const paymentData = {

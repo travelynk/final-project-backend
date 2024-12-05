@@ -25,7 +25,8 @@ export const cancelPayment = async (req, res, next) => {
         const { error, value } = PaymentValidation.cancelPaymentSchema.validate(req.params);
 
         if (error) {
-            throw new Error400(error.message);
+            // throw new Error400(error.message);
+            return response.res400(`${error.details[0].message}`, res);
         };
 
         const { transactionId } = value;
@@ -47,7 +48,8 @@ export const checkPaymentStatus = async (req, res, next) => {
         const { error, value } = PaymentValidation.checkPaymentStatusSchema.validate(req.params);
 
         if (error) {
-            throw new Error400(error.message);
+            // throw new Error400(error.message);
+            return response.res400(`${error.details[0].message}`, res);
         };
 
         const { transactionId } = value;
@@ -64,7 +66,7 @@ export const checkPaymentStatus = async (req, res, next) => {
     }
 };
 
-export const createGoPayPayment = async (req, res) => {
+export const createGoPayPayment = async (req, res, next) => {
     try {
         const { error, value } = PaymentValidation.createGoPayPaymentSchema.validate(req.body);
 

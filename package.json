@@ -10,7 +10,14 @@
     "test": "jest --coverage",
     "generate-openapi": "dotenv -e .env.local -- node ./openapi.js",
     "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix"
+    "lint:fix": "eslint ./src --fix",
+    "db:reset": "npx prisma migrate reset --preview-feature",
+    "db:migrate": "npx prisma migrate dev --preview-feature",
+    "db:studio": "npx prisma studio",
+    "db:seed": "npx prisma db seed"
+  },
+  "prisma": {
+    "seed": "node ./prisma/seeder/main.seed.js"
   },
   "keywords": [],
   "author": "",
@@ -37,7 +44,8 @@
     "otplib": "^12.0.1",
     "postman2openapi": "^1.2.1",
     "socket.io": "^4.8.1",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

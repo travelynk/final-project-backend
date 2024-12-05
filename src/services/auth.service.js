@@ -1,34 +1,58 @@
 import prisma from "../configs/database.js";
-import { Error400, Error404, Error409 } from "../utils/customError.js";
+import { Error400, Error401, Error404, Error409 } from "../utils/customError.js";
 import { generateOTP, generateSecret, verifyOTP } from "../utils/otp.js";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
 
 export const login = async ({ email, password }) => {
-    const user = await prisma.user.findUnique({ where: { email } });
+    try {
+        //validasi input
+        if (!email || !password) {
+            throw new Error400('Email dan kata sandi harus diisi!');
+        }
 
-    if (!user) return null; // Jika email tidak ditemukan.
+        const user = await prisma.user.findUnique({
+            where: { email }
+        });
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return null; // Jika password tidak valid.
+        if (!user) {
+            throw new Error400('Email tidak valid!');
+        }
 
-    // Verifikasi jika akun belum diverifikasi
-    // if (!user.verified) {
-    //     throw new Error("Account is not verified");
-    // }
+        if (!user.verified) {
+            throw new Error401('Akun belum diverifikasi');
+        }
 
-    // Membuat JWT token
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        if (!isPasswordMatch) {
+            throw new Error400('Kata sandi tidak valid!');
+        }
+        //generate JWT token
+        const token = jwt.sign(
+            { id: user.id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
 
-    return { token, role: user.role };
+        return {
+            token,
+            user: { email: user.email, role: user.role }
+        };
+    } catch (error) {
+        if (error instanceof Error400 || error instanceof Error401) {
+            throw error;
+        } else {
+            throw new Error("Internal Server Error");
+        }
+    }
 };
 
 export const register = async (data) => {
     const { email, password, fullName, phone } = data;
 
     const existingEmail = await prisma.user.findUnique({
-        where: { email: email },
+        where: { email },
     });
 
     if (!existingEmail) {
@@ -44,7 +68,7 @@ export const register = async (data) => {
                 verified: false,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                Profile: {
+                profile: {
                     create: { fullName, phone },
                 },
             },
@@ -64,7 +88,7 @@ export const verifyOtp = async (data) => {
     const { email, otp } = data;
 
     const user = await prisma.user.findUnique({
-        where: { email: email },
+        where: { email },
     });
 
     if (!user) {
@@ -104,15 +128,15 @@ export const sendOtp = async (email) => {
     //         pass: process.env.MAILTRAP_PASS,
     //     },
     // });
-    
+
     const transporter = nodemailer.createTransport({
         service: "gmail",
-        secure:true,                    
+        secure: true,
         auth: {
-          user: process.env.EMAIL_USER, 
-          pass: process.env.EMAIL_PASS  
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
         }
-      });
+    });
 
     const mailOptions = {
         from: "test@gmail.com",
@@ -126,7 +150,6 @@ export const sendOtp = async (email) => {
     return "Email untuk memverifikasi akun Anda telah dikirim.";
 };
 
-// Updated resetPassword to use the token for resetting password directly
 // Reset password function, using token to update password
 export const resetPassword = async (token, password) => {
     try {
@@ -136,7 +159,7 @@ export const resetPassword = async (token, password) => {
 
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
-            throw new Error404("User not found");
+            throw new Error404("Akun pengguna tidak di temukan");
         }
 
         // Hash new password and update password
@@ -147,14 +170,15 @@ export const resetPassword = async (token, password) => {
             data: { password: hashedPassword },
         });
 
-        return { message: "Password reset successfully" };
+        return { message: "Berhasil mereset password" };
     } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            // Lemparkan error TokenExpiredError untuk ditangani di controller
+        if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+            throw new Error401('Token tidak valid atau telah kedaluwarsa. Silakan minta email reset kata sandi yang baru.');
+        } else if(error instanceof Error404) {
             throw error;
+        } else {
+            throw new Error('Internal Server Error');
         }
-
-        throw new Error('Invalid or expired token');
     }
 };
 

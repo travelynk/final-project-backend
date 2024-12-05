@@ -11,6 +11,7 @@ import terminalRoute from './terminal.route.js';
 import airlineRoute from './airline.route.js';
 import flightRoute from './flight.route.js';
 import seatRouter from './seat.route.js';
+import paymentRouter from './payment.route.js';
 
 const swaggerDocument = JSON.parse(readFileSync(new URL('../../../docs/api-v1.json', import.meta.url), 'utf-8'));
 
@@ -33,5 +34,5 @@ export default (app) => {
     airlineRoute(router);
     flightRoute(router);
     seatRouter(router);
-
+    paymentRouter(router);
 };

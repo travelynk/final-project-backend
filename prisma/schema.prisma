@@ -100,8 +100,6 @@ model Airport {
 
   city              City        @relation(fields: [cityCode], references: [code])
   terminals         Terminal[]
-  departureRoutes   Flight[]    @relation("DepartureAirportRoutes")
-  arrivalRoutes     Flight[]    @relation("ArrivalAirportRoutes")
 
   @@map("airports")
 }
@@ -113,6 +111,8 @@ model Terminal {
   category  FlightCategory
   
   airport   Airport        @relation(fields: [airportId], references: [id])
+  departureRoutes   Flight[]    @relation("DepartureTerminalRoutes")
+  arrivalRoutes     Flight[]    @relation("ArrivalTerminalRoutes")
 
   @@map("terminals")
 }
@@ -129,22 +129,22 @@ model Airline {
 }
 
 model Flight {
-  id                 Int           @id @default(autoincrement())
-  airlineId          Int           @map("airline_id")
-  flightNum          String        @map("flight_num") @db.VarChar(15) @unique
-  departureAirportId Int           @map("departure_airport_id")
-  arrivalAirportId   Int           @map("arrival_airport_id")
-  departureTime      DateTime      @map("departure_time")
-  arrivalTime        DateTime      @map("arrival_time")
-  estimatedDuration  Float         @map("estimated_duration")
-  seatClass          String        @map("seat_class")
-  seatCapacity       Int           @map("seat_capacity")
-  facility           String?
-  price              Float         @default(0)
+  id                  Int           @id @default(autoincrement())
+  airlineId           Int           @map("airline_id")
+  flightNum           String        @map("flight_num") @db.VarChar(15)
+  departureTerminalId Int           @map("departure_terminal_id")
+  arrivalTerminalId   Int           @map("arrival_airport_id")
+  departureTime       DateTime      @map("departure_time")
+  arrivalTime         DateTime      @map("arrival_time")
+  estimatedDuration   Float         @map("estimated_duration")
+  seatClass           String        @map("seat_class")
+  seatCapacity        Int           @map("seat_capacity")
+  facility            String?
+  price               Float         @default(0)
 
-  airline            Airline       @relation(fields: [airlineId], references: [id])
-  departureAirport   Airport       @relation("DepartureAirportRoutes", fields: [departureAirportId], references: [id])
-  arrivalAirport     Airport       @relation("ArrivalAirportRoutes", fields: [arrivalAirportId], references: [id])
+  airline            Airline        @relation(fields: [airlineId], references: [id])
+  departureTerminal  Terminal       @relation("DepartureTerminalRoutes", fields: [departureTerminalId], references: [id])
+  arrivalTerminal    Terminal       @relation("ArrivalTerminalRoutes", fields: [arrivalTerminalId], references: [id])
 
   flightSeats        FlightSeats[]
   bookingSegments    BookingSegments[]

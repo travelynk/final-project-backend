@@ -12,7 +12,6 @@ export const createDebitPayment = async (req, res, next) => {
         }
 
         const result = await paymentService.createDebitPayment(value.bookingId, value.bank);
-
         res200('Pembayaran berhasil dibuat', { paymentUrl: result }, res);
     } catch (error) {
         next(error);
@@ -72,7 +71,6 @@ export const createGoPayPayment = async (req, res, next) => {
         }
 
         const result = await paymentService.createGoPayPayment(value.bookingId);
-
         res200('Pembayaran berhasil dibuat', { paymentUrl: result }, res);
     } catch (error) {
         next(error);
@@ -95,13 +93,9 @@ export const createCreditCardPayment = async (req, res, next) => {
         };
 
         const paymentToken = await paymentService.createCardToken(payload);
-
         const creditCardPayment = await paymentService.createCardPayment(value.bookingId, paymentToken);
-
         res200('Pembayaran berhasil dibuat', creditCardPayment, res);
     } catch (err) {
         next(err);
     }
 };
-
-

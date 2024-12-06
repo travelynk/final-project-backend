@@ -1,9 +1,8 @@
 import prisma from "../configs/database.js";
 import { Error400, Error404 } from "../utils/customError.js";
 import generateSeatCodes from "../utils/generateSeatCode.js";
-// import Graph from 'graphology';
-// import { singleSource } from 'graphology-shortest-path';
-// const { MultiGraph } = Graph;
+import Graph from 'graphology';
+const { MultiGraph } = Graph;
 
 export const getAll = async () => {
     return await prisma.flight.findMany();
@@ -92,341 +91,209 @@ export const destroy = async (id) => {
     });
 };
 
-// Client
-// export const getAvailableFlight = async (data) => {
-//     const startDay = new Date(data.schedule[0]);
-//     const endDay = new Date(startDay);
-//     endDay.setUTCDate(endDay.getUTCDate() + 1);
+export const getAvailableFlight = async (data) => {
+    const { route, seatClass, schedule } = data;
+    const startDay = new Date(schedule[0]);
+    const endDay = new Date(startDay);
+    endDay.setUTCDate(endDay.getUTCDate() + 1);
+    const [depCity, arrCity] = route;
 
-//     let outboundFlights = await prisma.flight.findMany({
-//         where: {
-//             departureAirport: {
-//                 cityCode: data.route[0]
-//             },
-//             arrivalAirport: {
-//                 cityCode: data.route[1]
-//             },
-//             seatClass: data.seatClass,
-//             departureTime: {
-//                 gte: startDay,
-//                 lt: endDay
-//             },
-//             flightSeats: {
-//                 some: {
-//                     isAvailable: true,
-//                 }
-//             }
-//         },
-//         include: {
-//             airline: true,
-//             departureAirport: true,
-//             arrivalAirport: true,
-//             _count: {
-//                 select: {
-//                     flightSeats: {
-//                         where: {
-//                             isAvailable: true
-//                         }
-//                     }
-//                 }
-//             }
-//         },
-//         orderBy: {
-//             price: 'asc'
-//         }
-//     });
+    // Ambil data penerbangan yang tersedia berdasarkan jadwal
+    const flights = await prisma.flight.findMany({
+        where: {
+            departureTime: {
+                gte: startDay,
+                lt: endDay,
+            },
+            seatClass,
+            flightSeats: {
+                some: {
+                    isAvailable: true,
+                },
+            },
+        },
+        include: {
+            airline: true,
+            departureTerminal: {
+                include: {
+                    airport: {
+                        include: {
+                            city: true,
+                        }
+                    }
+                }
+            },
+            arrivalTerminal: {
+                include: {
+                    airport: {
+                        include: {
+                            city: true,
+                        }
+                    }
+                }
+            },
+        },
+    });
 
-//     if (!outboundFlights.length) throw new Error404('Penerbangan tidak ditemukan!');
+    const outboundFlights = mapFlightData(flights, schedule, seatClass, depCity, arrCity);
+    const returnFlights = [];
 
-//     // Mapping response outbound flight
-//     outboundFlights = outboundFlights.map(flight => {
-//         const availableSeats = flight._count.flightSeats;
-//         delete flight._count;
-//         delete flight.airlineId;
-//         delete flight.departureAirportId;
-//         delete flight.arrivalAirportId;
-//         return {
-//             ...flight,
-//             availableSeats,
-//             passengers: data.passengers
-//         }
-//     });
+    return {outboundFlights, returnFlights};
 
-//     let returnFlights=[];
+};
 
-//     // Check if return flight is available    
-//     if (data.schedule[1]){
-//         const returnStartDay = new Date(data.schedule[1]);
-//         const returnEndDay = new Date(returnStartDay);
-//         returnEndDay.setUTCDate(returnEndDay.getUTCDate() + 1);
+const convertToJakartaTime = (utcDateStr) => {
+    const date = new Date(utcDateStr);
 
-//         returnFlights = await prisma.flight.findMany({
-//             where: {
-//                 departureAirport: {
-//                     cityCode: data.route[1]
-//                 },
-//                 arrivalAirport: {
-//                     cityCode: data.route[0]
-//                 },
-//                 seatClass: data.seatClass,
-//                 departureTime: {
-//                     gte: returnStartDay,
-//                     lt: returnEndDay
-//                 },
-//                 flightSeats: {
-//                     some: {
-//                         isAvailable: true,
-//                     }
-//                 }
-//             },
-//             include: {
-//                 airline: true,
-//                 departureAirport: true,
-//                 arrivalAirport: true,
-//                 _count: {
-//                     select: {
-//                         flightSeats: {
-//                             where: {
-//                                 isAvailable: true
-//                             }
-//                         }
-//                     }
-//                 }
-//             },
-//             orderBy: {
-//                 price: 'asc'
-//             }
-//         });
+    // Tambahkan offset +7 jam (WIB)
+    const jakartaOffset = 7 * 60 * 60 * 1000; // Offset dalam milidetik
+    const jakartaTime = new Date(date.getTime() + jakartaOffset);
 
-//         if (!returnFlights.length) throw new Error404('Penerbangan pulang tidak ditemukan!');
+    return {
+        date: `${jakartaTime.getFullYear()}-${String(jakartaTime.getMonth() + 1).padStart(2, "0")}-${String(jakartaTime.getDate()).padStart(2, "0")}`,
+        time: `${String(jakartaTime.getHours()).padStart(2, "0")}:${String(jakartaTime.getMinutes()).padStart(2, "0")}`,
+    };
+};
 
-//         returnFlights = returnFlights.map(flight => {
-//             const availableSeats = flight._count.flightSeats;
-//             delete flight._count;
-//             delete flight.airlineId;
-//             delete flight.departureAirportId;
-//             delete flight.arrivalAirportId;
-//             return {
-//                 ...flight,
-//                 availableSeats,
-//                 passengers: data.passengers
-//             }
-//         });
-//     }
+function createMultiGraph(flights) {
+    const multiGraph = new MultiGraph();
 
-//     const availableFlight = {
-//         outboundFlights,
-//         returnFlights
-//     };
+    // Tambahkan node unik
+    const uniqueNodes = new Set(flights.flatMap(flight => [
+        flight.departureTerminal.airport.cityCode,
+        flight.arrivalTerminal.airport.cityCode
+    ]));
+    uniqueNodes.forEach(node => multiGraph.addNode(node));
 
-//     return availableFlight;
+    // Tambahkan edges dengan informasi detail
+    flights.forEach(flight => {
+        const departureCityCode = flight.departureTerminal.airport.cityCode;
+        const arrivalCityCode = flight.arrivalTerminal.airport.cityCode;
 
-// };
+        multiGraph.addEdge(departureCityCode, arrivalCityCode, {
+            flightId: flight.id,
+            flightNum: flight.flightNum,
+            // departureTime: flight.departureTime,
+            // arrivalTime: flight.arrivalTime,
+            // estimatedDuration: flight.estimatedDuration,
+            // facility: flight.facility,
+            // price: flight.price,
+        });
+    });
 
-// export const getAvailableFlight = async (data) => {
-//     const { route, seatClass, schedule } = data;
-//     const startDay = new Date(schedule[0]);
-//     const endDay = new Date(startDay);
-//     endDay.setUTCDate(endDay.getUTCDate() + 1);
+    return multiGraph;
+}
 
-//     // Ambil data semua penerbangan
-//     const flights = await prisma.flight.findMany({
-//         where: {
-//             departureTime: {
-//                 gte: startDay,
-//                 lt: endDay,
-//             },
-//             seatClass,
-//             flightSeats: {
-//                 some: {
-//                     isAvailable: true,
-//                 },
-//             },
-//         },
-//         include: {
-//             departureAirport: {
-//                 include: {
-//                     city: true,
-//                 },
-//             },
-//             arrivalAirport: {
-//                 include: {
-//                     city: true,
-//                 },
-//             },
-//         },
-//     });
+function findAllPaths(graph, start, end, path = [], visited = new Set()) {
+    path = [...path, start];
+    visited.add(start);
 
-//     // Inisialisasi graf
-//     const graph = new DirectedGraph();
+    if (start === end) {
+        return [path];
+    }
 
-//     // Tambahkan node dan edge dari data penerbangan
-//     flights.forEach((flight) => {
-//         const departureCity = flight.departureAirport.city.code;
-//         const arrivalCity = flight.arrivalAirport.city.code;
+    let paths = [];
 
-//         // Tambahkan node jika belum ada
-//         if (!graph.hasNode(departureCity)) graph.addNode(departureCity);
-//         if (!graph.hasNode(arrivalCity)) graph.addNode(arrivalCity);
+    graph.outNeighbors(start).forEach(neighbor => {
+        if (!visited.has(neighbor)) {
+            const newPaths = findAllPaths(graph, neighbor, end, path, new Set(visited));
+            paths.push(...newPaths);
+        }
+    });
 
-//         // Tambahkan edge dengan atribut
-//         graph.addEdge(departureCity, arrivalCity, {
-//             flightId: flight.id,
-//             price: flight.price,
-//             departureTime: flight.departureTime,
-//             arrivalTime: flight.arrivalTime,
-//         });
-//     });
+    return paths;
+}
 
-//     // Cari semua jalur dari kota asal ke kota tujuan
-//     const [origin, destination] = route; // Contoh: ['JKT', 'SBY']
-//     if (!graph.hasNode(origin) || !graph.hasNode(destination)) {
-//         throw new Error404('Kota asal atau tujuan tidak ditemukan!');
-//     }
+function findValidFlights(flights, source, target) {
+    return flights
+        .filter(flight => flight.departureTerminal.airport.cityCode === source && flight.arrivalTerminal.airport.cityCode === target)
+        .map(flight => {
+        const departureTimeJakarta = convertToJakartaTime(flight.departureTime);
+        const arrivalTimeJakarta = convertToJakartaTime(flight.arrivalTime);
+        return {
+            flightId: flight.id,
+            flightNum: flight.flightNum,
+            airline: {
+                name: flight.airline.name,
+                image: flight.airline.image
+            },
+            departure: {
+                airport: flight.departureTerminal.airport.name,
+                city: {
+                    code: flight.departureTerminal.airport.city.code,
+                    name: flight.departureTerminal.airport.city.name
+                },
+                time: departureTimeJakarta.time,
+                date: departureTimeJakarta.date,
+                terminal: flight.departureTerminal.name
+            },
+            arrival: {
+                airport: flight.arrivalTerminal.airport.name,
+                city: {
+                    code: flight.arrivalTerminal.airport.city.code,
+                    name: flight.arrivalTerminal.airport.city.name
+                },
+                time: arrivalTimeJakarta.time,
+                date: arrivalTimeJakarta.date,
+                terminal: flight.arrivalTerminal.name
+            },
+            estimatedDuration: flight.estimatedDuration,
+            facility: flight.facility,
+            price: flight.price,
+        }});
+}
 
-//     // Cari jalur terpendek menggunakan Dijkstra atau Breadth-First Search
-//     const paths = [];
-//     graph.forEachPathFromNode(origin, destination, (path, attributes) => {
-//         paths.push({
-//             path,
-//             attributes,
-//         });
-//     });
+function generateFlightCombinations(flightLists) {
+    if (flightLists.length === 0) return [[]];
 
-//     // Format data hasil
-//     const result = paths.map((p) => {
-//         const totalPrice = p.attributes.reduce((sum, attr) => sum + attr.price, 0);
-//         const flights = p.path.map((city, idx) => {
-//             if (idx < p.path.length - 1) {
-//                 const edge = graph.edge(city, p.path[idx + 1]);
-//                 return {
-//                     flightId: edge.flightId,
-//                     departureCity: city,
-//                     arrivalCity: p.path[idx + 1],
-//                     price: edge.price,
-//                 };
-//             }
-//             return null;
-//         }).filter(Boolean);
+    const [firstList, ...remainingLists] = flightLists;
+    const restCombinations = generateFlightCombinations(remainingLists);
 
-//         return {
-//             totalPrice,
-//             flights,
-//         };
-//     });
+    return firstList.flatMap(flight =>
+        restCombinations.map(combo => [flight, ...combo])
+    );
+}
 
-//     return result;
-// };
+function mapFlightData(flights, schedule, seatClass, depCity, arrCity) {
+    const multiGraph = createMultiGraph(flights);
+    const paths = findAllPaths(multiGraph, depCity, arrCity);
 
-// export const getAvailableFlight = async (data) => {
-//     const { route, seatClass, schedule } = data;
-//     const startDay = new Date(schedule[0]);
-//     const endDay = new Date(startDay);
-//     endDay.setUTCDate(endDay.getUTCDate() + 1);
+    const processedPaths = paths.map((path) => {
+        const flightDetails = path.slice(0, -1).map((node, i) => {
+            let validFlights = findValidFlights(flights, node, path[i + 1]);
+            return validFlights;
+        });
 
-//     // Ambil data penerbangan yang tersedia berdasarkan jadwal
-//     const flights = await prisma.flight.findMany({
-//         where: {
-//             departureTime: {
-//                 gte: startDay,
-//                 lt: endDay,
-//             },
-//             seatClass,
-//             flightSeats: {
-//                 some: {
-//                     isAvailable: true,
-//                 },
-//             },
-//         },
-//         include: {
-//             departureAirport: {
-//                 include: {
-//                     city: true, // Mengambil informasi kota
-//                 },
-//             },
-//             arrivalAirport: {
-//                 include: {
-//                     city: true, // Mengambil informasi kota
-//                 },
-//             },
-//         },
-//     });
+        const allFlightCombinations = generateFlightCombinations(flightDetails);
 
-//     // Inisialisasi graf
-//     const graph = new MultiGraph();
+        return allFlightCombinations.map(flightCombo => ({
+            path,
+            flights: flightCombo
+        }));
+    }).flat();
 
-//     // Tambahkan node dan edge ke graf berdasarkan kode kota
-//     flights.forEach((flight) => {
-//         const departureCityCode = flight.departureAirport.city.code; // Kode kota keberangkatan
-//         const arrivalCityCode = flight.arrivalAirport.city.code; // Kode kota tujuan
+    const result = processedPaths.map((pathInfo) => {
+        let totalPrice = 0;
+        let totalDuration = 0;
+        const flightsOnPath = pathInfo.flights;
+        flightsOnPath.forEach((edgeAttributes) => {
+            console.log(edgeAttributes)
+            totalPrice += edgeAttributes.price;
+            totalDuration += edgeAttributes.estimatedDuration;
+        });
 
-//         // Tambahkan node kota jika belum ada
-//         if (!graph.hasNode(departureCityCode)) graph.addNode(departureCityCode);
-//         if (!graph.hasNode(arrivalCityCode)) graph.addNode(arrivalCityCode);
+        return {
+            flightDate: convertToJakartaTime(schedule[0]).date,
+            estimatedDuration: `${totalDuration} Jam`,
+            departureTime: pathInfo.flights[0].departure.time,
+            arrivalTime: pathInfo.flights.at(-1).arrival.time,
+            seatClass,
+            price: `Rp ${totalPrice.toLocaleString()}`,
+            isTransit: flightsOnPath.length > 1,
+            // delayTransit: flightsOnPath.length > 1 ? (new Date(flightsOnPath[1].departureTime) - new Date(flightsOnPath[0].arrivalTime)) / 3600000 : 0,
+            flights: pathInfo.flights,
+        };
+    });
 
-//         // Tambahkan edge dari kota keberangkatan ke kota tujuan dengan ID penerbangan
-//         graph.addEdge(departureCityCode, arrivalCityCode, {
-//             flightId: flight.id,
-//             price: flight.price,
-//             departureTime: flight.departureTime,
-//             arrivalTime: flight.arrivalTime,
-//         });
-
-//         console.log(`Edge: ${departureCityCode} -> ${arrivalCityCode}, Price: ${flight.price}`);
-//     });
-
-//     // Fungsi DFS untuk menemukan semua jalur antara dua node
-//     const findAllPaths = (current, destination, path = [], pathDetails = []) => {
-//         path.push(current);
-//         if (current === destination) {
-//             paths.push({ path: [...path], details: [...pathDetails] });
-//         } else {
-//             graph.neighbors(current).forEach((neighbor) => {
-//                 if (!path.includes(neighbor)) {
-//                     // Ambil semua edge antara current dan neighbor
-//                     const edges = graph.edges(current, neighbor);
-//                     edges.forEach((edge) => {
-//                         const edgeAttributes = graph.getEdgeAttributes(edge);
-//                         pathDetails.push(edgeAttributes);
-//                         findAllPaths(neighbor, destination, path, pathDetails);
-//                         pathDetails.pop(); // Kembali ke jalur sebelumnya setelah rekursi
-//                     });
-//                 }
-//             });
-//         }
-//         path.pop();
-//     };
-
-//     const [originCity, destinationCity] = route; // Contoh: ['JKT', 'SBY']
-//     if (!graph.hasNode(originCity) || !graph.hasNode(destinationCity)) {
-//         throw new Error404('Kota asal atau tujuan tidak ditemukan!');
-//     }
-
-//     const paths = [];
-//     findAllPaths(originCity, destinationCity);
-
-//     if (paths.length === 0) {
-//         throw new Error404('Tidak ada jalur antara kota asal dan tujuan.');
-//     }
-
-//     // Format hasil
-//     const results = paths.map((pathObj) => {
-//         let totalPrice = 0;
-//         const flightsOnPath = pathObj.details;
-//         flightsOnPath.forEach((edgeAttributes) => {
-//             totalPrice += edgeAttributes.price;
-//         });
-
-//         return {
-//             totalPrice,
-//             flights: flightsOnPath.map((edge) => ({
-//                 flightId: edge.flightId,
-//                 departureCity: edge.departureCity,
-//                 arrivalCity: edge.arrivalCity,
-//                 price: edge.price,
-//             })),
-//         };
-//     });
-
-//     return results;
-// };
+    return result;
+};

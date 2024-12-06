@@ -1,5 +1,8 @@
 import prisma from "../configs/database.js";
-import { Error404, Error409 } from "../utils/customError.js";
+import { Error400, Error404, Error409 } from "../utils/customError.js";
+import * as VoucherService from './voucher.service.js';
+import { encodeBookingCode } from "../utils/hashids.js";
+
 
 export const getBookings = async (userId) => {
   const bookings = await prisma.booking.findMany({
@@ -53,6 +56,7 @@ export const getBookings = async (userId) => {
           method: true,
         },
       },
+      voucher: true,
     },
   })
 
@@ -60,7 +64,14 @@ export const getBookings = async (userId) => {
     throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
   }
 
-  return bookings;
+  const bookingsWithHash = await Promise.all(
+    bookings.map(async (booking) => ({
+      ...booking,
+      bookingCode: await encodeBookingCode(booking.id),
+    }))
+  );
+
+  return bookingsWithHash
 };
 
 export const getBooking = async (userId, id) => {
@@ -116,6 +127,7 @@ export const getBooking = async (userId, id) => {
           method: true,
         },
       },
+      voucher: true,
     },
   });
 
@@ -124,27 +136,71 @@ export const getBooking = async (userId, id) => {
     throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
   }
 
+  booking.bookingCode = await encodeBookingCode(booking.id);
+
   return booking;
 };
 
 export const storeBooking = async (userId, data) => {
   const {
     roundTrip,
-    totalPrice,
-    tax,
-    disc,
+    voucherCode,
     passengerCount,
     flightSegments,
   } = data;
 
+  const tax = 11;
+
+  const flightIds = flightSegments.map(segment => segment.flightId);
+
+  const flights = await prisma.flight.findMany({
+    where: {
+      id: {
+        in: flightIds,
+      },
+    },
+    select: {
+      id: true,
+      price: true,
+    },
+  });
+
+  let totalSum = flightIds.reduce((sum, id) => {
+    const flight = flights.find(f => f.id === id);
+    return sum + (flight ? flight.price : 0);
+  }, 0);
+
+  let maxVouchers;
+
+  if (voucherCode) {
+    const voucher = await VoucherService.getVoucherByCode(voucherCode, totalSum);
+    totalSum = voucher.updatedTotalPrice;
+    maxVouchers = voucher.maxVoucher;
+  };
+
+  totalSum -= (totalSum * tax / 100);
+
+  const totalPrice = totalSum;
+  console.log(totalPrice)
+
   const booking = await prisma.$transaction(async (tx) => {
     const createdBooking = await tx.booking.create({
       data: {
-        userId,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
         roundTrip,
         totalPrice,
+        ...(voucherCode && {
+          voucher: {
+            connect: {
+              code: voucherCode,
+            },
+          },
+        }),
         tax,
-        disc,
         status: "Pending",
       },
     });
@@ -212,9 +268,25 @@ export const storeBooking = async (userId, data) => {
       });
     }
 
+    if (maxVouchers) {
+      const usedVouchers = await tx.booking.count({
+        where: {
+          voucher: {
+            code: voucherCode,
+          },
+        },
+      });
+
+      if (maxVouchers <= usedVouchers) {
+        throw new Error409('Mohon maaf, Code Voucher sudah tidak berlaku');
+      };
+    }
+
     return createdBooking;
   });
 
+  booking.bookingCode = await encodeBookingCode(booking.id);
+  
   return booking;
 };
 
@@ -237,6 +309,10 @@ export const updateStatusBooking = async (data, id) => {
     data: { status },
   });
 
+  updatedBooking.bookingCode = await encodeBookingCode(updatedBooking.id);
+
+
+
   return updatedBooking;
 };
 
@@ -251,7 +327,6 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
     filterDate.lte = new Date(endDate);
   }
 
-  console.log(filterDate)
   const bookingsByDate = await prisma.booking.findMany({
     where: {
       userId,
@@ -304,6 +379,7 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
           method: true,
         },
       },
+      voucher: true,
     },
   });
 
@@ -311,5 +387,12 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
     throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
   }
 
-  return bookingsByDate;
+  const bookingsByDateWithHash = await Promise.all(
+    bookingsByDate.map(async (booking) => ({
+      ...booking,
+      bookingCode: await encodeBookingCode(booking.id),
+    }))
+  );
+
+  return bookingsByDateWithHash;
 };

@@ -94,6 +94,8 @@ model Airport {
   code      String     @unique @db.VarChar(4)
   name      String     @db.VarChar(100)
   cityCode  String     @map("city_code")
+  lat       Float      
+  long      Float      
 
   city              City        @relation(fields: [cityCode], references: [code])
   terminals         Terminal[]
@@ -165,6 +167,7 @@ model Voucher {
     id          Int         @id @default(autoincrement())
     code        String      @unique @db.VarChar(8)
     type        typeVoucher
+    value       Float
     minPurchase Float       @map("min_purchase")
     maxVoucher  Int         @map("max_voucher")
     startDate   DateTime    @map("start_date")
@@ -183,7 +186,7 @@ model Booking {
   roundTrip        Boolean          @default(false) @map("round_trip")
   totalPrice       Float            @default(0) @map("total_price")
   tax              Float            @default(0)
-  voucherCode      String           @map("voucher_code") @db.VarChar(8)
+  voucherCode      String?          @map("voucher_code") @db.VarChar(8)
   status           BookingStatus    @default(Pending)
   createdAt        DateTime         @default(now())  @map("created_at")
   updatedAt        DateTime         @updatedAt @map("updated_at")

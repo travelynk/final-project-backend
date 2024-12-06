@@ -13,26 +13,27 @@ export const storeBooking = Joi.object({
       'boolean.base': 'roundTrip harus berupa nilai boolean.',
       'any.required': 'roundTrip wajib diisi.'
     }),
-  totalPrice: Joi.number().precision(2).positive().required()
+  // totalPrice: Joi.number().precision(2).positive().required()
+  //   .messages({
+  //     'number.base': 'totalPrice harus berupa angka.',
+  //     'number.precision': 'totalPrice harus memiliki dua angka di belakang koma.',
+  //     'number.positive': 'totalPrice harus bernilai positif.',
+  //     'any.required': 'totalPrice wajib diisi.'
+  //   }),
+  // tax: Joi.number().precision(2).positive().required()
+  //   .messages({
+  //     'number.base': 'tax harus berupa angka.',
+  //     'number.precision': 'tax harus memiliki dua angka di belakang koma.',
+  //     'number.positive': 'tax harus bernilai positif.',
+  //     'any.required': 'tax wajib diisi.'
+  //   }),
+  voucherCode: Joi.string()
+    .alphanum()
+    .length(8)
     .messages({
-      'number.base': 'totalPrice harus berupa angka.',
-      'number.precision': 'totalPrice harus memiliki dua angka di belakang koma.',
-      'number.positive': 'totalPrice harus bernilai positif.',
-      'any.required': 'totalPrice wajib diisi.'
-    }),
-  tax: Joi.number().precision(2).positive().required()
-    .messages({
-      'number.base': 'tax harus berupa angka.',
-      'number.precision': 'tax harus memiliki dua angka di belakang koma.',
-      'number.positive': 'tax harus bernilai positif.',
-      'any.required': 'tax wajib diisi.'
-    }),
-  disc: Joi.number().precision(2).positive().required()
-    .messages({
-      'number.base': 'disc harus berupa angka.',
-      'number.precision': 'disc harus memiliki dua angka di belakang koma.',
-      'number.positive': 'disc harus bernilai positif.',
-      'any.required': 'disc wajib diisi.'
+      'string.empty': 'Kode voucher harus diisi.',
+      'string.alphanum': 'Kode voucher hanya boleh berisi huruf dan angka.',
+      'string.length': 'Kode voucher harus terdiri dari 8 karakter.',
     }),
   passengerCount: Joi.object({
     adult: Joi.number().integer().min(0).required()

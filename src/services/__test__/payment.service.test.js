@@ -135,7 +135,7 @@ describe("Payment Service Tests", () => {
     
     it("should throw error if booking not found", async () => {
       prisma.booking.findUnique.mockResolvedValue(null);
-      await expect(createGoPayPayment(1)).rejects.toThrow("Booking not found");
+      await expect(createGoPayPayment(1)).rejects.toThrow("Pemesanan tidak ditemukan");
     });
     
   });
@@ -143,7 +143,7 @@ describe("Payment Service Tests", () => {
   describe("createCardPayment", () => {
     it("should throw error if booking not found", async () => {
       prisma.booking.findUnique.mockResolvedValue(null);
-      await expect(createCardPayment(1, "card_token_123")).rejects.toThrow("Booking not found");
+      await expect(createCardPayment(1, "card_token_123")).rejects.toThrow("Pemesanan tidak ditemukan");
     });
     
     it("should create Card payment successfully", async () => {

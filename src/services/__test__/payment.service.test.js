@@ -123,6 +123,7 @@ describe("Payment Service Tests", () => {
         gross_amount: "300000",
       };
       coreApi.charge.mockResolvedValue(mockResponse);
+
       prisma.payment.create.mockResolvedValue();
 
       const response = await createGoPayPayment(1);
@@ -137,7 +138,6 @@ describe("Payment Service Tests", () => {
       prisma.booking.findUnique.mockResolvedValue(null);
       await expect(createGoPayPayment(1)).rejects.toThrow("Pemesanan tidak ditemukan");
     });
-    
   });
 
   describe("createCardPayment", () => {

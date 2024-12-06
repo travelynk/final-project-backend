@@ -38,6 +38,11 @@ enum typeVoucher {
   fixed
 }
 
+enum typeVoucher {
+  percentage
+  fixed
+}
+
 // Define the models
 model User {
   id            Int            @id @default(autoincrement())

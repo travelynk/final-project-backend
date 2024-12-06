@@ -44,8 +44,7 @@
     "otplib": "^12.0.1",
     "postman2openapi": "^1.2.1",
     "socket.io": "^4.8.1",
-    "swagger-ui-express": "^5.0.1",
-    "xlsx": "^0.18.5"
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
@@ -59,7 +58,8 @@
     "jest": "^29.7.0",
     "nodemon": "^3.1.7",
     "prisma": "^5.22.0",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "xlsx": "^0.18.5"
   },
   "jest": {
     "transform": {

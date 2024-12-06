@@ -1,7 +1,4 @@
 import midtransClient from "midtrans-client";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const coreApi = new midtransClient.CoreApi({
     isProduction: false, // Set to true for production

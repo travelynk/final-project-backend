@@ -20,8 +20,8 @@ enum FlightCategory {
 }
 
 enum BookingStatus {
-  Pending
-  Confirmed
+  Unpaid
+  Issued
   Cancelled
 }
 
@@ -34,8 +34,8 @@ enum PaymentStatus {
 }
 
 enum typeVoucher {
-  percentage
-  fixed
+  Percentage
+  Fixed
 }
 
 // Define the models
@@ -188,7 +188,7 @@ model Booking {
   totalPrice       Float            @default(0) @map("total_price")
   tax              Float            @default(0)
   voucherCode      String?          @map("voucher_code") @db.VarChar(8)
-  status           BookingStatus    @default(Pending)
+  status           BookingStatus    @default(Unpaid)
   createdAt        DateTime         @default(now())  @map("created_at")
   updatedAt        DateTime         @updatedAt @map("updated_at")
 
@@ -250,12 +250,13 @@ model PassengerCount {
 model Payment {
   id               Int           @id @default(autoincrement())
   bookingId        Int           @map("booking_id")
-  transactionId    String        @unique @db.VarChar(100) @map("transaction_id")
-  reference_number String        @db.VarChar(100) @map("reference_number")
-  total            Float
-  method           String        @db.VarChar(20)
+  transactionId    String?        @unique @db.VarChar(100) @map("transaction_id")
+  reference_number String?        @db.VarChar(100) @map("reference_number")
+  total            Float?
+  method           String?        @db.VarChar(20)
   status           PaymentStatus @default(Pending)
-  amount           Float         @default(0)
+  amount           Float?         @default(0)
+  deadline         DateTime?     @default(dbgenerated("CURRENT_TIMESTAMP + INTERVAL '15 minutes'")) 
   createdAt        DateTime      @default(now()) @map("created_at")
   updatedAt        DateTime      @updatedAt      @map("updated_at")
 

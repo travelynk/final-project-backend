@@ -22,7 +22,7 @@ export const storeVoucher = async (data) => {
     });
 
     if (existingVoucher) {
-        throw new Error404('Mohon maaf, Code Voucher sudah pernah di input');
+        throw new Error404('Mohon maaf, Code Voucher sudah pernah digunakan');
     }
 
     const voucher = await prisma.voucher.create({
@@ -40,13 +40,13 @@ export const storeVoucher = async (data) => {
     return voucher;
 };
 
-export const getVoucherByCode = async (code , totalPrice) => {
+export const getVoucherByCode = async (code, totalPrice) => {
     const voucher = await prisma.voucher.findUnique({
         where: { code },
     });
 
-    if (!voucher){
-        throw new Error404("Mohon maaf , tidak dapat menemukan Voucher tersebut");
+    if (!voucher) {
+        throw new Error404("Mohon maaf, Voucher tidak dapat ditemukan");
     }
     const userId = 1;
 
@@ -60,7 +60,7 @@ export const getVoucherByCode = async (code , totalPrice) => {
 
     const isUsed = await prisma.booking.findFirst({
         where: {
-            userId, 
+            userId,
             voucher: {
                 code,
             },
@@ -71,19 +71,30 @@ export const getVoucherByCode = async (code , totalPrice) => {
         throw new Error400('Mohon maaf, Code Voucher sudah tidak berlaku');
     }
 
-    if (totalPrice < voucher.minPurchase){
+    if (totalPrice < voucher.minPurchase) {
         throw new Error400('Mohon maaf, Minimum Pembelanjaan Anda tidak mencukupi');
     }
-    
+
     let updatedTotalPrice = totalPrice;
 
-    if (voucher.type == "percentage") {
+    if (voucher.type == "Percentage") {
         updatedTotalPrice -= (totalPrice * voucher.value / 100)
-    } else if (voucher.type == "fixed"){
+    } else if (voucher.type == "Fixed") {
         updatedTotalPrice -= voucher.value
     }
 
     voucher.updatedTotalPrice = updatedTotalPrice;
 
     return voucher;
+};
+
+export const updateVoucher = async (code, dataToUpdate) => {
+    const updatedVoucher = await prisma.voucher.update({
+        where: { code },
+        data: {
+            ...dataToUpdate, 
+        },
+    });
+
+    return updatedVoucher;
 };

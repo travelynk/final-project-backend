@@ -6,4 +6,5 @@ export default (router) => {
     router.get(prefix + '/', VoucherController.getVouchers);
     router.get(prefix + '/:code', VoucherController.getVoucherByCode);
     router.post(prefix + '/', VoucherController.storeVoucher);
+    router.put(prefix + '/:code',VoucherController.updateVoucher);
 };

@@ -2,6 +2,7 @@ import prisma from "../configs/database.js";
 import { Error400, Error404, Error409 } from "../utils/customError.js";
 import * as VoucherService from './voucher.service.js';
 import { encodeBookingCode } from "../utils/hashids.js";
+import { getIoInstance } from "../configs/websocket.js";
 
 
 export const getBookings = async (userId) => {
@@ -181,7 +182,6 @@ export const storeBooking = async (userId, data) => {
   totalSum -= (totalSum * tax / 100);
 
   const totalPrice = totalSum;
-  console.log(totalPrice)
 
   const booking = await prisma.$transaction(async (tx) => {
     const createdBooking = await tx.booking.create({
@@ -201,7 +201,7 @@ export const storeBooking = async (userId, data) => {
           },
         }),
         tax,
-        status: "Pending",
+        status: "Unpaid",
       },
     });
 
@@ -282,14 +282,77 @@ export const storeBooking = async (userId, data) => {
       };
     }
 
+    const payment = await tx.payment.create({
+      data: {
+        bookingId: createdBooking.id,
+      },
+    });
+
+    setTimeout(() => updateStatusBooking({status : "Cancelled"}, createdBooking.id), 900000);
+
+    const formattedDeadline = await formatedDateAndYear(payment.deadline);
+    const message = `Selesaikan pembayaran Anda sebelum ${formattedDeadline} UTC!`;
+
+
+    const notification = await tx.notification.create({
+      data: {
+        userId: userId,
+        type: "Payment",
+        message: message,
+        isRead: false,
+      },
+    });
+
+    const createdAt = await formatedDate(notification.createdAt);
+
+    const io = getIoInstance();
+
+    io.emit('Status Pembayaran (Unpaid)', {message,createdAt});
+
     return createdBooking;
   });
 
   booking.bookingCode = await encodeBookingCode(booking.id);
-  
+
   return booking;
 };
 
+const formatedDateAndYear = async (isoString) => {
+  const dateObj = new Date(isoString);
+  const options = { 
+    day: 'numeric', 
+    month: 'long', 
+    year: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    timeZone: 'UTC' 
+  };
+  const formattedDate = dateObj.toLocaleDateString('id-ID', options);
+  // const waktu = tanggalObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
+  
+  return formattedDate;
+};
+
+const formatedDate = async (isoString) => {
+  const dateObj = new Date(isoString);
+
+  const options = { 
+    day: 'numeric', 
+    month: 'long', 
+    timeZone: 'UTC', 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  };
+
+  const formattedParts = dateObj.toLocaleDateString('id-ID', options).split(' ');
+
+  const [day, month] = formattedParts;
+
+  const hour = dateObj.getUTCHours().toString().padStart(2, '0');
+  const minute = dateObj.getUTCMinutes().toString().padStart(2, '0');
+  
+  return `${day} ${month}, ${hour}:${minute}`;
+};
 
 export const updateStatusBooking = async (data, id) => {
   const {
@@ -297,20 +360,90 @@ export const updateStatusBooking = async (data, id) => {
   } = data;
 
   const booking = await prisma.booking.findUnique({
-    where: { id: parseInt(id) },
+    where: {
+      id: parseInt(id),
+    },
+    include: {
+      segments: {
+        include: {
+          flight: {
+            select: {
+              flightNum: true,
+              departureAirport: {
+                select: { name: true, code: true },
+              },
+              arrivalAirport: {
+                select: { name: true, code: true },
+              },
+              airline: {
+                select: { name: true, code: true },
+              },
+            },
+          },
+          flightSeat: {
+            select: {
+              id: true,
+              position: true,
+              isAvailable: true,
+            },
+          },
+          passenger: true,
+        },
+      },
+    },
   });
 
   if (!booking) {
     throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
   }
 
-  const updatedBooking = await prisma.booking.update({
-    where: { id: parseInt(id) },
-    data: { status },
+  if (booking.status == "Issued") {
+    throw new Error400('Status Booking sudah tidak bisa diubah karena sudah dilakukan pembayaran.');
+  }
+
+  if (booking.status == "Cancelled") {
+    throw new Error400('Status Booking sudah tidak bisa diubah karena sudah dilakukan pembatalan.');
+  }
+
+  const updatedBooking = await prisma.$transaction(async (tx) => {
+    if (status == "Cancelled") {
+      const seatIds = booking.segments.flatMap(segment =>
+        segment.flightSeat ? [segment.flightSeat.id] : []
+      );
+
+      await tx.flightSeats.updateMany({
+        where: {
+          id: {
+            in: seatIds,
+          },
+        },
+        data: {
+          isAvailable: true,
+        },
+      });
+    }
+
+    const updatedStatusBooking = await tx.booking.update({
+      where: { id: parseInt(id) },
+      data: { status },
+    });
+
+    return updatedStatusBooking;
   });
 
   updatedBooking.bookingCode = await encodeBookingCode(updatedBooking.id);
 
+  if (status == "Cancelled") {
+    const io = getIoInstance();
+
+    const message = `Mohon maaf, Booking Anda dengan nomor ${updatedBooking.bookingCode} telah dibatalkan karena pembayaran tidak diterima 
+              sesuai batas waktu yang ditentukan. Jika membutuhkan bantuan lebih lanjut, 
+              silakan hubungi kami. Terima kasih atas pengertiannya.`;
+
+    const updatedAt = await formatedDate(updatedBooking.updatedAt);
+
+    io.emit('Pembatalan Booking', {message,updatedAt});
+  };
 
 
   return updatedBooking;

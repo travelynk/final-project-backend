@@ -53,3 +53,26 @@ export const getVoucherByCode = async (req, res, next) => {
         next(error);
     }
 };
+
+export const updateVoucher = async (req, res, next) => {
+    try {
+        const validationBody = VoucherValidation.updateVoucherBody.validate(req.body);
+
+        const validationParams = VoucherValidation.updateVoucherParams.validate(req.params);
+
+        if (validationBody.error || validationParams.error) {
+            const errors = [];
+            if (validationParams.error) errors.push(validationParams.error.message);
+            if (validationBody.error) errors.push(validationBody.error.message);
+            throw new Error400(errors.join(', '));
+        };
+
+        const { code } = validationParams.value;
+        
+        const updatedVoucher = await VoucherService.updateVoucher(code, validationBody.value);
+
+        res200('Berhasil', updatedVoucher, res);
+    } catch (error) {
+        next(error);
+    }
+};

@@ -145,12 +145,12 @@ export const storeBooking = Joi.object({
 
 export const updateStatusBookingBody = Joi.object({
   status: Joi.string()
-    .valid('Pending', 'Confirmed', 'Cancelled')
+    .valid('Unpaid', 'Issued', 'Cancelled')
     .required()
     .messages({
       'any.required': 'Status booking harus diisi.',
       'string.empty': 'Status booking tidak boleh kosong.',
-      'any.only': 'Status booking harus salah satu dari: Pending, Confirmed, Cancelled.',
+      'any.only': 'Status booking harus salah satu dari: Unpaid, Issued, Cancelled.',
     }),
 });
 

@@ -12,7 +12,7 @@ export const storeVoucher = Joi.object({
     }),
 
   type: Joi.string()
-    .valid('percentage', 'fixed')
+    .valid('Percentage', 'Fixed')
     .required()
     .messages({
       'any.only': 'Tipe voucher harus berupa "percentage" atau "fixed".',
@@ -95,5 +95,54 @@ export const getVoucherByCodeBody = Joi.object({
       'number.min': 'Total price tidak boleh kurang dari 0.',
       'number.precision': 'Total price hanya boleh memiliki hingga 2 angka desimal.',
       'any.required': 'Total price wajib diisi.',
+    })
+});
+
+
+export const updateVoucherBody = Joi.object({
+  type: Joi.string().valid('Percentage', 'Fixed').optional().messages({
+    'any.only': 'Tipe voucher harus salah satu dari: Percentage, Fixed.',
+  }),
+  value: Joi.number().positive().optional().messages({
+    'number.base': 'Nilai harus berupa angka.',
+    'number.positive': 'Nilai harus lebih besar dari nol.',
+  }),
+  minPurchase: Joi.number().positive().optional().messages({
+    'number.base': 'Pembelian minimal harus berupa angka.',
+    'number.positive': 'Pembelian minimal harus lebih besar dari nol.',
+  }),
+  maxVoucher: Joi.number().integer().min(1).optional().messages({
+    'number.base': 'Voucher maksimal harus berupa angka.',
+    'number.min': 'Voucher maksimal harus setidaknya 1.',
+  }),
+  startDate: Joi.date().iso().optional().messages({
+    'date.base': 'Tanggal mulai harus berupa tanggal yang valid.',
+    'date.format': 'Tanggal mulai harus dalam format ISO.',
+  }),
+  endDate: Joi.date().iso().greater(Joi.ref('startDate')).optional().messages({
+    'date.base': 'Tanggal selesai harus berupa tanggal yang valid.',
+    'date.format': 'Tanggal selesai harus dalam format ISO.',
+    'date.greater': 'Tanggal selesai harus lebih besar dari tanggal mulai.',
+  }),
+
+})
+  .and('startDate', 'endDate')
+  .messages({
+    'object.and': 'startDate dan endDate harus diberikan bersamaan.',
+  });
+
+export const updateVoucherParams = Joi.object({
+  code: Joi.string()
+    .alphanum()
+    .min(3)
+    .max(20)
+    .required()
+    .messages({
+      'string.base': 'Code harus berupa string.',
+      'string.alphanum': 'Code hanya boleh berisi karakter alfanumerik.',
+      'string.empty': 'Code tidak boleh kosong.',
+      'string.min': 'Code harus memiliki minimal {#limit} karakter.',
+      'string.max': 'Code tidak boleh lebih dari {#limit} karakter.',
+      'any.required': 'Code wajib diisi.'
     })
 });

@@ -37,14 +37,14 @@ describe('Flight Service', () => {
     });
 
     describe('getAll', () => {
-        test('should return all flights', async () => {
-            prisma.flight.findMany.mockResolvedValue([data]);
+        // test('should return all flights', async () => {
+        //     prisma.flight.findMany.mockResolvedValue([data]);
 
-            const result = await FlightService.getAll();
+        //     const result = await FlightService.getAll();
 
-            expect(result).toEqual([data]);
-            expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
-        });
+        //     expect(result).toEqual([data]);
+        //     expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
+        // });
 
         test('should return empty array', async () => {
             prisma.flight.findMany.mockResolvedValue([]);

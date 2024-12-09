@@ -1,5 +1,9 @@
 import { coreApi, snap } from "../configs/midtransClient.js";
 import prisma from "../configs/database.js";
+import { generateQrPng } from '../utils/qrcode.js';
+import { imagekit } from '../utils/imagekit.js';
+import { encodeBookingCode } from '../utils/hashids.js';
+import jwt from 'jsonwebtoken';
 
 export const createDebitPayment = async (bookingId, bank) => {
     const booking = await prisma.booking.findUnique({
@@ -186,3 +190,25 @@ export const createCardPayment = async (bookingId, cardToken) => {
 
     return chargeResponse;
 };
+
+export const generateQrcode = async (id) => {
+    const code = await encodeBookingCode(id);
+    const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
+    const url = `${process.env.DOMAIN_URL}/api/v1/bookings/scan?token=${resetToken}`;
+
+    const qr = await generateQrPng(url);
+
+    const qrCode = await imagekit.upload({
+        fileName: "testing",
+        file: qr.toString('base64')
+    });
+
+    const updatedBooking = await prisma.booking.update({
+        where: {
+            id: parseInt(id),
+        },
+        data: { urlQrcode: qrCode.url },
+    });
+
+    return updatedBooking
+}

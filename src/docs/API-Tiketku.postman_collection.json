@@ -65,11 +65,15 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/auth/register",
+									"raw": "http://localhost:5000/api/v1/auth/register",
+									"protocol": "http",
 									"host": [
-										"{{host}}"
+										"localhost"
 									],
+									"port": "5000",
 									"path": [
+										"api",
+										"v1",
 										"auth",
 										"register"
 									]
@@ -289,11 +293,15 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/auth/login",
+									"raw": "http://localhost:5000/api/v1/auth/login",
+									"protocol": "http",
 									"host": [
-										"{{host}}"
+										"localhost"
 									],
+									"port": "5000",
 									"path": [
+										"api",
+										"v1",
 										"auth",
 										"login"
 									]
@@ -461,11 +469,15 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/auth/reset-password?token=eyJ0eXAiOiJKV1QiLCJhbGciOJIUzI1NiJ9.eyJyZWZyZXNoX3Rva2VuX2V4cGlyZX",
+									"raw": "http://localhost:5000/api/v1/auth/reset-password?token=eyJ0eXAiOiJKV1QiLCJhbGciOJIUzI1NiJ9.eyJyZWZyZXNoX3Rva2VuX2V4cGlyZX",
+									"protocol": "http",
 									"host": [
-										"{{host}}"
+										"localhost"
 									],
+									"port": "5000",
 									"path": [
+										"api",
+										"v1",
 										"auth",
 										"reset-password"
 									],
@@ -639,11 +651,15 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/auth/verify-otp",
+									"raw": "http://localhost:5000/api/v1/auth/verify-otp",
+									"protocol": "http",
 									"host": [
-										"{{host}}"
+										"localhost"
 									],
+									"port": "5000",
 									"path": [
+										"api",
+										"v1",
 										"auth",
 										"verify-otp"
 									]
@@ -805,11 +821,15 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/auth/send-otp",
+									"raw": "http://localhost:5000/api/v1/auth/send-otp",
+									"protocol": "http",
 									"host": [
-										"{{host}}"
+										"localhost"
 									],
+									"port": "5000",
 									"path": [
+										"api",
+										"v1",
 										"auth",
 										"send-otp"
 									]
@@ -1033,11 +1053,15 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/auth/reset-password/send-email",
+									"raw": "http://localhost:5000/api/v1/auth/reset-password/send-email",
+									"protocol": "http",
 									"host": [
-										"{{host}}"
+										"localhost"
 									],
+									"port": "5000",
 									"path": [
+										"api",
+										"v1",
 										"auth",
 										"reset-password",
 										"send-email"
@@ -1270,6 +1294,236 @@
 				}
 			],
 			"description": "API authentication and authorization"
+		},
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "GetProfile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/profiles",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"profiles"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/api/v1/profiles",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"profiles"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 3,\r\n        \"fullName\": \"Travelynk\",\r\n        \"phone\": \"1234567890\",\r\n        \"email\": \"travelynk@test.com\"\r\n    }\r\n}"
+						},
+						{
+							"name": "404",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/profiles",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"profiles"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "131"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"83-cqy1zBGp0HcAQLHML/3gC2NPgL4\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 Dec 2024 10:53:06 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Pengguna tidak ditemukan. Pastikan informasi yang Anda masukkan sudah benar dan coba lagi.\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "UpdateProfile",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"Travelynk Updated\",        \r\n  \"phone\": \"0987654321\",  \r\n  \"email\": \"travelynk.updated@test.com\"  \r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/profiles",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"profiles"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"fullName\": \"John Updated\",        \r\n  \"phone\": \"0987654321\",  \r\n  \"email\": \"john.updated@example.com\"  \r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/v1/profiles",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"profiles"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 3,\r\n        \"fullName\": \"Travelynk Updated\",\r\n        \"phone\": \"0987654321\",\r\n        \"email\": \"travelynk.updated@test.com\"\r\n    }\r\n}"
+						},
+						{
+							"name": "404",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"fullName\": \"Travelynk Updated\",        \r\n  \"phone\": \"0987654321\",  \r\n  \"email\": \"travelynk.updated@test.com\"  \r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/profiles",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"profiles"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "131"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"83-cqy1zBGp0HcAQLHML/3gC2NPgL4\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 Dec 2024 10:58:32 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Pengguna tidak ditemukan. Pastikan informasi yang Anda masukkan sudah benar dan coba lagi.\",\n    \"data\": null\n}"
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "Country",
@@ -3423,7 +3677,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"airlineId\": 14,\r\n    \"flightNum\": \"GA130\",\r\n    \"departureAirportId\": 10,\r\n    \"arrivalAirportId\": 9,\r\n    \"departureTime\": \"2024-12-06T04:30:00.000Z\",\r\n    \"arrivalTime\": \"2024-12-06T05:00:00.000Z\",\r\n    \"estimatedDuration\": 45,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 60,\r\n    \"facility\": \"WIFI\",\r\n    \"price\": 940000\r\n}",
+							"raw": "{\r\n    \"airlineId\": 3,\r\n    \"flightNum\": \"QZ2007\",\r\n    \"departureTerminalId\": 12,\r\n    \"arrivalTerminalId\": 33,\r\n    \"departureTime\": \"2024-12-10T04:30:00.000Z\",\r\n    \"arrivalTime\": \"2024-12-10T05:00:00.000Z\",\r\n    \"estimatedDuration\": 45,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 60,\r\n    \"facility\": \"WIFI\",\r\n    \"price\": 940000\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3448,7 +3702,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"airlineId\": 1,\r\n    \"flightNum\": \"GA123\",\r\n    \"departureAirportId\": 1,\r\n    \"arrivalAirportId\": 2,\r\n    \"departureTime\": \"2021-08-01T00:00:00.000Z\",\r\n    \"arrivalTime\": \"2021-08-01T01:00:00.000Z\",\r\n    \"estimatedDuration\": 60,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 100,\r\n    \"facility\": \"WIFI\",\r\n    \"price\": 1000000,\r\n    \"groupId\": null\r\n}",
+									"raw": "{\r\n    \"airlineId\": 3,\r\n    \"flightNum\": \"QZ2007\",\r\n    \"departureTerminalId\": 12,\r\n    \"arrivalTerminalId\": 33,\r\n    \"departureTime\": \"2024-12-10T04:30:00.000Z\",\r\n    \"arrivalTime\": \"2024-12-10T05:00:00.000Z\",\r\n    \"estimatedDuration\": 45,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 60,\r\n    \"facility\": \"WIFI\",\r\n    \"price\": 940000\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3474,20 +3728,24 @@
 									"value": "Express"
 								},
 								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
 									"key": "Content-Type",
 									"value": "application/json; charset=utf-8"
 								},
 								{
 									"key": "Content-Length",
-									"value": "364"
+									"value": "353"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"16c-IAjViyaF3mmUbH7lp1JXvOMSBDs\""
+									"value": "W/\"161-V8FdsSog+ob9pVx41rbwt49iYwk\""
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 28 Nov 2024 07:02:59 GMT"
+									"value": "Mon, 09 Dec 2024 05:18:13 GMT"
 								},
 								{
 									"key": "Connection",
@@ -3499,7 +3757,71 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"status\": {\n        \"code\": 201,\n        \"message\": \"Berhasil menambahkan data penerbangan\"\n    },\n    \"data\": {\n        \"id\": 3,\n        \"airlineId\": 1,\n        \"flightNum\": \"GA123\",\n        \"departureAirportId\": 1,\n        \"arrivalAirportId\": 2,\n        \"departureTime\": \"2021-08-01T00:00:00.000Z\",\n        \"arrivalTime\": \"2021-08-01T01:00:00.000Z\",\n        \"estimatedDuration\": 60,\n        \"seatClass\": \"Economy\",\n        \"seatCapacity\": 100,\n        \"facility\": \"WIFI\",\n        \"price\": 1000000\n    }\n}"
+							"body": "{\n    \"status\": {\n        \"code\": 201,\n        \"message\": \"Berhasil menambahkan data penerbangan\"\n    },\n    \"data\": {\n        \"id\": 9,\n        \"airlineId\": 3,\n        \"flightNum\": \"QZ2007\",\n        \"departureTerminalId\": 12,\n        \"arrivalTerminalId\": 33,\n        \"departureTime\": \"2024-12-10T04:30:00.000Z\",\n        \"arrivalTime\": \"2024-12-10T05:00:00.000Z\",\n        \"estimatedDuration\": 0.5,\n        \"seatClass\": \"Economy\",\n        \"seatCapacity\": 60,\n        \"facility\": \"WIFI\",\n        \"price\": 940000\n    }\n}"
+						},
+						{
+							"name": "400",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"airlineId\": 3,\r\n    \"flightNum\": \"QZ2007\",\r\n    \"departureTerminalId\": 12,\r\n    \"arrivalTerminalId\": 33,\r\n    \"departureTime\": \"2024-12-09T04:30:00.000Z\",\r\n    \"arrivalTime\": \"2024-12-09T05:00:00.000Z\",\r\n    \"estimatedDuration\": 45,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 60,\r\n    \"facility\": \"WIFI\",\r\n    \"price\": 940000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/flights",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"flights"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "93"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"5d-ecOk/l5UDzew3/f1IPFky9rLbCU\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 Dec 2024 05:20:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Waktu keberangkatan tidak boleh kurang dari hari ini\",\n    \"data\": null\n}"
 						}
 					]
 				},
@@ -3552,15 +3874,15 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "2269"
+									"value": "4710"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"8dd-Y16SxASvINMJ1KiQHMDKMalBtKk\""
+									"value": "W/\"1266-7uqOpCQGVxzu0OUZSHq85T/Rv7M\""
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 06 Dec 2024 11:44:10 GMT"
+									"value": "Mon, 09 Dec 2024 07:58:36 GMT"
 								},
 								{
 									"key": "Connection",
@@ -3572,7 +3894,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Berhasil mengambil semua data penerbangan\"\n    },\n    \"data\": [\n        {\n            \"id\": 1,\n            \"airlineId\": 3,\n            \"flightNum\": \"QZ2001\",\n            \"departureTerminalId\": 11,\n            \"arrivalTerminalId\": 29,\n            \"departureTime\": \"2024-12-07T06:00:00.000Z\",\n            \"arrivalTime\": \"2024-12-07T08:00:00.000Z\",\n            \"estimatedDuration\": 2,\n            \"seatClass\": \"Economy\",\n            \"seatCapacity\": 50,\n            \"facility\": \"Wifi\",\n            \"price\": 1000000\n        },\n        {\n            \"id\": 2,\n            \"airlineId\": 3,\n            \"flightNum\": \"QZ2002\",\n            \"departureTerminalId\": 12,\n            \"arrivalTerminalId\": 33,\n            \"departureTime\": \"2024-12-07T06:30:00.000Z\",\n            \"arrivalTime\": \"2024-12-07T08:00:00.000Z\",\n            \"estimatedDuration\": 1.5,\n            \"seatClass\": \"Economy\",\n            \"seatCapacity\": 50,\n            \"facility\": \"Snack\",\n            \"price\": 800000\n        },\n        {\n            \"id\": 3,\n            \"airlineId\": 3,\n            \"flightNum\": \"QZ2003\",\n            \"departureTerminalId\": 29,\n            \"arrivalTerminalId\": 9,\n            \"departureTime\": \"2024-12-07T08:00:00.000Z\",\n            \"arrivalTime\": \"2024-12-07T09:00:00.000Z\",\n            \"estimatedDuration\": 1,\n            \"seatClass\": \"Economy\",\n            \"seatCapacity\": 50,\n            \"facility\": \"Wifi\",\n            \"price\": 900000\n        },\n        {\n            \"id\": 5,\n            \"airlineId\": 14,\n            \"flightNum\": \"GA4001\",\n            \"departureTerminalId\": 29,\n            \"arrivalTerminalId\": 33,\n            \"departureTime\": \"2024-12-07T08:00:00.000Z\",\n            \"arrivalTime\": \"2024-12-07T09:00:00.000Z\",\n            \"estimatedDuration\": 1,\n            \"seatClass\": \"Economy\",\n            \"seatCapacity\": 40,\n            \"facility\": \"Wifi\",\n            \"price\": 1250000\n        },\n        {\n            \"id\": 6,\n            \"airlineId\": 14,\n            \"flightNum\": \"GA4002\",\n            \"departureTerminalId\": 12,\n            \"arrivalTerminalId\": 29,\n            \"departureTime\": \"2024-12-07T07:00:00.000Z\",\n            \"arrivalTime\": \"2024-12-07T08:00:00.000Z\",\n            \"estimatedDuration\": 1,\n            \"seatClass\": \"Economy\",\n            \"seatCapacity\": 50,\n            \"facility\": \"Snack\",\n            \"price\": 700000\n        },\n        {\n            \"id\": 7,\n            \"airlineId\": 14,\n            \"flightNum\": \"GA4003\",\n            \"departureTerminalId\": 11,\n            \"arrivalTerminalId\": 9,\n            \"departureTime\": \"2024-12-07T06:45:00.000Z\",\n            \"arrivalTime\": \"2024-12-07T09:45:00.000Z\",\n            \"estimatedDuration\": 3,\n            \"seatClass\": \"Economy\",\n            \"seatCapacity\": 50,\n            \"facility\": \"Wifi\",\n            \"price\": 950000\n        },\n        {\n            \"id\": 4,\n            \"airlineId\": 3,\n            \"flightNum\": \"QZ2004\",\n            \"departureTerminalId\": 33,\n            \"arrivalTerminalId\": 9,\n            \"departureTime\": \"2024-12-07T08:00:00.000Z\",\n            \"arrivalTime\": \"2024-12-07T09:30:00.000Z\",\n            \"estimatedDuration\": 1.5,\n            \"seatClass\": \"Economy\",\n            \"seatCapacity\": 40,\n            \"facility\": \"Snack\",\n            \"price\": 1500000\n        },\n        {\n            \"id\": 8,\n            \"airlineId\": 14,\n            \"flightNum\": \"GA4004\",\n            \"departureTerminalId\": 33,\n            \"arrivalTerminalId\": 11,\n            \"departureTime\": \"2024-12-07T08:30:00.000Z\",\n            \"arrivalTime\": \"2024-12-07T10:00:00.000Z\",\n            \"estimatedDuration\": 1.5,\n            \"seatClass\": \"Economy\",\n            \"seatCapacity\": 20,\n            \"facility\": \"Snack\",\n            \"price\": 2000000\n        }\n    ]\n}"
+							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Berhasil mengambil semua data penerbangan\"\n    },\n    \"data\": [\n        {\n            \"flightId\": 2,\n            \"flightNum\": \"QZ2002\",\n            \"airline\": {\n                \"name\": \"AirAsia Indonesia\",\n                \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n            },\n            \"departure\": {\n                \"airport\": \"Soekarno-Hatta International Airport\",\n                \"city\": {\n                    \"code\": \"JKT\",\n                    \"name\": \"Jakarta\"\n                },\n                \"schedule\": \"2024-12-07T06:30:00.000Z\",\n                \"terminal\": \"Terminal 2\"\n            },\n            \"arrival\": {\n                \"airport\": \"Adisutjipto Airport\",\n                \"city\": {\n                    \"code\": \"JOG\",\n                    \"name\": \"Yogyakarta-Java Island\"\n                },\n                \"schedule\": \"2024-12-07T08:00:00.000Z\",\n                \"terminal\": \"Terminal A\"\n            },\n            \"estimatedDuration\": 1.5,\n            \"facility\": \"Snack\",\n            \"price\": 800000\n        },\n        {\n            \"flightId\": 3,\n            \"flightNum\": \"QZ2003\",\n            \"airline\": {\n                \"name\": \"AirAsia Indonesia\",\n                \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n            },\n            \"departure\": {\n                \"airport\": \"Juanda Airport\",\n                \"city\": {\n                    \"code\": \"SUB\",\n                    \"name\": \"Surabaya\"\n                },\n                \"schedule\": \"2024-12-07T08:00:00.000Z\",\n                \"terminal\": \"Terminal 1\"\n            },\n            \"arrival\": {\n                \"airport\": \"Ngurah Rai Airport\",\n                \"city\": {\n                    \"code\": \"DPS\",\n                    \"name\": \"Denpasar - Bali\"\n                },\n                \"schedule\": \"2024-12-07T09:00:00.000Z\",\n                \"terminal\": \"Terminal Domestik\"\n            },\n            \"estimatedDuration\": 1,\n            \"facility\": \"Wifi\",\n            \"price\": 900000\n        },\n        {\n            \"flightId\": 5,\n            \"flightNum\": \"GA4001\",\n            \"airline\": {\n                \"name\": \"Garuda Indonesia\",\n                \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n            },\n            \"departure\": {\n                \"airport\": \"Juanda Airport\",\n                \"city\": {\n                    \"code\": \"SUB\",\n                    \"name\": \"Surabaya\"\n                },\n                \"schedule\": \"2024-12-07T08:00:00.000Z\",\n                \"terminal\": \"Terminal 1\"\n            },\n            \"arrival\": {\n                \"airport\": \"Adisutjipto Airport\",\n                \"city\": {\n                    \"code\": \"JOG\",\n                    \"name\": \"Yogyakarta-Java Island\"\n                },\n                \"schedule\": \"2024-12-07T09:00:00.000Z\",\n                \"terminal\": \"Terminal A\"\n            },\n            \"estimatedDuration\": 1,\n            \"facility\": \"Wifi\",\n            \"price\": 1250000\n        },\n        {\n            \"flightId\": 6,\n            \"flightNum\": \"GA4002\",\n            \"airline\": {\n                \"name\": \"Garuda Indonesia\",\n                \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n            },\n            \"departure\": {\n                \"airport\": \"Soekarno-Hatta International Airport\",\n                \"city\": {\n                    \"code\": \"JKT\",\n                    \"name\": \"Jakarta\"\n                },\n                \"schedule\": \"2024-12-07T07:00:00.000Z\",\n                \"terminal\": \"Terminal 2\"\n            },\n            \"arrival\": {\n                \"airport\": \"Juanda Airport\",\n                \"city\": {\n                    \"code\": \"SUB\",\n                    \"name\": \"Surabaya\"\n                },\n                \"schedule\": \"2024-12-07T08:00:00.000Z\",\n                \"terminal\": \"Terminal 1\"\n            },\n            \"estimatedDuration\": 1,\n            \"facility\": \"Snack\",\n            \"price\": 700000\n        },\n        {\n            \"flightId\": 7,\n            \"flightNum\": \"GA4003\",\n            \"airline\": {\n                \"name\": \"Garuda Indonesia\",\n                \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n            },\n            \"departure\": {\n                \"airport\": \"Soekarno-Hatta International Airport\",\n                \"city\": {\n                    \"code\": \"JKT\",\n                    \"name\": \"Jakarta\"\n                },\n                \"schedule\": \"2024-12-07T06:45:00.000Z\",\n                \"terminal\": \"Terminal 1\"\n            },\n            \"arrival\": {\n                \"airport\": \"Ngurah Rai Airport\",\n                \"city\": {\n                    \"code\": \"DPS\",\n                    \"name\": \"Denpasar - Bali\"\n                },\n                \"schedule\": \"2024-12-07T09:45:00.000Z\",\n                \"terminal\": \"Terminal Domestik\"\n            },\n            \"estimatedDuration\": 3,\n            \"facility\": \"Wifi\",\n            \"price\": 950000\n        },\n        {\n            \"flightId\": 4,\n            \"flightNum\": \"QZ2004\",\n            \"airline\": {\n                \"name\": \"AirAsia Indonesia\",\n                \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n            },\n            \"departure\": {\n                \"airport\": \"Adisutjipto Airport\",\n                \"city\": {\n                    \"code\": \"JOG\",\n                    \"name\": \"Yogyakarta-Java Island\"\n                },\n                \"schedule\": \"2024-12-07T08:00:00.000Z\",\n                \"terminal\": \"Terminal A\"\n            },\n            \"arrival\": {\n                \"airport\": \"Ngurah Rai Airport\",\n                \"city\": {\n                    \"code\": \"DPS\",\n                    \"name\": \"Denpasar - Bali\"\n                },\n                \"schedule\": \"2024-12-07T09:30:00.000Z\",\n                \"terminal\": \"Terminal Domestik\"\n            },\n            \"estimatedDuration\": 1.5,\n            \"facility\": \"Snack\",\n            \"price\": 1500000\n        },\n        {\n            \"flightId\": 8,\n            \"flightNum\": \"GA4004\",\n            \"airline\": {\n                \"name\": \"Garuda Indonesia\",\n                \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n            },\n            \"departure\": {\n                \"airport\": \"Adisutjipto Airport\",\n                \"city\": {\n                    \"code\": \"JOG\",\n                    \"name\": \"Yogyakarta-Java Island\"\n                },\n                \"schedule\": \"2024-12-07T08:30:00.000Z\",\n                \"terminal\": \"Terminal A\"\n            },\n            \"arrival\": {\n                \"airport\": \"Soekarno-Hatta International Airport\",\n                \"city\": {\n                    \"code\": \"JKT\",\n                    \"name\": \"Jakarta\"\n                },\n                \"schedule\": \"2024-12-07T10:00:00.000Z\",\n                \"terminal\": \"Terminal 1\"\n            },\n            \"estimatedDuration\": 1.5,\n            \"facility\": \"Snack\",\n            \"price\": 2000000\n        },\n        {\n            \"flightId\": 1,\n            \"flightNum\": \"QZ2001\",\n            \"airline\": {\n                \"name\": \"AirAsia Indonesia\",\n                \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n            },\n            \"departure\": {\n                \"airport\": \"Soekarno-Hatta International Airport\",\n                \"city\": {\n                    \"code\": \"JKT\",\n                    \"name\": \"Jakarta\"\n                },\n                \"schedule\": \"2024-12-07T06:00:00.000Z\",\n                \"terminal\": \"Terminal 1\"\n            },\n            \"arrival\": {\n                \"airport\": \"Juanda Airport\",\n                \"city\": {\n                    \"code\": \"SUB\",\n                    \"name\": \"Surabaya\"\n                },\n                \"schedule\": \"2024-12-07T07:00:00.000Z\",\n                \"terminal\": \"Terminal 1\"\n            },\n            \"estimatedDuration\": 1,\n            \"facility\": \"Wifi\",\n            \"price\": 1000000\n        },\n        {\n            \"flightId\": 9,\n            \"flightNum\": \"QZ2005\",\n            \"airline\": {\n                \"name\": \"AirAsia Indonesia\",\n                \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n            },\n            \"departure\": {\n                \"airport\": \"Soekarno-Hatta International Airport\",\n                \"city\": {\n                    \"code\": \"JKT\",\n                    \"name\": \"Jakarta\"\n                },\n                \"schedule\": \"2024-12-10T04:30:00.000Z\",\n                \"terminal\": \"Terminal 2\"\n            },\n            \"arrival\": {\n                \"airport\": \"Adisutjipto Airport\",\n                \"city\": {\n                    \"code\": \"JOG\",\n                    \"name\": \"Yogyakarta-Java Island\"\n                },\n                \"schedule\": \"2024-12-10T05:00:00.000Z\",\n                \"terminal\": \"Terminal A\"\n            },\n            \"estimatedDuration\": 45,\n            \"facility\": \"WIFI\",\n            \"price\": 940000\n        }\n    ]\n}"
 						}
 					]
 				},
@@ -3594,7 +3916,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/flights/search?rf=JKT.DPS&dt=2024-12-07&ps=2.1.0&sc=Economy",
+							"raw": "{{host}}/flights/search?rf=JKT.DPS&dt=2024-12-12.2024-12-12&ps=2.0.0&sc=Economy",
 							"host": [
 								"{{host}}"
 							],
@@ -3610,12 +3932,12 @@
 								},
 								{
 									"key": "dt",
-									"value": "2024-12-07",
+									"value": "2024-12-12.2024-12-12",
 									"description": "Schedule Flight = outboundTime.returnTime"
 								},
 								{
 									"key": "ps",
-									"value": "2.1.0",
+									"value": "2.0.0",
 									"description": "Passenger Count = adult.child.infant"
 								},
 								{
@@ -3627,93 +3949,6 @@
 						}
 					},
 					"response": [
-						{
-							"name": "200",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{host}}/flights/search?rf=JKT.DPS&dt=2024-12-07&ps=2.1.0&sc=Economy",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"flights",
-										"search"
-									],
-									"query": [
-										{
-											"key": "rf",
-											"value": "JKT.DPS",
-											"description": "Route Flight = departureCityCode.ArrivalCityCode"
-										},
-										{
-											"key": "dt",
-											"value": "2024-12-07",
-											"description": "Schedule Flight = outboundTime.returnTime"
-										},
-										{
-											"key": "ps",
-											"value": "2.1.0",
-											"description": "Passenger Count = adult.child.infant"
-										},
-										{
-											"key": "sc",
-											"value": "Economy",
-											"description": "Seat Class = Economy/Premium Economy/Business/First Class"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "X-Powered-By",
-									"value": "Express"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
-								},
-								{
-									"key": "Content-Length",
-									"value": "7744"
-								},
-								{
-									"key": "ETag",
-									"value": "W/\"1e40-q/6Yx6wdchLMwL1l3C6mBFXNVOY\""
-								},
-								{
-									"key": "Date",
-									"value": "Fri, 06 Dec 2024 11:35:14 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=5"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Berhasil mengambil data penerbangan yang tersedia\"\n    },\n    \"data\": {\n        \"outboundFlights\": [\n            {\n                \"flightDate\": \"2024-12-07\",\n                \"estimatedDuration\": \"3 Jam\",\n                \"departureTime\": \"20:00\",\n                \"arrivalTime\": \"23:00\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 1.900.000\",\n                \"isTransit\": true,\n                \"flights\": [\n                    {\n                        \"flightId\": 1,\n                        \"flightNum\": \"QZ2001\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"20:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"estimatedDuration\": 2,\n                        \"facility\": \"Wifi\",\n                        \"price\": 1000000\n                    },\n                    {\n                        \"flightId\": 3,\n                        \"flightNum\": \"QZ2003\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"23:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Wifi\",\n                        \"price\": 900000\n                    }\n                ]\n            },\n            {\n                \"flightDate\": \"2024-12-07\",\n                \"estimatedDuration\": \"2 Jam\",\n                \"departureTime\": \"21:00\",\n                \"arrivalTime\": \"23:00\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 1.600.000\",\n                \"isTransit\": true,\n                \"flights\": [\n                    {\n                        \"flightId\": 6,\n                        \"flightNum\": \"GA4002\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"21:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 2\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Snack\",\n                        \"price\": 700000\n                    },\n                    {\n                        \"flightId\": 3,\n                        \"flightNum\": \"QZ2003\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"23:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Wifi\",\n                        \"price\": 900000\n                    }\n                ]\n            },\n            {\n                \"flightDate\": \"2024-12-07\",\n                \"estimatedDuration\": \"4.5 Jam\",\n                \"departureTime\": \"20:00\",\n                \"arrivalTime\": \"23:30\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 3.750.000\",\n                \"isTransit\": true,\n                \"flights\": [\n                    {\n                        \"flightId\": 1,\n                        \"flightNum\": \"QZ2001\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"20:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"estimatedDuration\": 2,\n                        \"facility\": \"Wifi\",\n                        \"price\": 1000000\n                    },\n                    {\n                        \"flightId\": 5,\n                        \"flightNum\": \"GA4001\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"23:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Wifi\",\n                        \"price\": 1250000\n                    },\n                    {\n                        \"flightId\": 4,\n                        \"flightNum\": \"QZ2004\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"23:30\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 1.5,\n                        \"facility\": \"Snack\",\n                        \"price\": 1500000\n                    }\n                ]\n            },\n            {\n                \"flightDate\": \"2024-12-07\",\n                \"estimatedDuration\": \"3.5 Jam\",\n                \"departureTime\": \"21:00\",\n                \"arrivalTime\": \"23:30\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 3.450.000\",\n                \"isTransit\": true,\n                \"flights\": [\n                    {\n                        \"flightId\": 6,\n                        \"flightNum\": \"GA4002\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"21:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 2\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Snack\",\n                        \"price\": 700000\n                    },\n                    {\n                        \"flightId\": 5,\n                        \"flightNum\": \"GA4001\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"23:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Wifi\",\n                        \"price\": 1250000\n                    },\n                    {\n                        \"flightId\": 4,\n                        \"flightNum\": \"QZ2004\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"23:30\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 1.5,\n                        \"facility\": \"Snack\",\n                        \"price\": 1500000\n                    }\n                ]\n            },\n            {\n                \"flightDate\": \"2024-12-07\",\n                \"estimatedDuration\": \"3 Jam\",\n                \"departureTime\": \"20:30\",\n                \"arrivalTime\": \"23:30\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 2.300.000\",\n                \"isTransit\": true,\n                \"flights\": [\n                    {\n                        \"flightId\": 2,\n                        \"flightNum\": \"QZ2002\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"20:30\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 2\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"estimatedDuration\": 1.5,\n                        \"facility\": \"Snack\",\n                        \"price\": 800000\n                    },\n                    {\n                        \"flightId\": 4,\n                        \"flightNum\": \"QZ2004\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"22:00\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"23:30\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 1.5,\n                        \"facility\": \"Snack\",\n                        \"price\": 1500000\n                    }\n                ]\n            },\n            {\n                \"flightDate\": \"2024-12-07\",\n                \"estimatedDuration\": \"3 Jam\",\n                \"departureTime\": \"20:45\",\n                \"arrivalTime\": \"23:45\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 950.000\",\n                \"isTransit\": false,\n                \"flights\": [\n                    {\n                        \"flightId\": 7,\n                        \"flightNum\": \"GA4003\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"20:45\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"23:45\",\n                            \"date\": \"2024-12-07\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 3,\n                        \"facility\": \"Wifi\",\n                        \"price\": 950000\n                    }\n                ]\n            }\n        ],\n        \"returnFlights\": []\n    }\n}"
-						},
 						{
 							"name": "404",
 							"originalRequest": {
@@ -3787,6 +4022,93 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"status\": false,\n    \"message\": \"Penerbangan pulang tidak ditemukan!\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/flights/search?rf=JKT.DPS&dt=2024-12-12.2024-12-12&ps=2.0.0&sc=Economy",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"flights",
+										"search"
+									],
+									"query": [
+										{
+											"key": "rf",
+											"value": "JKT.DPS",
+											"description": "Route Flight = departureCityCode.ArrivalCityCode"
+										},
+										{
+											"key": "dt",
+											"value": "2024-12-12.2024-12-12",
+											"description": "Schedule Flight = outboundTime.returnTime"
+										},
+										{
+											"key": "ps",
+											"value": "2.0.0",
+											"description": "Passenger Count = adult.child.infant"
+										},
+										{
+											"key": "sc",
+											"value": "Economy",
+											"description": "Seat Class = Economy/Premium Economy/Business/First Class"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "7671"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1df7-NqYNd7pO2051mgGA412p6pRYBlQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 Dec 2024 10:45:26 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Berhasil mengambil data penerbangan yang tersedia\"\n    },\n    \"data\": {\n        \"outboundFlights\": [\n            {\n                \"flightDate\": \"2024-12-12\",\n                \"estimatedDuration\": \"3 Jam\",\n                \"departureTime\": \"2024-12-12T06:00:00.000Z\",\n                \"arrivalTime\": \"2024-12-12T09:00:00.000Z\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 1.900.000\",\n                \"isTransit\": true,\n                \"delayTransit\": [\n                    \"1 Jam\"\n                ],\n                \"flights\": [\n                    {\n                        \"flightId\": 1,\n                        \"flightNum\": \"QZ2001\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"13:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"14:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"estimatedDuration\": 2,\n                        \"facility\": \"Wifi\",\n                        \"price\": 1000000\n                    },\n                    {\n                        \"flightId\": 3,\n                        \"flightNum\": \"QZ2003\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"15:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"16:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Wifi\",\n                        \"price\": 900000\n                    }\n                ]\n            },\n            {\n                \"flightDate\": \"2024-12-12\",\n                \"estimatedDuration\": \"4.5 Jam\",\n                \"departureTime\": \"2024-12-12T06:00:00.000Z\",\n                \"arrivalTime\": \"2024-12-12T12:30:00.000Z\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 3.750.000\",\n                \"isTransit\": true,\n                \"delayTransit\": [\n                    \"2 Jam\",\n                    \"1 Jam 15 Menit\"\n                ],\n                \"flights\": [\n                    {\n                        \"flightId\": 1,\n                        \"flightNum\": \"QZ2001\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"13:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"14:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"estimatedDuration\": 2,\n                        \"facility\": \"Wifi\",\n                        \"price\": 1000000\n                    },\n                    {\n                        \"flightId\": 5,\n                        \"flightNum\": \"GA4001\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"16:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"16:45\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Wifi\",\n                        \"price\": 1250000\n                    },\n                    {\n                        \"flightId\": 4,\n                        \"flightNum\": \"QZ2004\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"18:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"19:30\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 1.5,\n                        \"facility\": \"Snack\",\n                        \"price\": 1500000\n                    }\n                ]\n            },\n            {\n                \"flightDate\": \"2024-12-12\",\n                \"estimatedDuration\": \"3.5 Jam\",\n                \"departureTime\": \"2024-12-12T07:00:00.000Z\",\n                \"arrivalTime\": \"2024-12-12T12:30:00.000Z\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 3.450.000\",\n                \"isTransit\": true,\n                \"delayTransit\": [\n                    \"1 Jam\",\n                    \"1 Jam 15 Menit\"\n                ],\n                \"flights\": [\n                    {\n                        \"flightId\": 6,\n                        \"flightNum\": \"GA4002\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"14:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 2\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"15:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Snack\",\n                        \"price\": 700000\n                    },\n                    {\n                        \"flightId\": 5,\n                        \"flightNum\": \"GA4001\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Juanda Airport\",\n                            \"city\": {\n                                \"code\": \"SUB\",\n                                \"name\": \"Surabaya\"\n                            },\n                            \"time\": \"16:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"16:45\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"estimatedDuration\": 1,\n                        \"facility\": \"Wifi\",\n                        \"price\": 1250000\n                    },\n                    {\n                        \"flightId\": 4,\n                        \"flightNum\": \"QZ2004\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"18:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"19:30\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 1.5,\n                        \"facility\": \"Snack\",\n                        \"price\": 1500000\n                    }\n                ]\n            },\n            {\n                \"flightDate\": \"2024-12-12\",\n                \"estimatedDuration\": \"3 Jam\",\n                \"departureTime\": \"2024-12-12T06:30:00.000Z\",\n                \"arrivalTime\": \"2024-12-12T12:30:00.000Z\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 2.300.000\",\n                \"isTransit\": true,\n                \"delayTransit\": [\n                    \"3 Jam\"\n                ],\n                \"flights\": [\n                    {\n                        \"flightId\": 2,\n                        \"flightNum\": \"QZ2002\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"13:30\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 2\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"15:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"estimatedDuration\": 1.5,\n                        \"facility\": \"Snack\",\n                        \"price\": 800000\n                    },\n                    {\n                        \"flightId\": 4,\n                        \"flightNum\": \"QZ2004\",\n                        \"airline\": {\n                            \"name\": \"AirAsia Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Adisutjipto Airport\",\n                            \"city\": {\n                                \"code\": \"JOG\",\n                                \"name\": \"Yogyakarta-Java Island\"\n                            },\n                            \"time\": \"18:00\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal A\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"19:30\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 1.5,\n                        \"facility\": \"Snack\",\n                        \"price\": 1500000\n                    }\n                ]\n            },\n            {\n                \"flightDate\": \"2024-12-12\",\n                \"estimatedDuration\": \"3 Jam\",\n                \"departureTime\": \"2024-12-12T06:45:00.000Z\",\n                \"arrivalTime\": \"2024-12-12T09:45:00.000Z\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 950.000\",\n                \"isTransit\": false,\n                \"delayTransit\": [],\n                \"flights\": [\n                    {\n                        \"flightId\": 7,\n                        \"flightNum\": \"GA4003\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"13:45\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"16:45\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"estimatedDuration\": 3,\n                        \"facility\": \"Wifi\",\n                        \"price\": 950000\n                    }\n                ]\n            }\n        ],\n        \"returnFlights\": [\n            {\n                \"flightDate\": \"2024-12-12\",\n                \"estimatedDuration\": \"1.5 Jam\",\n                \"departureTime\": \"2024-12-12T08:30:00.000Z\",\n                \"arrivalTime\": \"2024-12-12T10:10:00.000Z\",\n                \"seatClass\": \"Economy\",\n                \"price\": \"Rp 2.000.000\",\n                \"isTransit\": false,\n                \"delayTransit\": [],\n                \"flights\": [\n                    {\n                        \"flightId\": 8,\n                        \"flightNum\": \"GA4004\",\n                        \"airline\": {\n                            \"name\": \"Garuda Indonesia\",\n                            \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                        },\n                        \"departure\": {\n                            \"airport\": \"Ngurah Rai Airport\",\n                            \"city\": {\n                                \"code\": \"DPS\",\n                                \"name\": \"Denpasar - Bali\"\n                            },\n                            \"time\": \"15:30\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal Domestik\"\n                        },\n                        \"arrival\": {\n                            \"airport\": \"Soekarno-Hatta International Airport\",\n                            \"city\": {\n                                \"code\": \"JKT\",\n                                \"name\": \"Jakarta\"\n                            },\n                            \"time\": \"17:10\",\n                            \"date\": \"2024-12-12\",\n                            \"terminal\": \"Terminal 1\"\n                        },\n                        \"estimatedDuration\": 1.5,\n                        \"facility\": \"Snack\",\n                        \"price\": 2000000\n                    }\n                ]\n            }\n        ]\n    }\n}"
 						}
 					]
 				},
@@ -3920,7 +4242,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"airlineId\": 1,\r\n    \"flightNum\": \"GA123\",\r\n    \"departureAirportId\": 1,\r\n    \"arrivalAirportId\": 2,\r\n    \"departureTime\": \"2021-08-01T11:30:00.000Z\",\r\n    \"arrivalTime\": \"2021-08-01T01:00:00.000Z\",\r\n    \"estimatedDuration\": 60,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 80,\r\n    \"facility\": \"WIFI\",\r\n    \"price\": 1000000\r\n}",
+							"raw": "{\r\n    \"airlineId\": 3,\r\n    \"flightNum\": \"QZ2005\",\r\n    \"departureTerminalId\": 12,\r\n    \"arrivalTerminalId\": 33,\r\n    \"departureTime\": \"2024-12-10T04:30:00.000Z\",\r\n    \"arrivalTime\": \"2024-12-09T05:00:00.000Z\",\r\n    \"estimatedDuration\": 45,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 60,\r\n    \"facility\": \"WIFI\",\r\n    \"price\": 940000\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3928,13 +4250,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/flights/1",
+							"raw": "{{host}}/flights/9",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"flights",
-								"1"
+								"9"
 							]
 						}
 					},
@@ -3946,7 +4268,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"airlineId\": 1,\r\n    \"flightNum\": \"GA123\",\r\n    \"departureAirportId\": 1,\r\n    \"arrivalAirportId\": 2,\r\n    \"departureTime\": \"2021-08-01T00:00:00.000Z\",\r\n    \"arrivalTime\": \"2021-08-01T01:00:00.000Z\",\r\n    \"estimatedDuration\": 60,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 100,\r\n    \"facility\": \"WIFI and Snack\",\r\n    \"price\": 1000000,\r\n    \"groupId\": null\r\n}",
+									"raw": "{\r\n    \"airlineId\": 3,\r\n    \"flightNum\": \"QZ2005\",\r\n    \"departureTerminalId\": 12,\r\n    \"arrivalTerminalId\": 33,\r\n    \"departureTime\": \"2024-12-10T04:30:00.000Z\",\r\n    \"arrivalTime\": \"2024-12-10T05:00:00.000Z\",\r\n    \"estimatedDuration\": 45,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 60,\r\n    \"facility\": \"WIFI\",\r\n    \"price\": 940000\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3954,13 +4276,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/flights/3",
+									"raw": "{{host}}/flights/9",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"flights",
-										"3"
+										"9"
 									]
 								}
 							},
@@ -3973,20 +4295,24 @@
 									"value": "Express"
 								},
 								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
 									"key": "Content-Type",
 									"value": "application/json; charset=utf-8"
 								},
 								{
 									"key": "Content-Length",
-									"value": "371"
+									"value": "349"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"173-Q468CcJDDuoi4C87e43co6QI3iw\""
+									"value": "W/\"15d-FiRBHVjAxUd8HLLz2d1G+vcjzjk\""
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 28 Nov 2024 07:23:36 GMT"
+									"value": "Mon, 09 Dec 2024 05:20:04 GMT"
 								},
 								{
 									"key": "Connection",
@@ -3998,7 +4324,72 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Berhasil mengubah data penerbangan\"\n    },\n    \"data\": {\n        \"id\": 3,\n        \"airlineId\": 1,\n        \"flightNum\": \"GA123\",\n        \"departureAirportId\": 1,\n        \"arrivalAirportId\": 2,\n        \"departureTime\": \"2021-08-01T00:00:00.000Z\",\n        \"arrivalTime\": \"2021-08-01T01:00:00.000Z\",\n        \"estimatedDuration\": 60,\n        \"seatClass\": \"Economy\",\n        \"seatCapacity\": 100,\n        \"facility\": \"WIFI and Snack\",\n        \"price\": 1000000\n    }\n}"
+							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Berhasil mengubah data penerbangan\"\n    },\n    \"data\": {\n        \"id\": 9,\n        \"airlineId\": 3,\n        \"flightNum\": \"QZ2005\",\n        \"departureTerminalId\": 12,\n        \"arrivalTerminalId\": 33,\n        \"departureTime\": \"2024-12-10T04:30:00.000Z\",\n        \"arrivalTime\": \"2024-12-10T05:00:00.000Z\",\n        \"estimatedDuration\": 45,\n        \"seatClass\": \"Economy\",\n        \"seatCapacity\": 60,\n        \"facility\": \"WIFI\",\n        \"price\": 940000\n    }\n}"
+						},
+						{
+							"name": "400",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"airlineId\": 3,\r\n    \"flightNum\": \"QZ2005\",\r\n    \"departureTerminalId\": 12,\r\n    \"arrivalTerminalId\": 33,\r\n    \"departureTime\": \"2024-12-10T04:30:00.000Z\",\r\n    \"arrivalTime\": \"2024-12-09T05:00:00.000Z\",\r\n    \"estimatedDuration\": 45,\r\n    \"seatClass\": \"Economy\",\r\n    \"seatCapacity\": 60,\r\n    \"facility\": \"WIFI\",\r\n    \"price\": 940000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/flights/9",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"flights",
+										"9"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "100"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"64-92bn0YIEc7Ayf6bJa+xgHlqcFg0\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 Dec 2024 05:21:03 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Waktu kedatangan harus lebih besar dari waktu keberangkatan\",\n    \"data\": null\n}"
 						}
 					]
 				},
@@ -4094,15 +4485,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/payments/debit",
-							"protocol": "http",
+							"raw": "{{host}}/payments/debit",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"payments",
 								"debit"
 							]
@@ -4124,15 +4511,11 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3000/api/v1/payments/debit",
-									"protocol": "http",
+									"raw": "{{host}}/payments/debit",
 									"host": [
-										"localhost"
+										"{{host}}"
 									],
-									"port": "3000",
 									"path": [
-										"api",
-										"v1",
 										"payments",
 										"debit"
 									]
@@ -4182,15 +4565,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/payments/b4a61bf7-286d-45c4-b3e2-689d97240939",
-							"protocol": "http",
+							"raw": "{{host}}/payments/b4a61bf7-286d-45c4-b3e2-689d97240939",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"payments",
 								"b4a61bf7-286d-45c4-b3e2-689d97240939"
 							],
@@ -4210,15 +4589,11 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:3000/api/v1/payments/b4a61bf7-286d-45c4-b3e2-689d97240939",
-									"protocol": "http",
+									"raw": "{{host}}/payments/b4a61bf7-286d-45c4-b3e2-689d97240939",
 									"host": [
-										"localhost"
+										"{{host}}"
 									],
-									"port": "3000",
 									"path": [
-										"api",
-										"v1",
 										"payments",
 										"b4a61bf7-286d-45c4-b3e2-689d97240939"
 									],
@@ -4284,15 +4659,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/payments/gopay",
-							"protocol": "http",
+							"raw": "{{host}}/payments/gopay",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"payments",
 								"gopay"
 							]
@@ -4314,15 +4685,11 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3000/api/v1/payments/gopay",
-									"protocol": "http",
+									"raw": "{{host}}/payments/gopay",
 									"host": [
-										"localhost"
+										"{{host}}"
 									],
-									"port": "3000",
 									"path": [
-										"api",
-										"v1",
 										"payments",
 										"gopay"
 									]
@@ -4381,15 +4748,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/payments/credit-card",
-							"protocol": "http",
+							"raw": "{{host}}/payments/credit-card",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"payments",
 								"credit-card"
 							]
@@ -4411,15 +4774,11 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3000/api/v1/payments/credit-card",
-									"protocol": "http",
+									"raw": "{{host}}/payments/credit-card",
 									"host": [
-										"localhost"
+										"{{host}}"
 									],
-									"port": "3000",
 									"path": [
-										"api",
-										"v1",
 										"payments",
 										"credit-card"
 									]
@@ -4469,15 +4828,11 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/v1/payments/35179627-7d53-4771-ba31-0bb4f279fe54",
-							"protocol": "http",
+							"raw": "{{host}}/payments/35179627-7d53-4771-ba31-0bb4f279fe54",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"payments",
 								"35179627-7d53-4771-ba31-0bb4f279fe54"
 							]
@@ -4490,15 +4845,11 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:3000/api/v1/payments/35179627-7d53-4771-ba31-0bb4f279fe54",
-									"protocol": "http",
+									"raw": "{{host}}/payments/35179627-7d53-4771-ba31-0bb4f279fe54",
 									"host": [
-										"localhost"
+										"{{host}}"
 									],
-									"port": "3000",
 									"path": [
-										"api",
-										"v1",
 										"payments",
 										"35179627-7d53-4771-ba31-0bb4f279fe54"
 									]
@@ -4544,6 +4895,561 @@
 				}
 			],
 			"description": "API for payment"
+		},
+		{
+			"name": "Seat",
+			"item": [
+				{
+					"name": "GetSeatsByFlightId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/seats/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"seats",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/seats/1",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"seats",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": [\r\n        {\r\n            \"id\": 8,\r\n            \"position\": \"1B\",\r\n            \"isAvailable\": false\r\n        },\r\n        {\r\n            \"id\": 7,\r\n            \"position\": \"1A\",\r\n            \"isAvailable\": false\r\n        },\r\n        {\r\n            \"id\": 9,\r\n            \"position\": \"1C\",\r\n            \"isAvailable\": false\r\n        },\r\n        {\r\n            \"id\": 10,\r\n            \"position\": \"2A\",\r\n            \"isAvailable\": false\r\n        },\r\n        {\r\n            \"id\": 12,\r\n            \"position\": \"2C\",\r\n            \"isAvailable\": false\r\n        },\r\n        {\r\n            \"id\": 11,\r\n            \"position\": \"2B\",\r\n            \"isAvailable\": false\r\n        }\r\n    ]\r\n}"
+						}
+					]
+				}
+			],
+			"description": "API for check available seat"
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "GetBookingsByDate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/bookings/filter?startDate=2024-12-01&endDate=2024-12-10",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"bookings",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-12-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-12-10"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/bookings/filter?startDate=2024-12-01&endDate=2024-12-10",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"bookings",
+										"filter"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2024-12-01"
+										},
+										{
+											"key": "endDate",
+											"value": "2024-12-10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": [\r\n        {\r\n            \"id\": 26,\r\n            \"userId\": 1,\r\n            \"roundTrip\": true,\r\n            \"totalPrice\": 1335,\r\n            \"tax\": 11,\r\n            \"voucherCode\": null,\r\n            \"urlQrcode\": \"https://ik.imagekit.io/9kbraeia1/testing_P9KZ1ot2K\",\r\n            \"isScan\": true,\r\n            \"status\": \"Issued\",\r\n            \"createdAt\": \"2024-12-06T08:35:28.557Z\",\r\n            \"updatedAt\": \"2024-12-09T03:56:37.835Z\",\r\n            \"user\": {\r\n                \"id\": 1,\r\n                \"email\": \"admin@gmail.com\",\r\n                \"profile\": {\r\n                    \"fullName\": \"Admin\",\r\n                    \"phone\": \"628123456789\"\r\n                }\r\n            },\r\n            \"passengerCount\": {\r\n                \"id\": 25,\r\n                \"bookingId\": 26,\r\n                \"adult\": 1,\r\n                \"child\": 0,\r\n                \"infant\": 0\r\n            },\r\n            \"segments\": [\r\n                {\r\n                    \"id\": 19,\r\n                    \"bookingId\": 26,\r\n                    \"flightId\": 1,\r\n                    \"isReturn\": false,\r\n                    \"passengerId\": 22,\r\n                    \"seatId\": 4,\r\n                    \"flight\": {\r\n                        \"flightNum\": \"FL123\",\r\n                        \"departureAirport\": {\r\n                            \"name\": \"Pattimura Airport\",\r\n                            \"code\": \"AMQ\"\r\n                        },\r\n                        \"arrivalAirport\": {\r\n                            \"name\": \"Sultan Iskandar Muda Airport\",\r\n                            \"code\": \"BTJ\"\r\n                        },\r\n                        \"airline\": {\r\n                            \"name\": \"Air Arabia Maroc\",\r\n                            \"code\": \"3O\"\r\n                        }\r\n                    },\r\n                    \"flightSeat\": {\r\n                        \"position\": \"2A\",\r\n                        \"isAvailable\": true\r\n                    },\r\n                    \"passenger\": {\r\n                        \"id\": 22,\r\n                        \"userId\": 1,\r\n                        \"title\": \"Mr\",\r\n                        \"fullName\": \"John Doe\",\r\n                        \"familyName\": \"Doe\",\r\n                        \"dob\": \"1990-05-20T00:00:00.000Z\",\r\n                        \"nationality\": \"USA\",\r\n                        \"identityNumber\": \"ID12345678921234\",\r\n                        \"issuingCountry\": \"USA\",\r\n                        \"identityExp\": \"2030-05-20T00:00:00.000Z\"\r\n                    }\r\n                },\r\n                {\r\n                    \"id\": 20,\r\n                    \"bookingId\": 26,\r\n                    \"flightId\": 2,\r\n                    \"isReturn\": true,\r\n                    \"passengerId\": 23,\r\n                    \"seatId\": 10,\r\n                    \"flight\": {\r\n                        \"flightNum\": \"FL124\",\r\n                        \"departureAirport\": {\r\n                            \"name\": \"Sultan Iskandar Muda Airport\",\r\n                            \"code\": \"BTJ\"\r\n                        },\r\n                        \"arrivalAirport\": {\r\n                            \"name\": \"Pattimura Airport\",\r\n                            \"code\": \"AMQ\"\r\n                        },\r\n                        \"airline\": {\r\n                            \"name\": \"Air Arabia Maroc\",\r\n                            \"code\": \"3O\"\r\n                        }\r\n                    },\r\n                    \"flightSeat\": {\r\n                        \"position\": \"2A\",\r\n                        \"isAvailable\": true\r\n                    },\r\n                    \"passenger\": {\r\n                        \"id\": 23,\r\n                        \"userId\": 1,\r\n                        \"title\": \"Mr\",\r\n                        \"fullName\": \"Jane Doe\",\r\n                        \"familyName\": \"Doe\",\r\n                        \"dob\": \"1992-08-15T00:00:00.000Z\",\r\n                        \"nationality\": \"USA\",\r\n                        \"identityNumber\": \"ID98765432121234\",\r\n                        \"issuingCountry\": \"USA\",\r\n                        \"identityExp\": \"2030-08-15T00:00:00.000Z\"\r\n                    }\r\n                }\r\n            ],\r\n            \"payments\": [\r\n                {\r\n                    \"transactionId\": null,\r\n                    \"status\": \"Pending\",\r\n                    \"total\": null,\r\n                    \"method\": null\r\n                }\r\n            ],\r\n            \"voucher\": null,\r\n            \"bookingCode\": \"bOQJR1M19\"\r\n        }\r\n    ]\r\n}"
+						}
+					]
+				},
+				{
+					"name": "GetBookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/bookings",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/bookings",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"bookings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": [\r\n        {\r\n            \"id\": 26,\r\n            \"userId\": 1,\r\n            \"roundTrip\": true,\r\n            \"totalPrice\": 1335,\r\n            \"tax\": 11,\r\n            \"voucherCode\": null,\r\n            \"urlQrcode\": \"https://ik.imagekit.io/9kbraeia1/testing_P9KZ1ot2K\",\r\n            \"isScan\": true,\r\n            \"status\": \"Issued\",\r\n            \"createdAt\": \"2024-12-06T08:35:28.557Z\",\r\n            \"updatedAt\": \"2024-12-09T03:56:37.835Z\",\r\n            \"user\": {\r\n                \"id\": 1,\r\n                \"email\": \"admin@gmail.com\",\r\n                \"profile\": {\r\n                    \"fullName\": \"Admin\",\r\n                    \"phone\": \"628123456789\"\r\n                }\r\n            },\r\n            \"passengerCount\": {\r\n                \"id\": 25,\r\n                \"bookingId\": 26,\r\n                \"adult\": 1,\r\n                \"child\": 0,\r\n                \"infant\": 0\r\n            },\r\n            \"segments\": [\r\n                {\r\n                    \"id\": 19,\r\n                    \"bookingId\": 26,\r\n                    \"flightId\": 1,\r\n                    \"isReturn\": false,\r\n                    \"passengerId\": 22,\r\n                    \"seatId\": 4,\r\n                    \"flight\": {\r\n                        \"flightNum\": \"FL123\",\r\n                        \"departureAirport\": {\r\n                            \"name\": \"Pattimura Airport\",\r\n                            \"code\": \"AMQ\"\r\n                        },\r\n                        \"arrivalAirport\": {\r\n                            \"name\": \"Sultan Iskandar Muda Airport\",\r\n                            \"code\": \"BTJ\"\r\n                        },\r\n                        \"airline\": {\r\n                            \"name\": \"Air Arabia Maroc\",\r\n                            \"code\": \"3O\"\r\n                        }\r\n                    },\r\n                    \"flightSeat\": {\r\n                        \"position\": \"2A\",\r\n                        \"isAvailable\": true\r\n                    },\r\n                    \"passenger\": {\r\n                        \"id\": 22,\r\n                        \"userId\": 1,\r\n                        \"title\": \"Mr\",\r\n                        \"fullName\": \"John Doe\",\r\n                        \"familyName\": \"Doe\",\r\n                        \"dob\": \"1990-05-20T00:00:00.000Z\",\r\n                        \"nationality\": \"USA\",\r\n                        \"identityNumber\": \"ID12345678921234\",\r\n                        \"issuingCountry\": \"USA\",\r\n                        \"identityExp\": \"2030-05-20T00:00:00.000Z\"\r\n                    }\r\n                },\r\n                {\r\n                    \"id\": 20,\r\n                    \"bookingId\": 26,\r\n                    \"flightId\": 2,\r\n                    \"isReturn\": true,\r\n                    \"passengerId\": 23,\r\n                    \"seatId\": 10,\r\n                    \"flight\": {\r\n                        \"flightNum\": \"FL124\",\r\n                        \"departureAirport\": {\r\n                            \"name\": \"Sultan Iskandar Muda Airport\",\r\n                            \"code\": \"BTJ\"\r\n                        },\r\n                        \"arrivalAirport\": {\r\n                            \"name\": \"Pattimura Airport\",\r\n                            \"code\": \"AMQ\"\r\n                        },\r\n                        \"airline\": {\r\n                            \"name\": \"Air Arabia Maroc\",\r\n                            \"code\": \"3O\"\r\n                        }\r\n                    },\r\n                    \"flightSeat\": {\r\n                        \"position\": \"2A\",\r\n                        \"isAvailable\": true\r\n                    },\r\n                    \"passenger\": {\r\n                        \"id\": 23,\r\n                        \"userId\": 1,\r\n                        \"title\": \"Mr\",\r\n                        \"fullName\": \"Jane Doe\",\r\n                        \"familyName\": \"Doe\",\r\n                        \"dob\": \"1992-08-15T00:00:00.000Z\",\r\n                        \"nationality\": \"USA\",\r\n                        \"identityNumber\": \"ID98765432121234\",\r\n                        \"issuingCountry\": \"USA\",\r\n                        \"identityExp\": \"2030-08-15T00:00:00.000Z\"\r\n                    }\r\n                }\r\n            ],\r\n            \"payments\": [\r\n                {\r\n                    \"transactionId\": null,\r\n                    \"status\": \"Pending\",\r\n                    \"total\": null,\r\n                    \"method\": null\r\n                }\r\n            ],\r\n            \"voucher\": null,\r\n            \"bookingCode\": \"bOQJR1M19\"\r\n        }\r\n    ]\r\n}"
+						}
+					]
+				},
+				{
+					"name": "GetBooking",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/bookings/26",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"bookings",
+								"26"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/bookings/26",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"bookings",
+										"26"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 26,\r\n        \"userId\": 1,\r\n        \"roundTrip\": true,\r\n        \"totalPrice\": 1335,\r\n        \"tax\": 11,\r\n        \"voucherCode\": null,\r\n        \"urlQrcode\": \"https://ik.imagekit.io/9kbraeia1/testing_P9KZ1ot2K\",\r\n        \"isScan\": true,\r\n        \"status\": \"Issued\",\r\n        \"createdAt\": \"2024-12-06T08:35:28.557Z\",\r\n        \"updatedAt\": \"2024-12-09T03:56:37.835Z\",\r\n        \"user\": {\r\n            \"id\": 1,\r\n            \"email\": \"admin@gmail.com\",\r\n            \"profile\": {\r\n                \"fullName\": \"Admin\",\r\n                \"phone\": \"628123456789\"\r\n            }\r\n        },\r\n        \"passengerCount\": {\r\n            \"id\": 25,\r\n            \"bookingId\": 26,\r\n            \"adult\": 1,\r\n            \"child\": 0,\r\n            \"infant\": 0\r\n        },\r\n        \"segments\": [\r\n            {\r\n                \"id\": 19,\r\n                \"bookingId\": 26,\r\n                \"flightId\": 1,\r\n                \"isReturn\": false,\r\n                \"passengerId\": 22,\r\n                \"seatId\": 4,\r\n                \"flight\": {\r\n                    \"flightNum\": \"FL123\",\r\n                    \"departureAirport\": {\r\n                        \"name\": \"Pattimura Airport\",\r\n                        \"code\": \"AMQ\"\r\n                    },\r\n                    \"arrivalAirport\": {\r\n                        \"name\": \"Sultan Iskandar Muda Airport\",\r\n                        \"code\": \"BTJ\"\r\n                    },\r\n                    \"airline\": {\r\n                        \"name\": \"Air Arabia Maroc\",\r\n                        \"code\": \"3O\"\r\n                    }\r\n                },\r\n                \"flightSeat\": {\r\n                    \"position\": \"2A\",\r\n                    \"isAvailable\": true\r\n                },\r\n                \"passenger\": {\r\n                    \"id\": 22,\r\n                    \"userId\": 1,\r\n                    \"title\": \"Mr\",\r\n                    \"fullName\": \"John Doe\",\r\n                    \"familyName\": \"Doe\",\r\n                    \"dob\": \"1990-05-20T00:00:00.000Z\",\r\n                    \"nationality\": \"USA\",\r\n                    \"identityNumber\": \"ID12345678921234\",\r\n                    \"issuingCountry\": \"USA\",\r\n                    \"identityExp\": \"2030-05-20T00:00:00.000Z\"\r\n                }\r\n            },\r\n            {\r\n                \"id\": 20,\r\n                \"bookingId\": 26,\r\n                \"flightId\": 2,\r\n                \"isReturn\": true,\r\n                \"passengerId\": 23,\r\n                \"seatId\": 10,\r\n                \"flight\": {\r\n                    \"flightNum\": \"FL124\",\r\n                    \"departureAirport\": {\r\n                        \"name\": \"Sultan Iskandar Muda Airport\",\r\n                        \"code\": \"BTJ\"\r\n                    },\r\n                    \"arrivalAirport\": {\r\n                        \"name\": \"Pattimura Airport\",\r\n                        \"code\": \"AMQ\"\r\n                    },\r\n                    \"airline\": {\r\n                        \"name\": \"Air Arabia Maroc\",\r\n                        \"code\": \"3O\"\r\n                    }\r\n                },\r\n                \"flightSeat\": {\r\n                    \"position\": \"2A\",\r\n                    \"isAvailable\": true\r\n                },\r\n                \"passenger\": {\r\n                    \"id\": 23,\r\n                    \"userId\": 1,\r\n                    \"title\": \"Mr\",\r\n                    \"fullName\": \"Jane Doe\",\r\n                    \"familyName\": \"Doe\",\r\n                    \"dob\": \"1992-08-15T00:00:00.000Z\",\r\n                    \"nationality\": \"USA\",\r\n                    \"identityNumber\": \"ID98765432121234\",\r\n                    \"issuingCountry\": \"USA\",\r\n                    \"identityExp\": \"2030-08-15T00:00:00.000Z\"\r\n                }\r\n            }\r\n        ],\r\n        \"payments\": [\r\n            {\r\n                \"transactionId\": null,\r\n                \"status\": \"Pending\",\r\n                \"total\": null,\r\n                \"method\": null\r\n            }\r\n        ],\r\n        \"voucher\": null,\r\n        \"bookingCode\": \"bOQJR1M19\"\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "StoreBooking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"roundTrip\": true,\r\n    \"passengerCount\": {\r\n        \"adult\": 1,\r\n        \"child\": 0,\r\n        \"infant\": 0\r\n    },\r\n    \"flightSegments\": [\r\n        {\r\n        \"flightId\": 1,\r\n        \"isReturn\": false,\r\n        \"seatId\": 6,\r\n        \"passenger\": {\r\n            \"title\": \"Mr\",\r\n            \"identityNumber\": \"ID12345678921234\",\r\n            \"fullName\": \"John Doe\",\r\n            \"familyName\": \"Doe\",\r\n            \"dob\": \"1990-05-20\",\r\n            \"nationality\": \"USA\",\r\n            \"issuingCountry\" : \"USA\",\r\n            \"identityExp\": \"2030-05-20\"\r\n        }\r\n        },\r\n        {\r\n        \"flightId\": 2,\r\n        \"isReturn\": true,\r\n        \"seatId\": 8,\r\n        \"passenger\": {\r\n            \"title\": \"Mr\",\r\n            \"identityNumber\": \"ID98765432121234\",\r\n            \"fullName\": \"Jane Doe\",\r\n            \"familyName\": \"Doe\",\r\n            \"dob\": \"1992-08-15\",\r\n            \"nationality\": \"USA\",\r\n            \"issuingCountry\": \"USA\",\r\n            \"identityExp\": \"2030-08-15\"\r\n        }\r\n        }\r\n    ]\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/bookings",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "    {\r\n    \"roundTrip\": true,\r\n    \"passengerCount\": {\r\n        \"adult\": 1,\r\n        \"child\": 0,\r\n        \"infant\": 0\r\n    },\r\n    \"flightSegments\": [\r\n        {\r\n        \"flightId\": 1,\r\n        \"isReturn\": false,\r\n        \"seatId\": 6,\r\n        \"passenger\": {\r\n            \"title\": \"Mr\",\r\n            \"identityNumber\": \"ID12345678921234\",\r\n            \"fullName\": \"John Doe\",\r\n            \"familyName\": \"Doe\",\r\n            \"dob\": \"1990-05-20\",\r\n            \"nationality\": \"USA\",\r\n            \"issuingCountry\" : \"USA\",\r\n            \"identityExp\": \"2030-05-20\"\r\n        }\r\n        },\r\n        {\r\n        \"flightId\": 2,\r\n        \"isReturn\": true,\r\n        \"seatId\": 8,\r\n        \"passenger\": {\r\n            \"title\": \"Mr\",\r\n            \"identityNumber\": \"ID98765432121234\",\r\n            \"fullName\": \"Jane Doe\",\r\n            \"familyName\": \"Doe\",\r\n            \"dob\": \"1992-08-15\",\r\n            \"nationality\": \"USA\",\r\n            \"issuingCountry\": \"USA\",\r\n            \"identityExp\": \"2030-08-15\"\r\n        }\r\n        }\r\n    ]\r\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/bookings",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"bookings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 81,\r\n        \"userId\": 1,\r\n        \"roundTrip\": true,\r\n        \"totalPrice\": 1335,\r\n        \"tax\": 11,\r\n        \"voucherCode\": null,\r\n        \"urlQrcode\": null,\r\n        \"isScan\": false,\r\n        \"status\": \"Unpaid\",\r\n        \"createdAt\": \"2024-12-09T04:54:09.416Z\",\r\n        \"updatedAt\": \"2024-12-09T04:54:09.416Z\",\r\n        \"bookingCode\": \"kRwq6lMZ2\"\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "UpdateStatusBooking",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\":\"Issued\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/bookings/81",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"bookings",
+								"81"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK - Successful Request",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\":\"Issued\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/bookings/81",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"bookings",
+										"81"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 81,\r\n        \"userId\": 1,\r\n        \"roundTrip\": true,\r\n        \"totalPrice\": 1335,\r\n        \"tax\": 11,\r\n        \"voucherCode\": null,\r\n        \"urlQrcode\": null,\r\n        \"isScan\": false,\r\n        \"status\": \"Issued\",\r\n        \"createdAt\": \"2024-12-09T04:54:09.416Z\",\r\n        \"updatedAt\": \"2024-12-09T04:55:39.220Z\",\r\n        \"bookingCode\": \"kRwq6lMZ2\"\r\n    }\r\n}"
+						}
+					]
+				}
+			],
+			"description": "API for feat booking"
+		},
+		{
+			"name": "Voucher",
+			"item": [
+				{
+					"name": "GetVouchers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/vouchers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"vouchers"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/vouchers",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"vouchers"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil mengambil semua data voucher\"\r\n    },\r\n    \"data\": [\r\n        {\r\n            \"id\": 6,\r\n            \"code\": \"DISC2025\",\r\n            \"type\": \"Percentage\",\r\n            \"value\": 10,\r\n            \"minPurchase\": 100,\r\n            \"maxVoucher\": 10,\r\n            \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n            \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n            \"createdAt\": \"2024-12-08T03:11:00.091Z\",\r\n            \"updatedAt\": \"2024-12-08T03:12:42.616Z\"\r\n        }\r\n    ]\r\n}"
+						}
+					]
+				},
+				{
+					"name": "GetVoucherByCode",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"totalPrice\" : 100.00\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/vouchers/DISC2024",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"vouchers",
+								"DISC2024"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/vouchers/DISC2024",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"vouchers",
+										"DISC2024"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 6,\r\n        \"code\": \"DISC2025\",\r\n        \"type\": \"Percentage\",\r\n        \"value\": 10,\r\n        \"minPurchase\": 100,\r\n        \"maxVoucher\": 10,\r\n        \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n        \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n        \"createdAt\": \"2024-12-08T03:11:00.091Z\",\r\n        \"updatedAt\": \"2024-12-08T03:12:42.616Z\",\r\n        \"updatedTotalPrice\": 90\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "StoreVoucher",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"DISC2025\",\r\n  \"type\": \"Fixed\",\r\n  \"value\": 20.0,\r\n  \"minPurchase\": 100.0,\r\n  \"maxVoucher\": 50,\r\n  \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n  \"endDate\": \"2024-12-31T23:59:59.000Z\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/voucher",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"voucher"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/voucher",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"voucher"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 7,\r\n        \"code\": \"DISC2024\",\r\n        \"type\": \"Fixed\",\r\n        \"value\": 20,\r\n        \"minPurchase\": 100,\r\n        \"maxVoucher\": 50,\r\n        \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n        \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n        \"createdAt\": \"2024-12-09T05:00:49.791Z\",\r\n        \"updatedAt\": \"2024-12-09T05:00:49.791Z\"\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "UpdateVoucher",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"type\": \"Percentage\",\r\n  \"value\": 10.0,\r\n  \"maxVoucher\": 10\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/vouchers/DISC2024",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"vouchers",
+								"DISC2024"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK - Successful Request",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"type\": \"Percentage\",\r\n  \"value\": 10.0,\r\n  \"maxVoucher\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/vouchers/DISC2024",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"vouchers",
+										"DISC2024"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 7,\r\n        \"code\": \"DISC2024\",\r\n        \"type\": \"Percentage\",\r\n        \"value\": 10,\r\n        \"minPurchase\": 100,\r\n        \"maxVoucher\": 10,\r\n        \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n        \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n        \"createdAt\": \"2024-12-09T05:00:49.791Z\",\r\n        \"updatedAt\": \"2024-12-09T05:01:51.113Z\"\r\n    }\r\n}"
+						}
+					]
+				}
+			],
+			"description": "API for feat voucher"
 		},
 		{
 			"name": "Other",

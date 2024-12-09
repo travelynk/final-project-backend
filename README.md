@@ -4,4 +4,4 @@ The backend is responsible for handling business logic, managing the database, a
 
 ### API Documentation
 Sweager = https://api-tiketku-travelynk-145227191319.asia-southeast1.run.app/api/v1/docs
-Postman = https://documenter.getpostman.com/view/27898805/2sAYBYhBEk
+Postman = https://documenter.getpostman.com/view/40170047/2sAYBbe98U

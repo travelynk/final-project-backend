@@ -102,6 +102,7 @@ export const createGoPayPayment = async (bookingId) => {
         where: { id: bookingId },
         include: { payments: true, user: { include: { profile: true } } },
     });
+  
     if (!booking) throw new Error("Pemesanan tidak ditemukan");
 
     const paymentData = {
@@ -149,6 +150,7 @@ export const createCardToken = async (payload) => {
         card_cvv: payload.card_cvv,
         client_key: process.env.MIDTRANS_CLIENT_KEY,
     });
+
     return cardResponse.token_id;
 };
 

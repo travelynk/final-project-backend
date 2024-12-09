@@ -74,6 +74,5 @@ export const createCreditCardPaymentSchema = Joi.object({
         .messages({
             "string.pattern.base": "CVV harus berupa 3-4 digit.",
             "any.required": "CVV wajib diisi.",
-            "string.max": "card CVV maksimal 3 nomor.",
         }),
 });

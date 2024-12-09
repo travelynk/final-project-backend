@@ -98,7 +98,7 @@ export const querySchema = joi.object({
 
             if (schedule.length === 2) {
                 const [startDate, endDate] = dateObjects;
-                if (startDate >= endDate) {
+                if (startDate > endDate) {
                     return helpers.message('Jadwal tidak valid! Tanggal berangkat tidak boleh sama atau lebih besar dari tanggal kembali');
                 }
             }

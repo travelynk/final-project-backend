@@ -136,4 +136,4 @@ dist
 .pnp.*
 
 prisma/migrations
-data.xlsx
+prisma/seeder/data.xlsx

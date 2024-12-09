@@ -97,7 +97,7 @@ function mapFlightData(flights, schedule, seatClass, depCity, arrCity) {
     const result = processedPaths.map((pathInfo) => {
         let totalPrice = 0;
         let totalDuration = 0;
-        let delay = 0;
+        let delay = [];
         const flightsOnPath = pathInfo.flights;
         flightsOnPath.forEach((flight, index) => {
             totalPrice += flight.price;
@@ -105,7 +105,19 @@ function mapFlightData(flights, schedule, seatClass, depCity, arrCity) {
             if (index > 0) {
                 const prevArrival = new Date(flightsOnPath[index - 1].arrivalTime);
                 const currDeparture = new Date(flight.departureTime);
-                delay += (currDeparture - prevArrival) / 3600000; // Calculate delay in hours
+                const delayTime = currDeparture - prevArrival;
+
+                // Konversi delayTime menjadi jam dan menit
+                const delayHours = Math.floor(delayTime / 3600000); // Dapatkan jam
+                const delayMinutes = Math.floor((delayTime % 3600000) / 60000); // Dapatkan menit
+
+                // Format hasil delay
+                let formattedDelay = `${delayHours} Jam`;
+                if (delayMinutes > 0) {
+                    formattedDelay += ` ${delayMinutes} Menit`;
+                }
+
+                delay.push(formattedDelay);
             }
         });
 
@@ -154,7 +166,7 @@ function mapFlightData(flights, schedule, seatClass, depCity, arrCity) {
             seatClass,
             price: `Rp ${totalPrice.toLocaleString()}`,
             isTransit: flightsOnPath.length > 1,
-            delayTransit: `${delay} Jam`,
+            delayTransit: delay,
             flights: formatFlight,
         };
     });

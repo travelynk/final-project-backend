@@ -440,11 +440,21 @@ export const updateStatusBooking = async (data, id) => {
               sesuai batas waktu yang ditentukan. Jika membutuhkan bantuan lebih lanjut, 
               silakan hubungi kami. Terima kasih atas pengertiannya.`;
 
+              
+
     const updatedAt = await formatedDate(updatedBooking.updatedAt);
+
+    await prisma.notification.create({
+      data: {
+        userId: updatedBooking.userId,
+        type: "Transaction",
+        message: message,
+        isRead: false,
+      },
+    });
 
     io.emit('Pembatalan Booking', { message, updatedAt });
   };
-
 
   return updatedBooking;
 };

@@ -75,8 +75,8 @@ export const store = async (data) => {
         where: {
             airlineId: data.airlineId,
             flightNum: data.flightNum,
-            departureAirportId: data.departureAirportId,
-            arrivalAirportId: data.arrivalAirportId,
+            departureTerminalId: data.departureTerminalId,
+            arrivalTerminalId: data.arrivalTerminalId,
             departureTime: data.departureTime,
             arrivalTime: data.arrivalTime
         }
@@ -113,8 +113,8 @@ export const update = async (id, data) => {
     const isDuplicateFlight = await prisma.flight.findFirst({
         where: {
             airlineId: data.airlineId,
-            departureAirportId: data.departureAirportId,
-            arrivalAirportId: data.arrivalAirportId,
+            departureTerminalId: data.departureTerminalId,
+            arrivalTerminalId: data.arrivalTerminalId,
             departureTime: data.departureTime,
             arrivalTime: data.arrivalTime,
             NOT: { id: parseInt(id) }
@@ -151,6 +151,7 @@ export const getAvailableFlight = async (data) => {
     const endDay = new Date(startDay);
     endDay.setUTCDate(endDay.getUTCDate() + 1);
     const [depCity, arrCity] = route;
+    let outboundFlights = [];
     let returnFlights = [];
 
     if (schedule.length > 1) {
@@ -194,7 +195,9 @@ export const getAvailableFlight = async (data) => {
             },
         });
 
-        returnFlights = mapFlightData(flights, schedule[1], seatClass, arrCity, depCity);
+        if (flights.length > 0) {
+            returnFlights = mapFlightData(flights, schedule[1], seatClass, arrCity, depCity);
+        }
     }
 
     const flights = await prisma.flight.findMany({
@@ -233,7 +236,9 @@ export const getAvailableFlight = async (data) => {
         },
     });
 
-    const outboundFlights = mapFlightData(flights, schedule[0], seatClass, depCity, arrCity);
+    if (flights.length > 0){
+        outboundFlights = mapFlightData(flights, schedule[0], seatClass, depCity, arrCity);
+    }
 
     return { outboundFlights, returnFlights };
 

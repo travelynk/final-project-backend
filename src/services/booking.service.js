@@ -1,5 +1,5 @@
 import prisma from "../configs/database.js";
-import { Error400, Error404, Error409 } from "../utils/customError.js";
+import { Error400, Error403, Error404, Error409 } from "../utils/customError.js";
 import * as VoucherService from './voucher.service.js';
 import { encodeBookingCode } from "../utils/hashids.js";
 import { getIoInstance } from "../configs/websocket.js";
@@ -288,7 +288,7 @@ export const storeBooking = async (userId, data) => {
       },
     });
 
-    setTimeout(() => updateStatusBooking({status : "Cancelled"}, createdBooking.id), 900000);
+    setTimeout(() => updateStatusBooking({ status: "Cancelled" }, createdBooking.id), 900000);
 
     const formattedDeadline = await formatedDateAndYear(payment.deadline);
     const message = `Selesaikan pembayaran Anda sebelum ${formattedDeadline} UTC!`;
@@ -307,7 +307,7 @@ export const storeBooking = async (userId, data) => {
 
     const io = getIoInstance();
 
-    io.emit('Status Pembayaran (Unpaid)', {message,createdAt});
+    io.emit('Status Pembayaran (Unpaid)', { message, createdAt });
 
     return createdBooking;
   });
@@ -319,29 +319,29 @@ export const storeBooking = async (userId, data) => {
 
 const formatedDateAndYear = async (isoString) => {
   const dateObj = new Date(isoString);
-  const options = { 
-    day: 'numeric', 
-    month: 'long', 
-    year: 'numeric', 
-    hour: '2-digit', 
-    minute: '2-digit', 
-    timeZone: 'UTC' 
+  const options = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'UTC'
   };
   const formattedDate = dateObj.toLocaleDateString('id-ID', options);
   // const waktu = tanggalObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
-  
+
   return formattedDate;
 };
 
 const formatedDate = async (isoString) => {
   const dateObj = new Date(isoString);
 
-  const options = { 
-    day: 'numeric', 
-    month: 'long', 
-    timeZone: 'UTC', 
-    hour: '2-digit', 
-    minute: '2-digit' 
+  const options = {
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+    hour: '2-digit',
+    minute: '2-digit'
   };
 
   const formattedParts = dateObj.toLocaleDateString('id-ID', options).split(' ');
@@ -350,7 +350,7 @@ const formatedDate = async (isoString) => {
 
   const hour = dateObj.getUTCHours().toString().padStart(2, '0');
   const minute = dateObj.getUTCMinutes().toString().padStart(2, '0');
-  
+
   return `${day} ${month}, ${hour}:${minute}`;
 };
 
@@ -442,7 +442,7 @@ export const updateStatusBooking = async (data, id) => {
 
     const updatedAt = await formatedDate(updatedBooking.updatedAt);
 
-    io.emit('Pembatalan Booking', {message,updatedAt});
+    io.emit('Pembatalan Booking', { message, updatedAt });
   };
 
 
@@ -528,4 +528,33 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
   );
 
   return bookingsByDateWithHash;
+};
+
+export const scanQrcode = async (id) => {
+  const booking = await prisma.booking.findUnique({
+    where: {
+      id: parseInt(id),
+      status: "Issued",
+    },
+  });
+
+  if (!booking) {
+    throw new Error403("Akses ditolak, pembayaran diperlukan.");
+  }
+
+  if (booking.isScan == true) {
+    throw new Error409("Tiket ini sudah dicetak sebelumnya. Tidak dapat mencetak tiket yang sama lebih dari sekali.");
+  }
+
+  //implementasi cetak tiket
+
+  const updatedBooking = await prisma.booking.update({
+    where: {
+      id: parseInt(id),
+      status: "Issued",
+    },
+    data: { isScan: true },
+  });
+
+  return updatedBooking;
 };

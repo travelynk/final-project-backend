@@ -22,6 +22,17 @@ jest.mock("../../configs/midtransClient.js", () => ({
   },
 }));
 
+jest.mock('imagekit', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      upload: jest.fn().mockResolvedValue({
+        url: 'https://mock-imagekit.io/path/to/image',
+        fileName: 'mocked-image.png',
+      }),
+    };
+  });
+});
+
 describe("Payment Service Tests", () => {
   afterEach(() => jest.clearAllMocks());
 

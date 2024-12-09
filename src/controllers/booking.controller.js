@@ -2,6 +2,8 @@ import * as BookingService from '../services/booking.service.js';
 import * as BookingValidation from '../validations/booking.validation.js';
 import * as response from '../utils/response.js';
 import { Error400 } from '../utils/customError.js';
+import { decodeBookingCode } from '../utils/hashids.js';
+import jwt from 'jsonwebtoken';
 
 export const getBookings = async (req, res, next) => {
     try {
@@ -91,6 +93,24 @@ export const getBookingsByDate = async (req, res, next) => {
         const bookingsByDate = await BookingService.getBookingsByDate(userId, startDate, endDate);
 
         response.res200('Berhasil', bookingsByDate, res);
+    } catch (error) {
+        next(error)
+    }
+};
+
+export const scanQrcode = async (req, res, next) => {
+    try {
+        const {token} = req.query;
+        
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET_FORGET);
+
+        const { code } = decodedToken;
+
+        const id = await decodeBookingCode(code);
+
+        const updatedBooking = await BookingService.scanQrcode(id);
+
+        response.res200('Berhasil', updatedBooking, res);
     } catch (error) {
         next(error)
     }

@@ -1,7 +1,7 @@
 import * as VoucherService from '../services/voucher.service.js';
 import * as VoucherValidation from '../validations/voucher.validation.js';
-import { res200, res201 } from '../utils/response.js';
-import { Error400, Error404 } from '../utils/customError.js';
+import { res200 } from '../utils/response.js';
+import { Error400 } from '../utils/customError.js';
 
 export const getVouchers = async (req, res, next) => {
     try {
@@ -43,7 +43,7 @@ export const getVoucherByCode = async (req, res, next) => {
         };
 
         const { code } = validationParams.value;
-        
+
         const { totalPrice } = validationBody.value;
 
         const voucher = await VoucherService.getVoucherByCode(code, totalPrice);
@@ -68,7 +68,7 @@ export const updateVoucher = async (req, res, next) => {
         };
 
         const { code } = validationParams.value;
-        
+
         const updatedVoucher = await VoucherService.updateVoucher(code, validationBody.value);
 
         res200('Berhasil', updatedVoucher, res);

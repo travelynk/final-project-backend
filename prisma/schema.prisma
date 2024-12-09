@@ -188,6 +188,8 @@ model Booking {
   totalPrice       Float            @default(0) @map("total_price")
   tax              Float            @default(0)
   voucherCode      String?          @map("voucher_code") @db.VarChar(8)
+  urlQrcode        String?          @map("url_qrcode")
+  isScan           Boolean          @default(false) @map("is_scan")
   status           BookingStatus    @default(Unpaid)
   createdAt        DateTime         @default(now())  @map("created_at")
   updatedAt        DateTime         @updatedAt @map("updated_at")

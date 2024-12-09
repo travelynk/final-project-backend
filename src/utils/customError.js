@@ -25,6 +25,15 @@ export class Error401 extends Error {
 //     }
 // }
 
+export class Error403 extends Error {
+    constructor(message, statusCode = 403) {
+        super(message);
+        this.status = false;
+        this.statusCode = statusCode;
+        this.name = 'Forbidden';
+    }
+}
+
 export class Error404 extends Error {
     constructor(message, statusCode = 404) {
         super(message);

@@ -2,6 +2,8 @@ import prisma from "../configs/database.js";
 import { Error400, Error404 } from "../utils/customError.js";
 import generateSeatCodes from "../utils/generateSeatCode.js";
 import mapFlightData from "../utils/graphFlight.js";
+import Graph from 'graphology';
+const { MultiGraph } = Graph;
 
 export const getAll = async () => {
     const flights = await prisma.flight.findMany({
@@ -241,5 +243,4 @@ export const getAvailableFlight = async (data) => {
     }
 
     return { outboundFlights, returnFlights };
-
 };

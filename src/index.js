@@ -1,9 +1,15 @@
 import "dotenv/config";
 import { app } from "./configs/app.js";
+import http from "http";
 import listEndpoints from 'express-list-endpoints';
+import { initializeWebSocket } from "./configs/websocket.js";
+
 
 const port = process.env.PORT || 8000;
 const host = process.env.HOST || 'localhost';
+
+const server = http.createServer(app);
+initializeWebSocket(server);
 
 try {
     if (process.env.NODE_ENV == "development") {
@@ -16,7 +22,7 @@ try {
         console.log("================== API - LIST =======================\n");
     };
 
-    app.listen(port, () => {
+    server.listen(port, () => {
         console.log(`🚀 Server is on ${host}:${port}`);
     });
 } catch (error) {

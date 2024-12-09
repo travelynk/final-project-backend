@@ -1,6 +1,9 @@
 import { coreApi, snap } from "../configs/midtransClient.js";
-
 import prisma from "../configs/database.js";
+import { generateQrPng } from '../utils/qrcode.js';
+import { imagekit } from '../utils/imagekit.js';
+import { encodeBookingCode } from '../utils/hashids.js';
+import jwt from 'jsonwebtoken';
 
 export const createDebitPayment = async (bookingId, bank) => {
     const booking = await prisma.booking.findUnique({
@@ -8,7 +11,7 @@ export const createDebitPayment = async (bookingId, bank) => {
         include: { payments: true, user: { include: { profile: true } } },
     });
 
-    if (!booking) throw new Error("Booking not found");
+    if (!booking) throw new Error("Pemesanan tidak ditemukan");
 
     const paymentData = {
         payment_type: "bank_transfer",
@@ -49,44 +52,49 @@ export const createDebitPayment = async (bookingId, bank) => {
 };
 
 export const cancelPayment = async (transactionId) => {
-    try {
-        const transactionStatus = await snap.transaction.status(transactionId);
+    const currentPayment = await prisma.payment.findUnique({
+        where: { transactionId },
+    });
 
-        if (transactionStatus.transaction_status !== 'pending') {
-            throw new Error(
-                `Transaction cannot be cancelled. Current status: ${transactionStatus.transaction_status}.`
-            );
-        }
-
-        const cancelResponse = await snap.transaction.cancel(transactionId);
-
-        await prisma.payment.update({
-            where: { transactionId },
-            data: { status: 'Expired' },
-        });
-
-        return cancelResponse;
-    } catch (error) {
-        throw new Error(error.response?.data?.status_message || error.message);
+    if (!currentPayment) {
+        throw new Error("Pembayaran tidak ditemukan");
     }
+
+    const transactionStatus = await snap.transaction.status(transactionId);
+
+    if (transactionStatus.transaction_status !== "pending") {
+        throw new Error(`Transaction cannot be cancelled. Current status: ${transactionStatus.transaction_status}.`);
+    }
+
+    const cancelResponse = await snap.transaction.cancel(transactionId);
+
+    await prisma.payment.update({
+        where: { transactionId },
+        data: { status: "Cancelled" },
+    });
+
+    return cancelResponse;
 };
 
 export const checkPaymentStatus = async (transactionId) => {
-    try {
-        const transactionStatus = await snap.transaction.status(transactionId);
+    const currentPayment = await prisma.payment.findUnique({
+        where: { transactionId },
+    });
 
-        const status = transactionStatus.transaction_status;
-        const statusFormatted = status.charAt(0).toUpperCase() + status.slice(1);
-
-        await prisma.payment.update({
-            where: { transactionId },
-            data: { status: statusFormatted },
-        });
-
-        return transactionStatus;
-    } catch (error) {
-        throw new Error(error.message);
+    if (!currentPayment) {
+        throw new Error("Pembayaran tidak ditemukan");
     }
+
+    const transactionStatus = await snap.transaction.status(transactionId);
+    const statusFormatted = transactionStatus.transaction_status.charAt(0).toUpperCase() +
+        transactionStatus.transaction_status.slice(1);
+
+    await prisma.payment.update({
+        where: { transactionId },
+        data: { status: statusFormatted },
+    });
+
+    return transactionStatus;
 };
 
 export const createGoPayPayment = async (bookingId) => {
@@ -94,8 +102,8 @@ export const createGoPayPayment = async (bookingId) => {
         where: { id: bookingId },
         include: { payments: true, user: { include: { profile: true } } },
     });
-
-    if (!booking) throw new Error("Booking not found");
+  
+    if (!booking) throw new Error("Pemesanan tidak ditemukan");
 
     const paymentData = {
         payment_type: "gopay",
@@ -109,14 +117,11 @@ export const createGoPayPayment = async (bookingId) => {
                 name: `Flight Booking ${bookingId}`,
                 price: booking.totalPrice,
                 quantity: 1,
-
             },
         ],
         customer_details: {
             first_name: booking.user.profile.fullName,
-            //   last_name: "Utomo",
             email: booking.user.email,
-            //   phone: "081223323423",
         },
     };
 
@@ -145,19 +150,17 @@ export const createCardToken = async (payload) => {
         card_cvv: payload.card_cvv,
         client_key: process.env.MIDTRANS_CLIENT_KEY,
     });
-    const cardToken = cardResponse.token_id;
-    return cardToken;
+
+    return cardResponse.token_id;
 };
 
 export const createCardPayment = async (bookingId, cardToken) => {
-
     const booking = await prisma.booking.findUnique({
         where: { id: bookingId },
         include: { payments: true, user: { include: { profile: true } } },
     });
 
-    if (!booking) throw new Error("Booking not found");
-
+    if (!booking) throw new Error("Pemesanan tidak ditemukan");
 
     const paymentData = {
         payment_type: "credit_card",
@@ -170,6 +173,7 @@ export const createCardPayment = async (bookingId, cardToken) => {
             authentication: false,
         },
     };
+
     const chargeResponse = await coreApi.charge(paymentData);
 
     await prisma.payment.create({
@@ -186,3 +190,25 @@ export const createCardPayment = async (bookingId, cardToken) => {
 
     return chargeResponse;
 };
+
+export const generateQrcode = async (id) => {
+    const code = await encodeBookingCode(id);
+    const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
+    const url = `${process.env.DOMAIN_URL}/api/v1/bookings/scan?token=${resetToken}`;
+
+    const qr = await generateQrPng(url);
+
+    const qrCode = await imagekit.upload({
+        fileName: "testing",
+        file: qr.toString('base64')
+    });
+
+    const updatedBooking = await prisma.booking.update({
+        where: {
+            id: parseInt(id),
+        },
+        data: { urlQrcode: qrCode.url },
+    });
+
+    return updatedBooking
+}

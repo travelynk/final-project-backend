@@ -191,7 +191,7 @@ export const sendResetPasswordEmail = async (email) => {
 
     // Generate token reset password (contoh sederhana)
     const resetToken = jwt.sign({ email }, process.env.JWT_SECRET_FORGET, { expiresIn: "1h" });
-    const resetLink = `${process.env.DOMAIN_URL}/api/v1/auth/reset-password?token=${resetToken}`;
+    const resetLink = `${process.env.FE_DOMAIN}/auth/reset-password?token=${resetToken}`;
 
     // Konfigurasi transporter nodemailer
     const transporter = nodemailer.createTransport({

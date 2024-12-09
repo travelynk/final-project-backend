@@ -5,6 +5,7 @@ import listEndpoints from 'express-list-endpoints';
 import { initializeWebSocket } from "./configs/websocket.js";
 
 
+
 const port = process.env.PORT || 8000;
 const host = process.env.HOST || 'localhost';
 

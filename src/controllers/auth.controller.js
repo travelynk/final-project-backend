@@ -116,3 +116,20 @@ export const verifyOtp = async (req, res, next) => {
         next(error);
     };
 };
+
+export const redirectGoogleOauth = async (req, res, next) => {
+    try {
+        res.redirect(await AuthService.googleAuthorizeUrl());
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const googleOauthCallback = async (req, res, next) => {
+    try {
+        const token = await AuthService.googleOauthCallback(req.query.code);
+        res.redirect(`${process.env.FE_DOMAIN}/auth/login?token=${token}`);
+    } catch (error) {
+        next(error);
+    }
+}

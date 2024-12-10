@@ -1,6 +1,16 @@
 import { coreApi, snap } from "../configs/midtransClient.js";
 import prisma from "../configs/database.js";
 import nodemailer from "nodemailer";
+import { generateQrPng } from '../utils/qrcode.js';
+import { imagekit } from '../utils/imagekit.js';
+import { encodeBookingCode } from '../utils/hashids.js';
+import jwt from 'jsonwebtoken';
+
+import { vaNumberPaymentEmail } from "../views/send.email.payment.js";
+import { gopayPaymentEmail } from "../views/send.email.payment.js";
+import { cardPaymentEmail } from "../views/send.email.payment.js";
+import { cancelPaymentEmail } from "../views/send.email.payment.js";
+import { paymentStatusEmail } from "../views/send.email.payment.js";
 
 export const createDebitPayment = async (bookingId, bank) => {
     const booking = await prisma.booking.findUnique({
@@ -38,6 +48,10 @@ export const createDebitPayment = async (bookingId, bank) => {
         new Date(new Date(chargeResponse.transaction_time).getTime() + 24 * 60 * 60 * 1000).toLocaleString() :
         "N/A"; // Tambahkan expired date (24 jam setelah transaksi dibuat)
 
+    // Generate QR Code setelah pembayaran sukses
+    const updatedBooking = await generateQrcode(bookingId);
+
+
     await prisma.payment.create({
         data: {
             bookingId: bookingId,
@@ -54,70 +68,7 @@ export const createDebitPayment = async (bookingId, bank) => {
     await sendPaymentEmail(
         booking.user.email,
         "Menunggu Pembayaran",
-        `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    line-height: 1.6;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f9f9f9;
-                }
-                .email-container {
-                    max-width: 600px;
-                    margin: 20px auto;
-                    background-color: #ffffff;
-                    border: 1px solid #dddddd;
-                    border-radius: 5px;
-                    padding: 20px;
-                }
-                .email-header {
-                    text-align: center;
-                    background-color: #FFA500;
-                    color: white;
-                    padding: 10px 0;
-                    border-radius: 5px 5px 0 0;
-                }
-                .email-content {
-                    padding: 20px;
-                    color: #333333;
-                }
-                .email-content p {
-                    margin: 10px 0;
-                }
-                .email-footer {
-                    text-align: center;
-                    font-size: 12px;
-                    color: #888888;
-                    margin-top: 20px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="email-header">
-                    <h1>Menunggu Pembayaran</h1>
-                </div>
-                <div class="email-content">
-                    <p>Pesanan Anda telah dibuat dengan detail berikut:</p>
-                    <p><strong>Bank:</strong> ${bank}</p>
-                    <p><strong>Total:</strong> Rp${booking.totalPrice.toLocaleString()}</p>
-                    <p><strong>Reference Number:</strong> ${chargeResponse.order_id}</p>
-                    <p><strong>Virtual Account Number:</strong> ${virtualAccount}</p>
-                    <p><strong>Expired Date:</strong> ${expiredDate}</p>
-                    <p>Silakan lakukan pembayaran sebelum tanggal jatuh tempo menggunakan Virtual Account yang disediakan.</p>
-                </div>
-                <div class="email-footer">
-                    <p>Terima kasih telah memilih layanan kami!</p>
-                    <p>Jika Anda memiliki pertanyaan, silakan hubungi layanan pelanggan kami.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        `
+        vaNumberPaymentEmail(bank, booking.totalPrice, chargeResponse.order_id, virtualAccount, expiredDate, updatedBooking.urlQrcode)
     );
 
     return chargeResponse;
@@ -157,66 +108,7 @@ export const cancelPayment = async (transactionId) => {
     await sendPaymentEmail(
         currentPayment.booking.user.email,
         "Pembayaran Dibatalkan",
-        `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    line-height: 1.6;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f9f9f9;
-                }
-                .email-container {
-                    max-width: 600px;
-                    margin: 20px auto;
-                    background-color: #ffffff;
-                    border: 1px solid #dddddd;
-                    border-radius: 5px;
-                    padding: 20px;
-                }
-                .email-header {
-                    text-align: center;
-                    background-color: #ff4d4d;
-                    color: white;
-                    padding: 10px 0;
-                    border-radius: 5px 5px 0 0;
-                }
-                .email-content {
-                    padding: 20px;
-                    color: #333333;
-                }
-                .email-content p {
-                    margin: 10px 0;
-                }
-                .email-footer {
-                    text-align: center;
-                    font-size: 12px;
-                    color: #888888;
-                    margin-top: 20px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="email-header">
-                    <h1>Pembayaran Dibatalkan</h1>
-                </div>
-                <div class="email-content">
-                    <p>Pembayaran Anda telah dibatalkan dengan detail berikut:</p>
-                    <p><strong>Nomor Transaksi:</strong> ${transactionId}</p>
-                    <p><strong>Status:</strong> Cancelled</p>
-                    <p>Jika pembatalan ini tidak dilakukan oleh Anda, segera hubungi layanan pelanggan kami.</p>
-                </div>
-                <div class="email-footer">
-                    <p>Terima kasih telah menggunakan layanan kami.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        `
+        cancelPaymentEmail(transactionId)
     );
 
     return cancelResponse;
@@ -264,66 +156,7 @@ export const checkPaymentStatus = async (transactionId) => {
     await sendPaymentEmail(
         currentPayment.booking.user.email,
         "Status Pembayaran Diperbarui",
-        `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    line-height: 1.6;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f9f9f9;
-                }
-                .email-container {
-                    max-width: 600px;
-                    margin: 20px auto;
-                    background-color: #ffffff;
-                    border: 1px solid #dddddd;
-                    border-radius: 5px;
-                    padding: 20px;
-                }
-                .email-header {
-                    text-align: center;
-                    background-color: #007bff;
-                    color: white;
-                    padding: 10px 0;
-                    border-radius: 5px 5px 0 0;
-                }
-                .email-content {
-                    padding: 20px;
-                    color: #333333;
-                }
-                .email-content p {
-                    margin: 10px 0;
-                }
-                .email-footer {
-                    text-align: center;
-                    font-size: 12px;
-                    color: #888888;
-                    margin-top: 20px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="email-header">
-                    <h1>Status Pembayaran Diperbarui</h1>
-                </div>
-                <div class="email-content">
-                    <p>Berikut adalah status terbaru untuk pembayaran Anda:</p>
-                    <p><strong>Nomor Transaksi:</strong> ${transactionId}</p>
-                    <p><strong>Status:</strong> ${statusFormatted}</p>
-                    <p>Jika Anda memiliki pertanyaan lebih lanjut, silakan hubungi layanan pelanggan kami.</p>
-                </div>
-                <div class="email-footer">
-                    <p>Terima kasih telah menggunakan layanan kami.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        `
+        paymentStatusEmail(transactionId, statusFormatted)
     );
 
     return transactionStatus;
@@ -362,11 +195,23 @@ export const createGoPayPayment = async (bookingId) => {
     const gopayDeepLink = chargeResponse.actions.find(
         (action) => action.name === "deeplink-redirect"
     )?.url || "N/A"; // URL deep link untuk redirect pembayaran
+
     const expiredDate = chargeResponse.transaction_time
         ? new Date(
             new Date(chargeResponse.transaction_time).getTime() + 24 * 60 * 60 * 1000
         ).toLocaleString()
         : "N/A"; // Expired Date (24 jam setelah transaksi dibuat)
+
+        // URL untuk generasi QR Code
+        const gopayQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
+         gopayDeepLink
+        )}&size=200x200`;
+
+        // Generate QR Code tambahan untuk informasi pemesanan
+        const infoQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
+            `https://yourapp.com/booking/${bookingId}`
+        )}&size=200x200`;
+
 
     await prisma.payment.create({
         data: {
@@ -384,86 +229,9 @@ export const createGoPayPayment = async (bookingId) => {
     await sendPaymentEmail(
         booking.user.email,
         "Menunggu Pembayaran GoPay",
-        `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    line-height: 1.6;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f9f9f9;
-                }
-                .email-container {
-                    max-width: 600px;
-                    margin: 20px auto;
-                    background-color: #ffffff;
-                    border: 1px solid #dddddd;
-                    border-radius: 5px;
-                    padding: 20px;
-                }
-                .email-header {
-                    text-align: center;
-                    background-color: #34a853;
-                    color: white;
-                    padding: 10px 0;
-                    border-radius: 5px 5px 0 0;
-                }
-                .email-content {
-                    padding: 20px;
-                    color: #333333;
-                }
-                .email-content p {
-                    margin: 10px 0;
-                }
-                .email-footer {
-                    text-align: center;
-                    font-size: 12px;
-                    color: #888888;
-                    margin-top: 20px;
-                }
-                .qr-code {
-                    text-align: center;
-                    margin: 20px 0;
-                }
-                .qr-code img {
-                    max-width: 200px;
-                    height: auto;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="email-header">
-                    <h1>Menunggu Pembayaran GoPay</h1>
-                </div>
-                <div class="email-content">
-                    <p>Pesanan Anda telah dibuat dengan detail berikut:</p>
-                    <p><strong>Total:</strong> Rp${booking.totalPrice.toLocaleString()}</p>
-                    <p><strong>Reference Number:</strong> ${chargeResponse.order_id}</p>
-                    <p><strong>Expired Date:</strong> ${expiredDate}</p>
-                    <div class="qr-code">
-                        <p><strong>Scan QR Code atau klik tautan untuk membayar:</strong></p>
-                        ${gopayDeepLink !== "N/A"
-            ? `<a href="${gopayDeepLink}" target="_blank"><img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
-                gopayDeepLink
-            )}&size=200x200" alt="QR Code"></a>`
-            : "<p>QR Code tidak tersedia.</p>"
-        }
-                    </div>
-                    <p>Atau buka aplikasi GoPay Anda untuk menyelesaikan pembayaran.</p>
-                </div>
-                <div class="email-footer">
-                    <p>Terima kasih telah memilih layanan kami!</p>
-                    <p>Jika Anda memiliki pertanyaan, silakan hubungi layanan pelanggan kami.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        `
+        gopayPaymentEmail(booking.totalPrice, chargeResponse.order_id, expiredDate, gopayDeepLink, gopayQrCodeUrl, infoQrCodeUrl)
     );
+
 
     return chargeResponse;
 };
@@ -501,6 +269,10 @@ export const createCardPayment = async (bookingId, cardToken) => {
 
     const chargeResponse = await coreApi.charge(paymentData);
 
+    // Generate QR Code
+    const updatedBooking = await generateQrcode(bookingId);
+
+
     await prisma.payment.create({
         data: {
             bookingId: bookingId,
@@ -517,67 +289,12 @@ export const createCardPayment = async (bookingId, cardToken) => {
     await sendPaymentEmail(
         booking.user.email,
         "Pembayaran Kartu Kredit Berhasil Dibuat",
-        `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    line-height: 1.6;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #f9f9f9;
-                }
-                .email-container {
-                    max-width: 600px;
-                    margin: 20px auto;
-                    background-color: #ffffff;
-                    border: 1px solid #dddddd;
-                    border-radius: 5px;
-                    padding: 20px;
-                }
-                .email-header {
-                    text-align: center;
-                    background-color: #007bff;
-                    color: white;
-                    padding: 10px 0;
-                    border-radius: 5px 5px 0 0;
-                }
-                .email-content {
-                    padding: 20px;
-                    color: #333333;
-                }
-                .email-content p {
-                    margin: 10px 0;
-                }
-                .email-footer {
-                    text-align: center;
-                    font-size: 12px;
-                    color: #888888;
-                    margin-top: 20px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="email-header">
-                    <h1>Pembayaran Kartu Kredit Berhasil</h1>
-                </div>
-                <div class="email-content">
-                    <p>Pesanan Anda telah berhasil diproses dengan detail berikut:</p>
-                    <p><strong>Total:</strong> Rp${booking.totalPrice.toLocaleString()}</p>
-                    <p><strong>Reference Number:</strong> ${chargeResponse.order_id}</p>
-                    <p><strong>Status:</strong> ${chargeResponse.transaction_status === "capture" ? "Sukses" : "Pending"}</p>
-                    <p>Terima kasih telah menggunakan layanan kami. Anda akan menerima notifikasi jika ada pembaruan pada status pembayaran Anda.</p>
-                </div>
-                <div class="email-footer">
-                    <p>Jika Anda memiliki pertanyaan lebih lanjut, silakan hubungi layanan pelanggan kami.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        `
+        cardPaymentEmail(
+            booking.totalPrice,
+            chargeResponse.order_id,
+            chargeResponse.transaction_status,
+            updatedBooking.urlQrcode
+        )
     );
 
     return chargeResponse;
@@ -605,12 +322,31 @@ export const sendPaymentEmail = async (email, subject, htmlContent) => {
         html: htmlContent,
     };
 
-    console.log(mailData);
-
     // Kirim email
     const info = await transporter.sendMail(mailData);
 
-    // console.log(`Payment email sent to ${email}, Message ID: ${info.messageId}`);
-
     return { messageId: info.messageId };
 };
+
+
+export const generateQrcode = async (id) => {
+    const code = await encodeBookingCode(id);
+    const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
+    const url = `${process.env.DOMAIN_URL}/api/v1/bookings/scan?token=${resetToken}`;
+
+    const qr = await generateQrPng(url);
+
+    const qrCode = await imagekit.upload({
+        fileName: "testing",
+        file: qr.toString('base64')
+    });
+
+    const updatedBooking = await prisma.booking.update({
+        where: {
+            id: parseInt(id),
+        },
+        data: { urlQrcode: qrCode.url },
+    });
+
+    return updatedBooking
+}

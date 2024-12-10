@@ -1,6 +1,8 @@
 import * as ProfileController from '../../../controllers/profile.controller.js';
 
 export default (router) => {
-    router.get('/profile', ProfileController.getProfile);
-    router.patch('/profile', ProfileController.updateProfile);
+    const prefix = '/profiles';
+
+    router.get(prefix + '/', ProfileController.getProfile);
+    router.patch(prefix + '/', ProfileController.updateProfile);
 }

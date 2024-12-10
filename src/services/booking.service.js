@@ -28,11 +28,31 @@ export const getBookings = async (userId) => {
           flight: {
             select: {
               flightNum: true,
-              departureAirport: {
-                select: { name: true, code: true },
+              departureTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
-              arrivalAirport: {
-                select: { name: true, code: true },
+              arrivalTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
               airline: {
                 select: { name: true, code: true },
@@ -99,11 +119,31 @@ export const getBooking = async (userId, id) => {
           flight: {
             select: {
               flightNum: true,
-              departureAirport: {
-                select: { name: true, code: true },
+              departureTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
-              arrivalAirport: {
-                select: { name: true, code: true },
+              arrivalTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
               airline: {
                 select: { name: true, code: true },
@@ -368,11 +408,31 @@ export const updateStatusBooking = async (data, id) => {
           flight: {
             select: {
               flightNum: true,
-              departureAirport: {
-                select: { name: true, code: true },
+              departureTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
-              arrivalAirport: {
-                select: { name: true, code: true },
+              arrivalTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
               airline: {
                 select: { name: true, code: true },
@@ -490,11 +550,31 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
           flight: {
             select: {
               flightNum: true,
-              departureAirport: {
-                select: { name: true, code: true },
+              departureTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
-              arrivalAirport: {
-                select: { name: true, code: true },
+              arrivalTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
               airline: {
                 select: { name: true, code: true },

@@ -4612,7 +4612,7 @@
 			"name": "Payment",
 			"item": [
 				{
-					"name": "debit_card",
+					"name": "virtual_account",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -4626,13 +4626,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/payments/debit",
+							"raw": "{{host}}/payments/virtual-account",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"payments",
-								"debit"
+								"virtual-account"
 							]
 						}
 					},
@@ -4652,13 +4652,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/payments/debit",
+									"raw": "{{host}}/payments/virtual-account",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"payments",
-										"debit"
+										"virtual-account"
 									]
 								}
 							},

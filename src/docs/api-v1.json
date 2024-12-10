@@ -5296,12 +5296,12 @@
         }
       }
     },
-    "/payments/debit": {
+    "/payments/virtual-account": {
       "post": {
         "tags": [
           "Payment"
         ],
-        "summary": "debit_card",
+        "summary": "virtual_account",
         "requestBody": {
           "content": {
             "application/json": {

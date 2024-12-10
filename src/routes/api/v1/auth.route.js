@@ -9,4 +9,6 @@ export default (router) => {
     router.post(prefix + '/send-otp',  AuthController.sendOtp);
     router.post(prefix + '/reset-password',  AuthController.resetPassword);
     router.post(prefix + '/reset-password/send-email', AuthController.sendResetPasswordEmail);
+    router.get(prefix + '/google/callback', AuthController.googleOauthCallback);
+    router.get(prefix + '/google', AuthController.redirectGoogleOauth);
 };

@@ -137,3 +137,4 @@ dist
 
 prisma/migrations
 prisma/seeder/data.xlsx
+google_client_secret.json

@@ -4,7 +4,6 @@ import * as VoucherService from './voucher.service.js';
 import { encodeBookingCode } from "../utils/hashids.js";
 import { getIoInstance } from "../configs/websocket.js";
 
-
 export const getBookings = async (userId) => {
   const bookings = await prisma.booking.findMany({
     where: {
@@ -29,11 +28,31 @@ export const getBookings = async (userId) => {
           flight: {
             select: {
               flightNum: true,
-              departureAirport: {
-                select: { name: true, code: true },
+              departureTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
-              arrivalAirport: {
-                select: { name: true, code: true },
+              arrivalTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
               airline: {
                 select: { name: true, code: true },
@@ -100,11 +119,31 @@ export const getBooking = async (userId, id) => {
           flight: {
             select: {
               flightNum: true,
-              departureAirport: {
-                select: { name: true, code: true },
+              departureTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
-              arrivalAirport: {
-                select: { name: true, code: true },
+              arrivalTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
               airline: {
                 select: { name: true, code: true },
@@ -369,11 +408,31 @@ export const updateStatusBooking = async (data, id) => {
           flight: {
             select: {
               flightNum: true,
-              departureAirport: {
-                select: { name: true, code: true },
+              departureTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
-              arrivalAirport: {
-                select: { name: true, code: true },
+              arrivalTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
               airline: {
                 select: { name: true, code: true },
@@ -442,13 +501,20 @@ export const updateStatusBooking = async (data, id) => {
 
     const updatedAt = await formatedDate(updatedBooking.updatedAt);
 
+    await prisma.notification.create({
+      data: {
+        userId: updatedBooking.userId,
+        type: "Transaction",
+        message: message,
+        isRead: false,
+      },
+    });
+
     io.emit('Pembatalan Booking', { message, updatedAt });
   };
 
-
   return updatedBooking;
 };
-
 
 export const getBookingsByDate = async (userId, startDate, endDate) => {
   const filterDate = {};
@@ -484,11 +550,31 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
           flight: {
             select: {
               flightNum: true,
-              departureAirport: {
-                select: { name: true, code: true },
+              departureTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
-              arrivalAirport: {
-                select: { name: true, code: true },
+              arrivalTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
               },
               airline: {
                 select: { name: true, code: true },
@@ -547,7 +633,6 @@ export const scanQrcode = async (id) => {
   }
 
   //implementasi cetak tiket
-
   const updatedBooking = await prisma.booking.update({
     where: {
       id: parseInt(id),

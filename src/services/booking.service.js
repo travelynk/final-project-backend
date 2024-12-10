@@ -4,7 +4,6 @@ import * as VoucherService from './voucher.service.js';
 import { encodeBookingCode } from "../utils/hashids.js";
 import { getIoInstance } from "../configs/websocket.js";
 
-
 export const getBookings = async (userId) => {
   const bookings = await prisma.booking.findMany({
     where: {
@@ -440,8 +439,6 @@ export const updateStatusBooking = async (data, id) => {
               sesuai batas waktu yang ditentukan. Jika membutuhkan bantuan lebih lanjut, 
               silakan hubungi kami. Terima kasih atas pengertiannya.`;
 
-              
-
     const updatedAt = await formatedDate(updatedBooking.updatedAt);
 
     await prisma.notification.create({
@@ -458,7 +455,6 @@ export const updateStatusBooking = async (data, id) => {
 
   return updatedBooking;
 };
-
 
 export const getBookingsByDate = async (userId, startDate, endDate) => {
   const filterDate = {};
@@ -557,7 +553,6 @@ export const scanQrcode = async (id) => {
   }
 
   //implementasi cetak tiket
-
   const updatedBooking = await prisma.booking.update({
     where: {
       id: parseInt(id),

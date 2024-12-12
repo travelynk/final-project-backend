@@ -5296,12 +5296,12 @@
         }
       }
     },
-    "/payments/debit": {
+    "/payments/virtual-account": {
       "post": {
         "tags": [
           "Payment"
         ],
-        "summary": "debit_card",
+        "summary": "virtual_account",
         "requestBody": {
           "content": {
             "application/json": {
@@ -6012,7 +6012,7 @@
         "tags": [
           "Voucher"
         ],
-        "summary": "GetVouchers",
+        "summary": "Get Vouchers",
         "responses": {
           "200": {
             "description": "OK",
@@ -6028,40 +6028,19 @@
         }
       }
     },
-    "/vouchers/DISC2024": {
-      "get": {
+    "/vouchers/ORAA1212": {
+      "post": {
         "tags": [
           "Voucher"
         ],
-        "summary": "GetVoucherByCode",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 6,\r\n        \"code\": \"DISC2025\",\r\n        \"type\": \"Percentage\",\r\n        \"value\": 10,\r\n        \"minPurchase\": 100,\r\n        \"maxVoucher\": 10,\r\n        \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n        \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n        \"createdAt\": \"2024-12-08T03:11:00.091Z\",\r\n        \"updatedAt\": \"2024-12-08T03:12:42.616Z\",\r\n        \"updatedTotalPrice\": 90\r\n    }\r\n}"
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Voucher"
-        ],
-        "summary": "UpdateVoucher",
+        "summary": "Get Voucher By Code",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "example": {
-                  "type": "Percentage",
-                  "value": 10,
-                  "maxVoucher": 10
+                  "totalPrice": 1000000
                 }
               }
             }
@@ -6075,7 +6054,7 @@
                 "schema": {
                   "type": "string"
                 },
-                "example": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 7,\r\n        \"code\": \"DISC2024\",\r\n        \"type\": \"Percentage\",\r\n        \"value\": 10,\r\n        \"minPurchase\": 100,\r\n        \"maxVoucher\": 10,\r\n        \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n        \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n        \"createdAt\": \"2024-12-09T05:00:49.791Z\",\r\n        \"updatedAt\": \"2024-12-09T05:01:51.113Z\"\r\n    }\r\n}"
+                "example": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 6,\r\n        \"code\": \"DISC2025\",\r\n        \"type\": \"Percentage\",\r\n        \"value\": 10,\r\n        \"minPurchase\": 100,\r\n        \"maxVoucher\": 10,\r\n        \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n        \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n        \"createdAt\": \"2024-12-08T03:11:00.091Z\",\r\n        \"updatedAt\": \"2024-12-08T03:12:42.616Z\",\r\n        \"updatedTotalPrice\": 90\r\n    }\r\n}"
               }
             }
           }
@@ -6087,7 +6066,7 @@
         "tags": [
           "Voucher"
         ],
-        "summary": "StoreVoucher",
+        "summary": "Store Voucher",
         "requestBody": {
           "content": {
             "application/json": {
@@ -6115,6 +6094,41 @@
                   "type": "string"
                 },
                 "example": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 7,\r\n        \"code\": \"DISC2024\",\r\n        \"type\": \"Fixed\",\r\n        \"value\": 20,\r\n        \"minPurchase\": 100,\r\n        \"maxVoucher\": 50,\r\n        \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n        \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n        \"createdAt\": \"2024-12-09T05:00:49.791Z\",\r\n        \"updatedAt\": \"2024-12-09T05:00:49.791Z\"\r\n    }\r\n}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vouchers/DISC2024": {
+      "put": {
+        "tags": [
+          "Voucher"
+        ],
+        "summary": "Update Voucher",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "type": "Percentage",
+                  "value": 10,
+                  "maxVoucher": 10
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 7,\r\n        \"code\": \"DISC2024\",\r\n        \"type\": \"Percentage\",\r\n        \"value\": 10,\r\n        \"minPurchase\": 100,\r\n        \"maxVoucher\": 10,\r\n        \"startDate\": \"2024-12-01T00:00:00.000Z\",\r\n        \"endDate\": \"2024-12-31T23:59:59.000Z\",\r\n        \"createdAt\": \"2024-12-09T05:00:49.791Z\",\r\n        \"updatedAt\": \"2024-12-09T05:01:51.113Z\"\r\n    }\r\n}"
               }
             }
           }

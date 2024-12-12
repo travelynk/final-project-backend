@@ -119,7 +119,8 @@ export const verifyOtp = async (req, res, next) => {
 
 export const redirectGoogleOauth = async (req, res, next) => {
     try {
-        res.redirect(await AuthService.googleAuthorizeUrl());
+        // res.redirect(await AuthService.googleAuthorizeUrl());
+        response.res200('Berhasil mendapatkan authorize url google', await AuthService.googleAuthorizeUrl(), res);
     } catch (error) {
         next(error);
     }
@@ -128,7 +129,8 @@ export const redirectGoogleOauth = async (req, res, next) => {
 export const googleOauthCallback = async (req, res, next) => {
     try {
         const token = await AuthService.googleOauthCallback(req.query.code);
-        res.redirect(`${process.env.FE_DOMAIN}/auth/login?token=${token}`);
+        // res.redirect(`${process.env.FE_DOMAIN}/auth/login?token=${token}`);
+        response.res200('Berhasil login menggunakan google', { token }, res);
     } catch (error) {
         next(error);
     }

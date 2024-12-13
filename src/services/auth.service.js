@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { google, oauth2Client, authorizationUrl } from "../configs/googleOauth.js";
+import { sendOtpEmail } from "../views/send.otp.js";
 
 export const login = async ({ email, password }) => {
     try {
@@ -143,7 +144,7 @@ export const sendOtp = async (email) => {
         from: "test@gmail.com",
         to: email,
         subject: "Verification Travelynk Account",
-        text: `Your OTP code is: ${otp}`,
+        html: sendOtpEmail(otp),
     };
 
     await transporter.sendMail(mailOptions);

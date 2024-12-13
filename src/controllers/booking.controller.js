@@ -100,8 +100,8 @@ export const getBookingsByDate = async (req, res, next) => {
 
 export const scanQrcode = async (req, res, next) => {
     try {
-        const {token} = req.query;
-        
+        const { token } = req.query;
+
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET_FORGET);
 
         const { code } = decodedToken;
@@ -113,5 +113,38 @@ export const scanQrcode = async (req, res, next) => {
         response.res200('Berhasil', updatedBooking, res);
     } catch (error) {
         next(error)
+    }
+};
+
+export const getTicket = async (req, res) => {
+    try {
+
+        const { token } = req.query;
+
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET_FORGET);
+
+        const { code } = decodedToken;
+
+        const id = await decodeBookingCode(code);
+
+        const userId = 1
+
+        const booking = await BookingService.getTicket(userId, id)
+        const domainUrl = process.env.DOMAIN_URL;
+
+        res.render('tickets', {
+            token,
+            domainUrl,
+            data: booking
+        });
+    } catch (error) {
+        res.status(error.statusCode || 500).render('error', {
+            error: {
+                title: 'Error',
+                message: error.message,
+                status: error.statusCode,
+            },
+        });
+        
     }
 };

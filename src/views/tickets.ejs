@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Tiket Pesawat - Travelynk</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f8fe;
+            margin: 0;
+            padding: 0;
+            color: #34495e;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #1e90ff;
+            margin-bottom: 20px;
+        }
+
+        .ticket {
+            border: 1px solid #e1eaf4;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #f7f9fc, #eef3fb);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ticket h2 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e1eaf4;
+            padding-bottom: 5px;
+        }
+
+        .ticket p {
+            font-size: 1rem;
+            margin: 5px 0;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #1e90ff;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .status-unpaid {
+            background-color: #ff6b6b;
+            color: #ffffff;
+        }
+
+        .status-paid {
+            background-color: #4caf50;
+            color: #ffffff;
+        }
+
+        .flight-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-top: 1px dashed #ccc;
+            margin-top: 15px;
+        }
+
+        .flight-details p {
+            margin: 0;
+        }
+
+        .flight-icon {
+            font-size: 1.5rem;
+            color: #1e90ff;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                margin: 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .ticket h2 {
+                font-size: 1.2rem;
+            }
+
+            .ticket p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Detail Tiket Anda</h1>
+
+        <% data.segments.forEach((segment, index) => { %>
+            <div class="ticket">
+                <h2>
+                    <%= index === 0 ? 'Perjalanan Pergi' : 'Perjalanan Pulang' %>
+                </h2>
+                <p><span class="label">Nama Penumpang:</span> <%= segment.passenger.fullName %></p>
+                <p><span class="label">Nomor Tiket:</span> <%= data.bookingCode %></p>
+                <p><span class="label">Penerbangan:</span>
+                    <%= segment.flight.departureTerminal.airport.name %> (<%= segment.flight.departureTerminal.airport.code %>) -
+                    <%= segment.flight.arrivalTerminal.airport.name %> (<%= segment.flight.arrivalTerminal.airport.code %>)
+                </p>
+                <p><span class="label">Tanggal:</span> <%= new Date(segment.flight.departureTime).toISOString().split('T')[0] %></p>
+                <p><span class="label">Jam Berangkat:</span>
+                    <%= new Date(segment.flight.departureTime).toISOString().split('T')[1].slice(0, 8) %>
+                </p>
+                <p><span class="label">Maskapai:</span> <%= segment.flight.airline.name %></p>
+                <p><span class="label">Nomor Kursi:</span> <%= segment.flightSeat.position %></p>
+
+                <div class="flight-details">
+                    <p><span class="flight-icon">&#9992;</span> <%= segment.flight.airline.name %></p>
+                    <p><%= segment.flight.departureTerminal.airport.code %> &#10132; <%= segment.flight.arrivalTerminal.airport.code %></p>
+                </div>
+
+                <div class="status <%= data.status === 'Unpaid' ? 'status-unpaid' : 'status-paid' %>">
+                    Status: <%= data.status %>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+
+    <script>
+        const token = '<%= token %>';
+        const domainUrl = '<%= domainUrl %>';
+        console.log(domainUrl);
+        console.log("Token yang diterima: ", token);
+
+        async function submitTicket() {
+            try {
+                const response = await fetch(`http://${domainUrl}/api/v1/bookings/scan?token=${token}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Request failed with status ' + response.status);
+                }
+
+                const data = await response.json();
+                console.log('Response yang diterima: ', data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function showPopup(message) {
+            const popup = document.createElement('div');
+            popup.style.position = 'fixed';
+            popup.style.top = '50%';
+            popup.style.left = '50%';
+            popup.style.transform = 'translate(-50%, -50%)';
+            popup.style.backgroundColor = '#ffffff';
+            popup.style.padding = '20px';
+            popup.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';
+            popup.style.borderRadius = '8px';
+            popup.style.zIndex = '1000';
+            popup.innerHTML = `<p>${message}</p>
+                                <button onclick="handlePopupClick(true, this)" style="margin-top: 10px; padding: 10px 20px; background-color: #27ae60; color: #fff; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">Yes</button>
+                                <button onclick="handlePopupClick(false, this)" style="margin-top: 10px; padding: 10px 20px; background-color: #e74c3c; color: #fff; border: none; border-radius: 5px; cursor: pointer;">No</button>`;
+
+            document.body.appendChild(popup);
+        }
+
+        async function handlePopupClick(isYes, button) {
+            const popup = button.parentElement;
+            document.body.removeChild(popup);
+            if (isYes) {
+                submitTicket();
+            } else {
+                await window.print();
+                window.addEventListener("afterprint", () => {
+                    showPopup("Apakah Tiket sudah selesai di print?");
+                });
+            }
+        }
+
+        window.print();
+        window.addEventListener("afterprint", () => {
+            showPopup("Apakah Tiket sudah selesai di print?");
+        });
+    </script>
+</body>
+
+</html>

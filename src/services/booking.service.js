@@ -643,3 +643,100 @@ export const scanQrcode = async (id) => {
 
   return updatedBooking;
 };
+
+
+export const getTicket = async (userId, id) => {
+  const booking = await prisma.booking.findUnique({
+    where: {
+      userId,
+      id: parseInt(id),
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          email: true,
+          profile: {
+            select: {
+              fullName: true,
+              phone: true,
+            },
+          },
+        },
+      },
+      passengerCount: true,
+      segments: {
+        include: {
+          flight: {
+            select: {
+              flightNum: true,
+              departureTime: true,
+              arrivalTime: true,
+              departureTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
+              },
+              arrivalTerminal: {
+                select: {
+                  id: true,
+                  name: true,
+                  airport: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true
+                    },
+                  },
+                },
+              },
+              airline: {
+                select: { name: true, code: true },
+              },
+            },
+          },
+          flightSeat: {
+            select: {
+              position: true,
+              isAvailable: true,
+            },
+          },
+          passenger: true,
+        },
+      },
+      payments: {
+        select: {
+          transactionId: true,
+          status: true,
+          total: true,
+          method: true,
+        },
+      },
+      voucher: true,
+    },
+  });
+
+  if (!booking) {
+    throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
+  }
+
+  if (booking.status != "Issued") {
+    throw new Error403("Akses ditolak, pembayaran diperlukan.");
+  }
+
+  if (booking.isScan == true) {
+    throw new Error409("Tiket ini sudah dicetak sebelumnya. Tidak dapat mencetak tiket yang sama lebih dari sekali.");
+  }
+
+  booking.bookingCode = await encodeBookingCode(booking.id);
+
+  return booking;
+};

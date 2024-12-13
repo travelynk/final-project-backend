@@ -6,6 +6,7 @@ import { generateOTP, generateSecret, verifyOTP } from "../../utils/otp";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
+import { sendOtpEmail } from '../../views/send.otp.js';
 
 
 jest.mock("../../configs/database", () => ({
@@ -170,7 +171,7 @@ describe("Auth Service", () => {
             expect(nodemailer.createTransport().sendMail).toHaveBeenCalledWith(expect.objectContaining({
                 to: data.email,
                 subject: "Verification Travelynk Account",
-                text: expect.stringContaining("Your OTP code is: 123456"),
+                html: expect.stringContaining(sendOtpEmail("123456")),
             }));
         });
 

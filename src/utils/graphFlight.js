@@ -74,7 +74,7 @@ function generateFlightCombinations(flightLists) {
     );
 }
 
-function mapFlightData(flights, schedule, seatClass, depCity, arrCity) {
+function mapFlightData(flights, schedule, seatClass, depCity, arrCity, passengers) {
     const multiGraph = createMultiGraph(flights);
     const paths = findAllPaths(multiGraph, depCity, arrCity);
 
@@ -158,16 +158,33 @@ function mapFlightData(flights, schedule, seatClass, depCity, arrCity) {
             }
         });
 
+        const [adult, child, infant] = passengers;
+
         return {
             flightDate: formatTime(schedule).date,
             estimatedDuration: `${totalDuration} Jam`,
             departureTime: pathInfo.flights[0].departureTime,
             arrivalTime: pathInfo.flights.at(-1).arrivalTime,
+            schedule: {
+                departure: {
+                    time: formatTime(pathInfo.flights[0].departureTime).time,
+                    date: formatTime(pathInfo.flights[0].departureTime).date,
+                },
+                arrival: {
+                    time: formatTime(pathInfo.flights.at(-1).arrivalTime).time,
+                    date: formatTime(pathInfo.flights.at(-1).arrivalTime).date,
+                }
+            },
             seatClass,
             price: `Rp ${totalPrice.toLocaleString()}`,
             isTransit: flightsOnPath.length > 1,
             delayTransit: delay,
             flights: formatFlight,
+            passengerCount: {
+                adult,
+                child,
+                infant
+            },
         };
     });
 

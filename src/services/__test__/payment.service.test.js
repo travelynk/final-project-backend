@@ -49,59 +49,72 @@ jest.mock('nodemailer', () => ({
   }),
 }));
 
-
 afterEach(() => jest.clearAllMocks());
 
 describe("Payment Service Tests", () => {
+
   describe("createDebitPayment", () => {
     it("should throw error if booking not found", async () => {
       prisma.booking.findUnique.mockResolvedValue(null);
       await expect(createDebitPayment(1, "bca")).rejects.toThrow("Pemesanan tidak ditemukan");
     });
 
-it("should create debit payment successfully", async () => {
-  const mockBooking = {
-    id: 1,
-    totalPrice: 700000,
-    user: { email: "test@example.com", profile: { fullName: "Test User" } },
-  };
+    it("should create debit payment successfully", async () => {
+      const mockBooking = {
+        id: 1,
+        totalPrice: 700000,
+        user: { email: "test@example.com", profile: { fullName: "Test User" } },
+      };
 
-  const mockUpdatedBooking = {
-    ...mockBooking,
-    status: "Pending",
-    urlQrcode: "https://example.com/qrcode.png",
-  };
+      const mockUpdatedBooking = {
+        ...mockBooking,
+        status: "Pending",
+        urlQrcode: "https://example.com/qrcode.png",
+      };
 
-  const mockChargeResponse = {
-    transaction_id: "txn_789",
-    order_id: "order_789",
-    gross_amount: "700000",
-    va_numbers: [],  // Simulasi jika tidak ada VA Number
-  };
-  
-  prisma.booking.findUnique.mockResolvedValue(mockBooking);
-  prisma.booking.update.mockResolvedValue(mockUpdatedBooking);
-  coreApi.charge.mockResolvedValue(mockChargeResponse);
+      const mockChargeResponse = {
+        transaction_id: "txn_789",
+        order_id: "order_789",
+        gross_amount: "700000",
+        va_numbers: [],
+      };
 
-  prisma.payment.create.mockResolvedValue();
+      prisma.booking.findUnique.mockResolvedValue(mockBooking);
+      prisma.booking.update.mockResolvedValue(mockUpdatedBooking);
+      coreApi.charge.mockResolvedValue(mockChargeResponse);
 
-  const response = await createDebitPayment(1, "BNI");
+      prisma.payment.create.mockResolvedValue();
 
-  expect(prisma.booking.findUnique).toHaveBeenCalledWith({
-    where: { id: 1 },
-    include: { payments: true, user: { include: { profile: true } } },
+      const response = await createDebitPayment(1, "BNI");
+
+      expect(prisma.booking.findUnique).toHaveBeenCalledWith({
+        where: { id: 1 },
+        include: { payments: true, user: { include: { profile: true } } },
+      });
+
+      expect(prisma.booking.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: { "urlQrcode": "https://mock-imagekit.io/path/to/image" },
+      });
+
+      expect(coreApi.charge).toHaveBeenCalled();
+      expect(prisma.payment.create).toHaveBeenCalled();
+      expect(response).toEqual(mockChargeResponse);
+    });
+
+    it("should handle error if coreApi charge fails", async () => {
+      const mockBooking = {
+        id: 1,
+        totalPrice: 700000,
+        user: { email: "test@example.com", profile: { fullName: "Test User" } },
+      };
+
+      prisma.booking.findUnique.mockResolvedValue(mockBooking);
+      coreApi.charge.mockRejectedValue(new Error("Payment gateway error"));
+
+      await expect(createDebitPayment(1, "BNI")).rejects.toThrow("Payment gateway error");
+    });
   });
-
-  expect(prisma.booking.update).toHaveBeenCalledWith({
-    where: { id: 1 },
-    data: { "urlQrcode": "https://mock-imagekit.io/path/to/image" },
-  });
-
-  expect(coreApi.charge).toHaveBeenCalled();
-  expect(prisma.payment.create).toHaveBeenCalled();
-  expect(response).toEqual(mockChargeResponse);
-  });
-});
 
   describe("cancelPayment", () => {
     it("should cancel payment successfully", async () => {
@@ -145,41 +158,54 @@ it("should create debit payment successfully", async () => {
         status: "pending",
         booking: { user: { email: "test@example.com" } },
       });
-    
+
       snap.transaction.status.mockResolvedValue({ transaction_status: "settlement" });
-    
+
       await expect(cancelPayment("txn_123")).rejects.toThrow(
         "Transaction cannot be cancelled. Current status: settlement."
       );
-    
+
       expect(prisma.payment.findUnique).toHaveBeenCalledWith({
         where: { transactionId: "txn_123" },
         include: { booking: { include: { user: true } } },
       });
-    
+
       expect(snap.transaction.status).toHaveBeenCalledWith("txn_123");
+    });
+
+    it("should throw error if cancel fails due to network issue", async () => {
+      prisma.payment.findUnique.mockResolvedValue({
+        id: 1,
+        transactionId: "txn_123",
+        status: "pending",
+        booking: { user: { email: "test@example.com" } },
+      });
+
+      snap.transaction.status.mockResolvedValue({ transaction_status: "pending" });
+      snap.transaction.cancel.mockRejectedValue(new Error("Network issue"));
+
+      await expect(cancelPayment("txn_123")).rejects.toThrow("Network issue");
     });
   });
 
   describe("checkPaymentStatus", () => {
-    it("should return payment status successfully", async () => {
+    it("should update booking status to Issued if payment is settled", async () => {
       prisma.payment.findUnique.mockResolvedValue({
         id: 1,
         transactionId: "txn_123",
-        booking: { user: { email: "test@example.com" } },
+        booking: { id: 1, user: { email: "test@example.com" } },
       });
 
       snap.transaction.status.mockResolvedValue({ transaction_status: "settlement" });
-
+      prisma.booking.update.mockResolvedValue();
       prisma.payment.update.mockResolvedValue();
 
       const response = await checkPaymentStatus("txn_123");
 
-      expect(prisma.payment.findUnique).toHaveBeenCalledWith({
-        where: { transactionId: "txn_123" },
-        include: { booking: { include: { user: true } } },
+      expect(prisma.booking.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: { status: "Issued" },
       });
-      expect(snap.transaction.status).toHaveBeenCalledWith("txn_123");
       expect(prisma.payment.update).toHaveBeenCalledWith({
         where: { transactionId: "txn_123" },
         data: { status: "Settlement" },
@@ -188,9 +214,16 @@ it("should create debit payment successfully", async () => {
       expect(response).toEqual({ transaction_status: "settlement" });
     });
 
-    it("should throw error if payment is not found", async () => {
-      prisma.payment.findUnique.mockResolvedValue(null);
-      await expect(checkPaymentStatus("txn_123")).rejects.toThrow("Pembayaran tidak ditemukan");
+    it("should handle unexpected transaction status", async () => {
+      prisma.payment.findUnique.mockResolvedValue({
+        id: 1,
+        transactionId: "txn_123",
+        booking: { id: 1, user: { email: "test@example.com" } },
+      });
+
+      snap.transaction.status.mockResolvedValue({ transaction_status: "unknown" });
+
+      await expect(checkPaymentStatus("txn_123")).rejects.toThrow("Transaction status tidak dikenali");
     });
   });
 
@@ -229,40 +262,89 @@ it("should create debit payment successfully", async () => {
       expect(prisma.payment.create).toHaveBeenCalled();
       expect(response).toEqual(mockChargeResponse);
     });
-  });
 
-  describe("createCardPayment", () => {
-    it("should throw error if booking is not found", async () => {
-      prisma.booking.findUnique.mockResolvedValue(null);
-      await expect(createCardPayment(1, "mockCardToken")).rejects.toThrow("Pemesanan tidak ditemukan");
-    });
-
-    it("should create Card payment successfully", async () => {
+    it("should handle error if coreApi charge fails", async () => {
       const mockBooking = {
         id: 1,
-        totalPrice: 700000,
+        totalPrice: 300000,
         user: { email: "test@example.com", profile: { fullName: "Test User" } },
       };
       prisma.booking.findUnique.mockResolvedValue(mockBooking);
 
-      const mockChargeResponse = {
-        transaction_id: "txn_789",
-        order_id: "order_789",
-        gross_amount: "700000",
-      };
-      coreApi.charge.mockResolvedValue(mockChargeResponse);
+      coreApi.charge.mockRejectedValue(new Error("GoPay payment error"));
 
-      prisma.payment.create.mockResolvedValue();
-
-      const response = await createCardPayment(1, "mockCardToken");
-
-      expect(prisma.booking.findUnique).toHaveBeenCalledWith({
-        where: { id: 1 },
-        include: { payments: true, user: { include: { profile: true } } },
-      });
-      expect(coreApi.charge).toHaveBeenCalled();
-      expect(prisma.payment.create).toHaveBeenCalled();
-      expect(response).toEqual(mockChargeResponse);
+      await expect(createGoPayPayment(1)).rejects.toThrow("GoPay payment error");
     });
   });
+
+  describe("createCardPayment", () => {
+    it("should create card payment successfully", async () => {
+      const mockBooking = {
+        id: 1,
+        totalPrice: 800000,
+        user: { email: "test@example.com", profile: { fullName: "Test User" } },
+      };
+    
+      const mockChargeResponse = {
+        transaction_id: "txn_101",
+        order_id: "order_101",
+        gross_amount: "800000",
+        transaction_status: "capture",
+      };
+    
+    
+      prisma.booking.findUnique.mockResolvedValue(mockBooking);
+      prisma.booking.update.mockResolvedValue({
+        ...mockBooking,
+        status: "Pending",
+      });
+    
+     
+      coreApi.charge.mockResolvedValue(mockChargeResponse);
+    
+     
+      const mockPayment = {
+        id: 1, 
+        transactionId: mockChargeResponse.transaction_id,
+        status: "Pending",
+        bookingId: mockBooking.id,
+      };
+    
+      prisma.payment.create.mockResolvedValue(mockPayment);
+    
+      const fixedTimestamp = 1734098960934;
+      jest.spyOn(Date, "now").mockReturnValue(fixedTimestamp);
+    
+      const response = await createCardPayment(1, "validCardToken");
+    
+      expect(coreApi.charge).toHaveBeenCalledWith({
+        payment_type: "credit_card",
+        credit_card: {
+          authentication: false,
+          token_id: "validCardToken", 
+        },
+        transaction_details: {
+          gross_amount: 800000, 
+          order_id: `BOOKING-1-${fixedTimestamp}`, 
+        },
+      });
+    
+      expect(prisma.payment.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          transactionId: mockChargeResponse.transaction_id,
+          status: "Pending",
+          bookingId: mockBooking.id,
+        }),
+      });
+    
+      expect(prisma.payment.update).toHaveBeenCalledWith({
+        where: { id: mockPayment.id },
+        data: { status: "Settlement" },
+      });
+    
+      expect(response).toEqual(mockChargeResponse);
+    });
+    
+  });    
+
 });

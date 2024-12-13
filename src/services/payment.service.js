@@ -126,26 +126,33 @@ export const checkPaymentStatus = async (transactionId) => {
     }
 
     const transactionStatus = await snap.transaction.status(transactionId);
+
     // const statusFormatted = transactionStatus.transaction_status.charAt(0).toUpperCase() +
     //     transactionStatus.transaction_status.slice(1);
 
     let statusFormatted;
-    switch (transactionStatus.transaction_status) {
-        case "pending":
-            statusFormatted = "Pending";
-            break;
-        case "settlement":
-            statusFormatted = "Settlement";
-            break;
-        case "cancel":
-            statusFormatted = "Cancelled";
-            break;
-        case "expire":
-            statusFormatted = "Expired";
-            break;
-        default:
-            statusFormatted = "Unknown"; // Default jika status tidak dikenali
+    if (transactionStatus.transaction_status === "pending") {
+        statusFormatted = "Pending";
+    } else if (["settlement", "capture"].includes(transactionStatus.transaction_status)) {
+        statusFormatted = "Settlement";
+        // Update status booking menjadi Issued jika pembayaran berhasil
+        await prisma.booking.update({
+            where: { id: currentPayment.booking.id },
+            data: { status: "Issued" },
+        });
+    } else if (["cancel", "expire"].includes(transactionStatus.transaction_status)) {
+        statusFormatted = "Cancelled";
+        // Update status booking menjadi Cancelled jika pembayaran dibatalkan
+        await prisma.booking.update({
+            where: { id: currentPayment.booking.id },
+            data: { status: "Cancelled" },
+        });
+    } else if (transactionStatus.transaction_status === "expire") {
+        statusFormatted = "Expired";
+    } else {
+        throw new Error("Transaction status tidak dikenali");
     }
+
 
     await prisma.payment.update({
         where: { transactionId },
@@ -272,20 +279,33 @@ export const createCardPayment = async (bookingId, cardToken) => {
     // Generate QR Code
     const updatedBooking = await generateQrcode(bookingId);
 
-
-    await prisma.payment.create({
+    // Buat pembayaran di database
+    const payment = await prisma.payment.create({
         data: {
             bookingId: bookingId,
             transactionId: chargeResponse.transaction_id,
             reference_number: chargeResponse.order_id,
             total: parseFloat(chargeResponse.gross_amount),
             method: chargeResponse.payment_type,
-            status: "Pending",
+            status: "Pending", // Status awal pembayaran
             amount: parseFloat(chargeResponse.gross_amount),
         },
     });
 
-    // Kirim email setelah pembayaran berhasil
+    // Update status booking dan pembayaran jika berhasil
+    if (updatedBooking && chargeResponse.transaction_status === "capture") {
+        await prisma.booking.update({
+            where: { id: bookingId },
+            data: { status: "Issued" },
+        });
+
+        await prisma.payment.update({
+            where: { id: payment.id },
+            data: { status: "Settlement" },
+        });
+    }
+
+    // Kirim email setelah pembayaran berhasil dibuat
     await sendPaymentEmail(
         booking.user.email,
         "Pembayaran Kartu Kredit Berhasil Dibuat",
@@ -299,6 +319,7 @@ export const createCardPayment = async (bookingId, cardToken) => {
 
     return chargeResponse;
 };
+
 
 
 // Fungsi untuk mengirim email notifikasi pembayaran

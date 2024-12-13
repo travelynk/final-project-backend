@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { google, oauth2Client, authorizationUrl } from "../configs/googleOauth.js";
+import { sendOtpEmail } from "../views/send.otp.js";
 
 export const login = async ({ email, password }) => {
     try {
@@ -14,7 +15,8 @@ export const login = async ({ email, password }) => {
         }
 
         const user = await prisma.user.findUnique({
-            where: { email }
+            where: { email },
+            include: { profile: true },
         });
 
         if (!user) {
@@ -38,7 +40,7 @@ export const login = async ({ email, password }) => {
 
         return {
             token,
-            user: { email: user.email, role: user.role }
+            user: { email: user.email, role: user.role, name: user.profile.fullName },
         };
     } catch (error) {
         if (error instanceof Error400 || error instanceof Error401) {
@@ -143,7 +145,7 @@ export const sendOtp = async (email) => {
         from: "test@gmail.com",
         to: email,
         subject: "Verification Travelynk Account",
-        text: `Your OTP code is: ${otp}`,
+        html: sendOtpEmail(otp),
     };
 
     await transporter.sendMail(mailOptions);
@@ -250,27 +252,13 @@ export const googleOauthCallback = async (code) => {
     }
 
     const email = data.email;
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ 
+        where: { email },
+        include: { profile: true }
+    });
 
     if (!user) {
-        const fullName = data.name;
-        const gender = data.gender
-        const password = data.id;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await prisma.user.create({
-            data: {
-                email,
-                role: "buyer",
-                password: hashedPassword,
-                verified: true,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                profile: {
-                    create: { fullName, phone: "", gender },
-                },
-            },
-            include: { profile: true },
-        });
+        throw new Error404("Pengguna tidak ditemukan");
     } else {
         if (!user.verified) {
             await prisma.user.update({
@@ -286,5 +274,10 @@ export const googleOauthCallback = async (code) => {
         { expiresIn: "1d" }
     );
 
-    return token;
+    const result = {
+        token,
+        user: { email: user.email, role: user.role, name: user.profile.fullName },
+    }
+
+    return result;
 };

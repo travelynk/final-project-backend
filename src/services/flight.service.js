@@ -146,7 +146,7 @@ export const destroy = async (id) => {
 };
 
 export const getAvailableFlight = async (data) => {
-    const { route, seatClass, schedule } = data;
+    const { route, seatClass, schedule, passengers } = data;
     const startDay = new Date(schedule[0]);
     const endDay = new Date(startDay);
     endDay.setUTCDate(endDay.getUTCDate() + 1);
@@ -196,7 +196,7 @@ export const getAvailableFlight = async (data) => {
         });
 
         if (flights.length > 0) {
-            returnFlights = mapFlightData(flights, schedule[1], seatClass, arrCity, depCity);
+            returnFlights = mapFlightData(flights, schedule[1], seatClass, arrCity, depCity, passengers);
         }
     }
 
@@ -237,7 +237,7 @@ export const getAvailableFlight = async (data) => {
     });
 
     if (flights.length > 0){
-        outboundFlights = mapFlightData(flights, schedule[0], seatClass, depCity, arrCity);
+        outboundFlights = mapFlightData(flights, schedule[0], seatClass, depCity, arrCity, passengers);
     }
 
     return { outboundFlights, returnFlights };

@@ -332,7 +332,7 @@ export const sendPaymentEmail = async (email, subject, htmlContent) => {
 export const generateQrcode = async (id) => {
     const code = await encodeBookingCode(id);
     const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-    const url = `${process.env.DOMAIN_URL}/api/v1/bookings/scan?token=${resetToken}`;
+    const url = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
 
     const qr = await generateQrPng(url);
 

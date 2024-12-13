@@ -51,6 +51,7 @@ describe("Auth Service", () => {
             password: "hashedPassword",
             role: "buyer",
             verified: true,
+            profile: { idUser: 1, fullName: "Test User", phone: "1234567890", gender: "Laki-laki" },
         };
         const mockData = {
             email: "test@example.com",
@@ -66,6 +67,7 @@ describe("Auth Service", () => {
             
             expect(prisma.user.findUnique).toHaveBeenCalledWith({
                 where: { email: mockData.email },
+                include: { profile: true },
             });
 
             expect(bcrypt.compare).toHaveBeenCalledWith(mockData.password, mockUser.password);
@@ -78,7 +80,7 @@ describe("Auth Service", () => {
 
             expect(result).toEqual({
               token: "mockToken",
-              user: { email: mockUser.email, role: mockUser.role },
+              user: { email: mockUser.email, role: mockUser.role, name: mockUser.profile.fullName },
             });
         });
   

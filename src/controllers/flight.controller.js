@@ -63,7 +63,7 @@ export const getAvailableFlight = async (req, res, next) => {
     try {
         const { error, value } = FlightValidation.querySchema.validate(req.query);
         if (error) {
-            throw new Error400(`${error.details[0].message}`);
+            throw new Error400(`${error.details[0].message}`, 400);
         }
 
         const { rf, dt, ps, sc } = value;
@@ -77,6 +77,7 @@ export const getAvailableFlight = async (req, res, next) => {
         const flights = await FlightService.getAvailableFlight(data);
         res200('Berhasil mengambil data penerbangan yang tersedia', flights, res);
     } catch (error) {
+        error.data = []
         next(error);
     }
 };

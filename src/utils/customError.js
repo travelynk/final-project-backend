@@ -51,31 +51,3 @@ export class Error409 extends Error {
         this.name = 'Conflict';
     }
 }
-
-// Uncomment when needed
-// export class Error500 extends Error {
-//     constructor(message, statusCode = 500) {
-//         super(message);
-//         this.status = false;
-//         this.statusCode = statusCode;
-//         this.name = 'InternalServerError';
-//     }
-// }
-
-// export class Error502 extends Error {
-//     constructor(message, statusCode = 502) {
-//         super(message);
-//         this.status = false;
-//         this.statusCode = statusCode;
-//         this.name = 'BadGateway';
-//     }
-// }
-
-// export class Error503 extends Error {
-//     constructor(message, statusCode = 503) {
-//         super(message);
-//         this.status = false;
-//         this.statusCode = statusCode;
-//         this.name = 'ServiceUnavailable';
-//     }
-// }

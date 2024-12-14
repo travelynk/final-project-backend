@@ -76,3 +76,21 @@ export const updateVoucher = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getVoucherById = async (req, res, next) => {
+    try {
+        const { error, value } = VoucherValidation.getVoucherById.validate(req.params);
+
+        if (error) {
+            throw new Error400(error.message);
+        };
+
+        const { id } = value
+
+        const voucher = await VoucherService.getVoucherById(id);
+
+        res200('Berhasil', voucher, res);
+    } catch (error) {
+        next(error);
+    }
+};

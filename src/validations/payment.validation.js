@@ -7,9 +7,9 @@ export const createPaymentSchema = Joi.object({
         "number.integer": "Booking ID harus berupa bilangan bulat.",
         "any.required": "Booking ID wajib diisi.",
     }),
-    bank: Joi.string().valid("bca", "bni", "bri", "mandiri", "permata").required().messages({
+    bank: Joi.string().valid("bca", "bni", "bri").required().messages({
         "string.base": "Bank harus berupa teks.",
-        "any.only": "Bank hanya bisa salah satu dari: bca, bni, bri, mandiri, permata.",
+        "any.only": "Bank hanya bisa salah satu dari: bca, bni, bri.",
         "any.required": "Bank wajib diisi.",
     }),
 });

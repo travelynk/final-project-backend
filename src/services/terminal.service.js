@@ -1,7 +1,46 @@
 import prisma from "../configs/database.js";
 
 export const getAll = async () => {
-    return await prisma.terminal.findMany();
+    const terminals = await prisma.terminal.findMany({
+        include: {
+            airport: {
+                include: {
+                    city: {
+                        include: {
+                            country: true
+                        }
+                    }
+                }
+            }
+        },
+        orderBy: {
+            airport: {
+                city: {
+                    name: 'asc'
+                }
+            }
+        }
+    });
+    return terminals.map(terminal => {
+        return {
+            id: terminal.id,
+            name: terminal.name,
+            category: terminal.category,
+            airport: {
+                code: terminal.airport.code,
+                name: terminal.airport.name,
+            },
+            city: {
+                code: terminal.airport.city.code,
+                name: terminal.airport.city.name,
+            },
+            country: {
+                code: terminal.airport.city.country.code,
+                name: terminal.airport.city.country.name,
+            }
+        };
+    });
+
 };
 
 export const getOne = async (id) => {

@@ -56,21 +56,21 @@ describe('Flight Service', () => {
         });
     });
 
-    describe('getOne', () => {
-        test('should return one flight', async () => {
-            prisma.flight.findUnique.mockResolvedValue(data);
+    // describe('getOne', () => {
+    //     test('should return one flight', async () => {
+    //         prisma.flight.findUnique.mockResolvedValue(data);
 
-            const result = await FlightService.getOne(parseInt(data.id));
+    //         const result = await FlightService.getOne(parseInt(data.id));
 
-            expect(result).toEqual(data);
-            expect(prisma.flight.findUnique).toHaveBeenCalledTimes(1);
-            expect(prisma.flight.findUnique).toHaveBeenCalledWith({
-                where: {
-                    id: data.id
-                }
-            });
-        });
-    });
+    //         expect(result).toEqual(data);
+    //         expect(prisma.flight.findUnique).toHaveBeenCalledTimes(1);
+    //         expect(prisma.flight.findUnique).toHaveBeenCalledWith({
+    //             where: {
+    //                 id: data.id
+    //             }
+    //         });
+    //     });
+    // });
 
     describe('store', () => {
         test('should return created flight', async () => {

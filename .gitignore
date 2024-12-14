@@ -135,6 +135,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-prisma/migrations
 prisma/seeder/data.xlsx
 google_client_secret.json

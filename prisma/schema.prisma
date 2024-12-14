@@ -28,6 +28,7 @@ enum BookingStatus {
 enum PaymentStatus {
   Pending
   Settlement
+  Capture
   Failed
   Expired
   Cancelled

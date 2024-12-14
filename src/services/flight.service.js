@@ -2,6 +2,7 @@ import prisma from "../configs/database.js";
 import { Error400, Error404 } from "../utils/customError.js";
 import generateSeatCodes from "../utils/generateSeatCode.js";
 import mapFlightData from "../utils/graphFlight.js";
+import { formatTime } from '../utils/formatTime.js';
 
 export const getAll = async () => {
     const flights = await prisma.flight.findMany({
@@ -43,7 +44,7 @@ export const getAll = async () => {
                         code: flight.departureTerminal.airport.city.code,
                         name: flight.departureTerminal.airport.city.name
                     },
-                    schedule: flight.departureTime,
+                    schedule: formatTime(flight.departureTime).date + ' ' + formatTime(flight.departureTime).time,
                     terminal: flight.departureTerminal.name
                 },
                 arrival: {
@@ -52,7 +53,7 @@ export const getAll = async () => {
                         code: flight.arrivalTerminal.airport.city.code,
                         name: flight.arrivalTerminal.airport.city.name
                     },
-                    schedule: flight.arrivalTime,
+                    schedule: formatTime(flight.arrivalTime).date + ' ' + formatTime(flight.arrivalTime).time,
                     terminal: flight.arrivalTerminal.name
                 },
                 estimatedDuration: flight.estimatedDuration,
@@ -63,11 +64,62 @@ export const getAll = async () => {
 };
 
 export const getOne = async (id) => {
-    return await prisma.flight.findUnique({
+    const flight = await prisma.flight.findUnique({
         where: {
             id: parseInt(id)
-        }
+        },
+        include: {
+            airline: true,
+            departureTerminal: {
+                include: {
+                    airport: {
+                        include: {
+                            city: true,
+                        }
+                    }
+                }
+            },
+            arrivalTerminal: {
+                include: {
+                    airport: {
+                        include: {
+                            city: true,
+                        }
+                    }
+                }
+            },
+        },
     });
+
+    return {
+        flightId: flight.id,
+        flightNum: flight.flightNum,
+        airline: {
+            name: flight.airline.name,
+            image: flight.airline.image
+        },
+        departure: {
+            airport: flight.departureTerminal.airport.name,
+            city: {
+                code: flight.departureTerminal.airport.city.code,
+                name: flight.departureTerminal.airport.city.name
+            },
+            schedule: formatTime(flight.departureTime).date + ' ' + formatTime(flight.departureTime).time,
+            terminal: flight.departureTerminal.name
+        },
+        arrival: {
+            airport: flight.arrivalTerminal.airport.name,
+            city: {
+                code: flight.arrivalTerminal.airport.city.code,
+                name: flight.arrivalTerminal.airport.city.name
+            },
+            schedule: formatTime(flight.arrivalTime).date + ' ' + formatTime(flight.arrivalTime).time,
+            terminal: flight.arrivalTerminal.name
+        },
+        estimatedDuration: flight.estimatedDuration,
+        facility: flight.facility,
+        price: flight.price,
+    };
 };
 
 export const store = async (data) => {
@@ -236,7 +288,7 @@ export const getAvailableFlight = async (data) => {
         },
     });
 
-    if (flights.length > 0){
+    if (flights.length > 0) {
         outboundFlights = mapFlightData(flights, schedule[0], seatClass, depCity, arrCity, passengers);
     }
 

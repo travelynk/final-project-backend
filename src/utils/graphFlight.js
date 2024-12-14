@@ -124,7 +124,7 @@ function mapFlightData(flights, schedule, seatClass, depCity, arrCity, passenger
         const formatFlight = flightsOnPath.map(flight => {
             const departureTimeJakarta = formatTime(flight.departureTime);
             const arrivalTimeJakarta = formatTime(flight.arrivalTime);
-
+            
             return {
                 flightId: flight.id,
                 flightNum: flight.flightNum,

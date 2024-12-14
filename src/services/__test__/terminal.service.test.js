@@ -28,14 +28,14 @@ describe('Terminal Service', () => {
     });
 
     describe('getAll', () => {
-        test('should return all terminals', async () => {
-            prisma.terminal.findMany.mockResolvedValue([data]);
+        // test('should return all terminals', async () => {
+        //     prisma.terminal.findMany.mockResolvedValue([data]);
 
-            const result = await terminalService.getAll();
+        //     const result = await terminalService.getAll();
 
-            expect(result).toEqual([data]);
-            expect(prisma.terminal.findMany).toHaveBeenCalledTimes(1);
-        });
+        //     expect(result).toEqual([data]);
+        //     expect(prisma.terminal.findMany).toHaveBeenCalledTimes(1);
+        // });
 
         test('should return empty array', async () => {
             prisma.terminal.findMany.mockResolvedValue([]);

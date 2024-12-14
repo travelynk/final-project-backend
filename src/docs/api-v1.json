@@ -2661,7 +2661,7 @@
         "tags": [
           "Airport"
         ],
-        "summary": "Update City",
+        "summary": "Update Airport",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2751,7 +2751,7 @@
         "tags": [
           "Airport"
         ],
-        "summary": "Destroy City",
+        "summary": "Destroy Airport",
         "responses": {
           "200": {
             "description": "OK",
@@ -2915,7 +2915,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Get Airports",
+        "summary": "Get Terminals",
         "responses": {
           "200": {
             "description": "OK",
@@ -2993,7 +2993,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Get Airport",
+        "summary": "Get Terminal",
         "responses": {
           "200": {
             "description": "OK",
@@ -3067,7 +3067,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Update City",
+        "summary": "Update Terminal",
         "requestBody": {
           "content": {
             "application/json": {
@@ -3157,7 +3157,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Destroy City",
+        "summary": "Destroy Terminal",
         "responses": {
           "200": {
             "description": "OK",
@@ -3672,7 +3672,7 @@
         "tags": [
           "Airline"
         ],
-        "summary": "Destroy City",
+        "summary": "Destroy Airline",
         "responses": {
           "200": {
             "description": "OK",
@@ -3923,7 +3923,7 @@
         "tags": [
           "Flight"
         ],
-        "summary": "Get Flight",
+        "summary": "Get Flights",
         "responses": {
           "200": {
             "description": "OK",
@@ -3949,19 +3949,19 @@
               "Content-Length": {
                 "schema": {
                   "type": "integer",
-                  "example": "4710"
+                  "example": "12327"
                 }
               },
               "ETag": {
                 "schema": {
                   "type": "string",
-                  "example": "W/\"1266-7uqOpCQGVxzu0OUZSHq85T/Rv7M\""
+                  "example": "W/\"3027-iJvVfpEPfa4kHpb7QcUZuIJvxvo\""
                 }
               },
               "Date": {
                 "schema": {
                   "type": "string",
-                  "example": "Mon, 09 Dec 2024 07:58:36 GMT"
+                  "example": "Sat, 14 Dec 2024 05:57:02 GMT"
                 }
               },
               "Connection": {
@@ -3989,8 +3989,8 @@
                   },
                   "data": [
                     {
-                      "flightId": 2,
-                      "flightNum": "QZ2002",
+                      "flightId": 9,
+                      "flightNum": "QZ2007",
                       "airline": {
                         "name": "AirAsia Indonesia",
                         "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
@@ -4001,7 +4001,7 @@
                           "code": "JKT",
                           "name": "Jakarta"
                         },
-                        "schedule": "2024-12-07T06:30:00.000Z",
+                        "schedule": "13-12-2024 11:30",
                         "terminal": "Terminal 2"
                       },
                       "arrival": {
@@ -4010,77 +4010,19 @@
                           "code": "JOG",
                           "name": "Yogyakarta-Java Island"
                         },
-                        "schedule": "2024-12-07T08:00:00.000Z",
+                        "schedule": "13-12-2024 12:00",
                         "terminal": "Terminal A"
                       },
-                      "estimatedDuration": 1.5,
-                      "facility": "Snack",
-                      "price": 800000
+                      "estimatedDuration": 0.5,
+                      "facility": "WIFI",
+                      "price": 940000
                     },
                     {
-                      "flightId": 3,
-                      "flightNum": "QZ2003",
+                      "flightId": 10,
+                      "flightNum": "GA1234",
                       "airline": {
-                        "name": "AirAsia Indonesia",
-                        "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
-                      },
-                      "departure": {
-                        "airport": "Juanda Airport",
-                        "city": {
-                          "code": "SUB",
-                          "name": "Surabaya"
-                        },
-                        "schedule": "2024-12-07T08:00:00.000Z",
-                        "terminal": "Terminal 1"
-                      },
-                      "arrival": {
-                        "airport": "Ngurah Rai Airport",
-                        "city": {
-                          "code": "DPS",
-                          "name": "Denpasar - Bali"
-                        },
-                        "schedule": "2024-12-07T09:00:00.000Z",
-                        "terminal": "Terminal Domestik"
-                      },
-                      "estimatedDuration": 1,
-                      "facility": "Wifi",
-                      "price": 900000
-                    },
-                    {
-                      "flightId": 5,
-                      "flightNum": "GA4001",
-                      "airline": {
-                        "name": "Garuda Indonesia",
-                        "image": "https://images.flightroutes.com/airlines/100/GA_100px.png"
-                      },
-                      "departure": {
-                        "airport": "Juanda Airport",
-                        "city": {
-                          "code": "SUB",
-                          "name": "Surabaya"
-                        },
-                        "schedule": "2024-12-07T08:00:00.000Z",
-                        "terminal": "Terminal 1"
-                      },
-                      "arrival": {
-                        "airport": "Adisutjipto Airport",
-                        "city": {
-                          "code": "JOG",
-                          "name": "Yogyakarta-Java Island"
-                        },
-                        "schedule": "2024-12-07T09:00:00.000Z",
-                        "terminal": "Terminal A"
-                      },
-                      "estimatedDuration": 1,
-                      "facility": "Wifi",
-                      "price": 1250000
-                    },
-                    {
-                      "flightId": 6,
-                      "flightNum": "GA4002",
-                      "airline": {
-                        "name": "Garuda Indonesia",
-                        "image": "https://images.flightroutes.com/airlines/100/GA_100px.png"
+                        "name": "Air Arabia Maroc",
+                        "image": "https://images.flightroutes.com/airlines/100/3O_100px.png"
                       },
                       "departure": {
                         "airport": "Soekarno-Hatta International Airport",
@@ -4088,28 +4030,28 @@
                           "code": "JKT",
                           "name": "Jakarta"
                         },
-                        "schedule": "2024-12-07T07:00:00.000Z",
+                        "schedule": "13-12-2024 13:00",
                         "terminal": "Terminal 2"
                       },
                       "arrival": {
-                        "airport": "Juanda Airport",
+                        "airport": "Adisutjipto Airport",
                         "city": {
-                          "code": "SUB",
-                          "name": "Surabaya"
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
                         },
-                        "schedule": "2024-12-07T08:00:00.000Z",
-                        "terminal": "Terminal 1"
+                        "schedule": "13-12-2024 15:00",
+                        "terminal": "Terminal A"
                       },
-                      "estimatedDuration": 1,
-                      "facility": "Snack",
-                      "price": 700000
+                      "estimatedDuration": 2,
+                      "facility": "WIFI, Meal",
+                      "price": 2500000
                     },
                     {
-                      "flightId": 7,
-                      "flightNum": "GA4003",
+                      "flightId": 11,
+                      "flightNum": "JT5678",
                       "airline": {
-                        "name": "Garuda Indonesia",
-                        "image": "https://images.flightroutes.com/airlines/100/GA_100px.png"
+                        "name": "Air France",
+                        "image": "https://images.flightroutes.com/airlines/100/AF_100px.png"
                       },
                       "departure": {
                         "airport": "Soekarno-Hatta International Airport",
@@ -4117,50 +4059,398 @@
                           "code": "JKT",
                           "name": "Jakarta"
                         },
-                        "schedule": "2024-12-07T06:45:00.000Z",
-                        "terminal": "Terminal 1"
+                        "schedule": "13-12-2024 17:00",
+                        "terminal": "Terminal 2"
                       },
                       "arrival": {
-                        "airport": "Ngurah Rai Airport",
-                        "city": {
-                          "code": "DPS",
-                          "name": "Denpasar - Bali"
-                        },
-                        "schedule": "2024-12-07T09:45:00.000Z",
-                        "terminal": "Terminal Domestik"
-                      },
-                      "estimatedDuration": 3,
-                      "facility": "Wifi",
-                      "price": 950000
-                    },
-                    {
-                      "flightId": 4,
-                      "flightNum": "QZ2004",
-                      "airline": {
-                        "name": "AirAsia Indonesia",
-                        "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
-                      },
-                      "departure": {
                         "airport": "Adisutjipto Airport",
                         "city": {
                           "code": "JOG",
                           "name": "Yogyakarta-Java Island"
                         },
-                        "schedule": "2024-12-07T08:00:00.000Z",
+                        "schedule": "13-12-2024 18:30",
                         "terminal": "Terminal A"
                       },
-                      "arrival": {
-                        "airport": "Ngurah Rai Airport",
+                      "estimatedDuration": 1.5,
+                      "facility": "WIFI",
+                      "price": 1200000
+                    },
+                    {
+                      "flightId": 12,
+                      "flightNum": "QZ9101",
+                      "airline": {
+                        "name": "AirAsia Indonesia",
+                        "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
                         "city": {
-                          "code": "DPS",
-                          "name": "Denpasar - Bali"
+                          "code": "JKT",
+                          "name": "Jakarta"
                         },
-                        "schedule": "2024-12-07T09:30:00.000Z",
-                        "terminal": "Terminal Domestik"
+                        "schedule": "13-12-2024 14:45",
+                        "terminal": "Terminal 2"
+                      },
+                      "arrival": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "13-12-2024 16:15",
+                        "terminal": "Terminal A"
                       },
                       "estimatedDuration": 1.5,
-                      "facility": "Snack",
+                      "facility": "WIFI, Meal",
                       "price": 1500000
+                    },
+                    {
+                      "flightId": 13,
+                      "flightNum": "SJ1122",
+                      "airline": {
+                        "name": "American Airlines",
+                        "image": "https://images.flightroutes.com/airlines/100/AA_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
+                        "city": {
+                          "code": "JKT",
+                          "name": "Jakarta"
+                        },
+                        "schedule": "13-12-2024 21:30",
+                        "terminal": "Terminal 2"
+                      },
+                      "arrival": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "13-12-2024 23:00",
+                        "terminal": "Terminal A"
+                      },
+                      "estimatedDuration": 1.5,
+                      "facility": "WIFI",
+                      "price": 1150000
+                    },
+                    {
+                      "flightId": 14,
+                      "flightNum": "ID3344",
+                      "airline": {
+                        "name": "Turkish Airlines",
+                        "image": "https://images.flightroutes.com/airlines/100/TK_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
+                        "city": {
+                          "code": "JKT",
+                          "name": "Jakarta"
+                        },
+                        "schedule": "13-12-2024 16:00",
+                        "terminal": "Terminal 2"
+                      },
+                      "arrival": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "13-12-2024 18:00",
+                        "terminal": "Terminal A"
+                      },
+                      "estimatedDuration": 2,
+                      "facility": "WIFI, Meal, Lounge Access",
+                      "price": 3500000
+                    },
+                    {
+                      "flightId": 15,
+                      "flightNum": "GA1234",
+                      "airline": {
+                        "name": "Air Arabia Maroc",
+                        "image": "https://images.flightroutes.com/airlines/100/3O_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Pattimura Airport",
+                        "city": {
+                          "code": "AMQ",
+                          "name": "Ambon"
+                        },
+                        "schedule": "14-12-2024 13:00",
+                        "terminal": "Terminal Utama"
+                      },
+                      "arrival": {
+                        "airport": "Sultan Iskandar Muda Airport",
+                        "city": {
+                          "code": "BTJ",
+                          "name": "Banda Aceh"
+                        },
+                        "schedule": "14-12-2024 15:00",
+                        "terminal": "Terminal Utama"
+                      },
+                      "estimatedDuration": 2,
+                      "facility": "WIFI, Meal",
+                      "price": 2500000
+                    },
+                    {
+                      "flightId": 16,
+                      "flightNum": "JT5678",
+                      "airline": {
+                        "name": "Air France",
+                        "image": "https://images.flightroutes.com/airlines/100/AF_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Radin Inten II Airport",
+                        "city": {
+                          "code": "TKG",
+                          "name": "Bandar Lampung-Sumatra Island"
+                        },
+                        "schedule": "14-12-2024 17:00",
+                        "terminal": "Terminal Utama"
+                      },
+                      "arrival": {
+                        "airport": "Husein Sastranegara Airport",
+                        "city": {
+                          "code": "BDO",
+                          "name": "Bandung"
+                        },
+                        "schedule": "14-12-2024 18:30",
+                        "terminal": "Terminal Utama"
+                      },
+                      "estimatedDuration": 1.5,
+                      "facility": "WIFI",
+                      "price": 1200000
+                    },
+                    {
+                      "flightId": 17,
+                      "flightNum": "QZ9101",
+                      "airline": {
+                        "name": "AirAsia Indonesia",
+                        "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Syamsudin Noor Airport",
+                        "city": {
+                          "code": "BDJ",
+                          "name": "Banjarmasin-Borneo Island"
+                        },
+                        "schedule": "15-12-2024 14:45",
+                        "terminal": "Terminal Baru"
+                      },
+                      "arrival": {
+                        "airport": "Hang Nadim Airport",
+                        "city": {
+                          "code": "BTH",
+                          "name": "Batam Island"
+                        },
+                        "schedule": "15-12-2024 16:15",
+                        "terminal": "Terminal Utama"
+                      },
+                      "estimatedDuration": 1.5,
+                      "facility": "WIFI, Meal",
+                      "price": 1500000
+                    },
+                    {
+                      "flightId": 18,
+                      "flightNum": "SJ1122",
+                      "airline": {
+                        "name": "American Airlines",
+                        "image": "https://images.flightroutes.com/airlines/100/AA_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Bersujud Batu Licin Airport",
+                        "city": {
+                          "code": "BTW",
+                          "name": "Batu Licin-Borneo Island"
+                        },
+                        "schedule": "15-12-2024 21:30",
+                        "terminal": "Terminal Utama"
+                      },
+                      "arrival": {
+                        "airport": "Fatmawati Soekarno Airport",
+                        "city": {
+                          "code": "BKS",
+                          "name": "Bengkulu-Sumatra Island"
+                        },
+                        "schedule": "15-12-2024 23:00",
+                        "terminal": "Terminal Utama"
+                      },
+                      "estimatedDuration": 1.5,
+                      "facility": "WIFI",
+                      "price": 1150000
+                    },
+                    {
+                      "flightId": 19,
+                      "flightNum": "ID3344",
+                      "airline": {
+                        "name": "Turkish Airlines",
+                        "image": "https://images.flightroutes.com/airlines/100/TK_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Ngurah Rai Airport",
+                        "city": {
+                          "code": "DPS",
+                          "name": "Denpasar - Bali"
+                        },
+                        "schedule": "16-12-2024 16:00",
+                        "terminal": "Terminal Domestik"
+                      },
+                      "arrival": {
+                        "airport": "Ngurah Rai Airport",
+                        "city": {
+                          "code": "DPS",
+                          "name": "Denpasar - Bali"
+                        },
+                        "schedule": "16-12-2024 18:00",
+                        "terminal": "Terminal Internasional"
+                      },
+                      "estimatedDuration": 2,
+                      "facility": "WIFI, Meal, Lounge Access",
+                      "price": 3500000
+                    },
+                    {
+                      "flightId": 20,
+                      "flightNum": "GA1234",
+                      "airline": {
+                        "name": "Air Arabia Maroc",
+                        "image": "https://images.flightroutes.com/airlines/100/3O_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
+                        "city": {
+                          "code": "JKT",
+                          "name": "Jakarta"
+                        },
+                        "schedule": "14-12-2024 13:00",
+                        "terminal": "Terminal 2"
+                      },
+                      "arrival": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "14-12-2024 15:00",
+                        "terminal": "Terminal A"
+                      },
+                      "estimatedDuration": 2,
+                      "facility": "WIFI, Meal",
+                      "price": 2500000
+                    },
+                    {
+                      "flightId": 21,
+                      "flightNum": "JT5678",
+                      "airline": {
+                        "name": "Air France",
+                        "image": "https://images.flightroutes.com/airlines/100/AF_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
+                        "city": {
+                          "code": "JKT",
+                          "name": "Jakarta"
+                        },
+                        "schedule": "14-12-2024 17:00",
+                        "terminal": "Terminal 2"
+                      },
+                      "arrival": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "14-12-2024 18:30",
+                        "terminal": "Terminal A"
+                      },
+                      "estimatedDuration": 1.5,
+                      "facility": "WIFI",
+                      "price": 1200000
+                    },
+                    {
+                      "flightId": 22,
+                      "flightNum": "QZ9101",
+                      "airline": {
+                        "name": "AirAsia Indonesia",
+                        "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
+                        "city": {
+                          "code": "JKT",
+                          "name": "Jakarta"
+                        },
+                        "schedule": "14-12-2024 14:45",
+                        "terminal": "Terminal 2"
+                      },
+                      "arrival": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "14-12-2024 16:15",
+                        "terminal": "Terminal A"
+                      },
+                      "estimatedDuration": 1.5,
+                      "facility": "WIFI, Meal",
+                      "price": 1500000
+                    },
+                    {
+                      "flightId": 23,
+                      "flightNum": "SJ1122",
+                      "airline": {
+                        "name": "American Airlines",
+                        "image": "https://images.flightroutes.com/airlines/100/AA_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
+                        "city": {
+                          "code": "JKT",
+                          "name": "Jakarta"
+                        },
+                        "schedule": "14-12-2024 21:30",
+                        "terminal": "Terminal 2"
+                      },
+                      "arrival": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "14-12-2024 23:00",
+                        "terminal": "Terminal A"
+                      },
+                      "estimatedDuration": 1.5,
+                      "facility": "WIFI",
+                      "price": 1150000
+                    },
+                    {
+                      "flightId": 24,
+                      "flightNum": "ID3344",
+                      "airline": {
+                        "name": "Turkish Airlines",
+                        "image": "https://images.flightroutes.com/airlines/100/TK_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
+                        "city": {
+                          "code": "JKT",
+                          "name": "Jakarta"
+                        },
+                        "schedule": "14-12-2024 16:00",
+                        "terminal": "Terminal 2"
+                      },
+                      "arrival": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "14-12-2024 18:00",
+                        "terminal": "Terminal A"
+                      },
+                      "estimatedDuration": 2,
+                      "facility": "WIFI, Meal, Lounge Access",
+                      "price": 3500000
                     },
                     {
                       "flightId": 8,
@@ -4170,13 +4460,13 @@
                         "image": "https://images.flightroutes.com/airlines/100/GA_100px.png"
                       },
                       "departure": {
-                        "airport": "Adisutjipto Airport",
+                        "airport": "Ngurah Rai Airport",
                         "city": {
-                          "code": "JOG",
-                          "name": "Yogyakarta-Java Island"
+                          "code": "DPS",
+                          "name": "Denpasar - Bali"
                         },
-                        "schedule": "2024-12-07T08:30:00.000Z",
-                        "terminal": "Terminal A"
+                        "schedule": "30-12-2024 15:30",
+                        "terminal": "Terminal Domestik"
                       },
                       "arrival": {
                         "airport": "Soekarno-Hatta International Airport",
@@ -4184,7 +4474,7 @@
                           "code": "JKT",
                           "name": "Jakarta"
                         },
-                        "schedule": "2024-12-07T10:00:00.000Z",
+                        "schedule": "30-12-2024 17:10",
                         "terminal": "Terminal 1"
                       },
                       "estimatedDuration": 1.5,
@@ -4204,7 +4494,7 @@
                           "code": "JKT",
                           "name": "Jakarta"
                         },
-                        "schedule": "2024-12-07T06:00:00.000Z",
+                        "schedule": "30-12-2024 13:00",
                         "terminal": "Terminal 1"
                       },
                       "arrival": {
@@ -4213,16 +4503,16 @@
                           "code": "SUB",
                           "name": "Surabaya"
                         },
-                        "schedule": "2024-12-07T07:00:00.000Z",
+                        "schedule": "30-12-2024 14:00",
                         "terminal": "Terminal 1"
                       },
-                      "estimatedDuration": 1,
-                      "facility": "Wifi",
+                      "estimatedDuration": 2,
+                      "facility": "Wifi, Snack",
                       "price": 1000000
                     },
                     {
-                      "flightId": 9,
-                      "flightNum": "QZ2005",
+                      "flightId": 2,
+                      "flightNum": "QZ2002",
                       "airline": {
                         "name": "AirAsia Indonesia",
                         "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
@@ -4233,7 +4523,7 @@
                           "code": "JKT",
                           "name": "Jakarta"
                         },
-                        "schedule": "2024-12-10T04:30:00.000Z",
+                        "schedule": "30-12-2024 13:30",
                         "terminal": "Terminal 2"
                       },
                       "arrival": {
@@ -4242,12 +4532,157 @@
                           "code": "JOG",
                           "name": "Yogyakarta-Java Island"
                         },
-                        "schedule": "2024-12-10T05:00:00.000Z",
+                        "schedule": "30-12-2024 15:00",
                         "terminal": "Terminal A"
                       },
-                      "estimatedDuration": 45,
-                      "facility": "WIFI",
-                      "price": 940000
+                      "estimatedDuration": 1.5,
+                      "facility": "Wifi, Snack",
+                      "price": 800000
+                    },
+                    {
+                      "flightId": 3,
+                      "flightNum": "QZ2003",
+                      "airline": {
+                        "name": "AirAsia Indonesia",
+                        "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Juanda Airport",
+                        "city": {
+                          "code": "SUB",
+                          "name": "Surabaya"
+                        },
+                        "schedule": "30-12-2024 15:00",
+                        "terminal": "Terminal 1"
+                      },
+                      "arrival": {
+                        "airport": "Ngurah Rai Airport",
+                        "city": {
+                          "code": "DPS",
+                          "name": "Denpasar - Bali"
+                        },
+                        "schedule": "30-12-2024 16:00",
+                        "terminal": "Terminal Domestik"
+                      },
+                      "estimatedDuration": 1,
+                      "facility": "Wifi, Snack",
+                      "price": 900000
+                    },
+                    {
+                      "flightId": 4,
+                      "flightNum": "QZ2004",
+                      "airline": {
+                        "name": "AirAsia Indonesia",
+                        "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "30-12-2024 18:00",
+                        "terminal": "Terminal A"
+                      },
+                      "arrival": {
+                        "airport": "Ngurah Rai Airport",
+                        "city": {
+                          "code": "DPS",
+                          "name": "Denpasar - Bali"
+                        },
+                        "schedule": "30-12-2024 19:30",
+                        "terminal": "Terminal Domestik"
+                      },
+                      "estimatedDuration": 1.5,
+                      "facility": "Wifi, Snack",
+                      "price": 1500000
+                    },
+                    {
+                      "flightId": 5,
+                      "flightNum": "GA4001",
+                      "airline": {
+                        "name": "Garuda Indonesia",
+                        "image": "https://images.flightroutes.com/airlines/100/GA_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Juanda Airport",
+                        "city": {
+                          "code": "SUB",
+                          "name": "Surabaya"
+                        },
+                        "schedule": "30-12-2024 16:00",
+                        "terminal": "Terminal 1"
+                      },
+                      "arrival": {
+                        "airport": "Adisutjipto Airport",
+                        "city": {
+                          "code": "JOG",
+                          "name": "Yogyakarta-Java Island"
+                        },
+                        "schedule": "30-12-2024 16:45",
+                        "terminal": "Terminal A"
+                      },
+                      "estimatedDuration": 1,
+                      "facility": "Wifi, Snack",
+                      "price": 1250000
+                    },
+                    {
+                      "flightId": 6,
+                      "flightNum": "GA4002",
+                      "airline": {
+                        "name": "Garuda Indonesia",
+                        "image": "https://images.flightroutes.com/airlines/100/GA_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
+                        "city": {
+                          "code": "JKT",
+                          "name": "Jakarta"
+                        },
+                        "schedule": "30-12-2024 14:00",
+                        "terminal": "Terminal 2"
+                      },
+                      "arrival": {
+                        "airport": "Juanda Airport",
+                        "city": {
+                          "code": "SUB",
+                          "name": "Surabaya"
+                        },
+                        "schedule": "30-12-2024 15:00",
+                        "terminal": "Terminal 1"
+                      },
+                      "estimatedDuration": 1,
+                      "facility": "Snack",
+                      "price": 700000
+                    },
+                    {
+                      "flightId": 7,
+                      "flightNum": "GA4003",
+                      "airline": {
+                        "name": "Garuda Indonesia",
+                        "image": "https://images.flightroutes.com/airlines/100/GA_100px.png"
+                      },
+                      "departure": {
+                        "airport": "Soekarno-Hatta International Airport",
+                        "city": {
+                          "code": "JKT",
+                          "name": "Jakarta"
+                        },
+                        "schedule": "30-12-2024 13:45",
+                        "terminal": "Terminal 1"
+                      },
+                      "arrival": {
+                        "airport": "Ngurah Rai Airport",
+                        "city": {
+                          "code": "DPS",
+                          "name": "Denpasar - Bali"
+                        },
+                        "schedule": "30-12-2024 16:45",
+                        "terminal": "Terminal Domestik"
+                      },
+                      "estimatedDuration": 3,
+                      "facility": "Wifi",
+                      "price": 950000
                     }
                   ]
                 }
@@ -4280,7 +4715,7 @@
               "type": "string"
             },
             "description": "Schedule Flight = outboundTime.returnTime",
-            "example": "2024-12-12.2024-12-12"
+            "example": "2024-12-30.2024-12-30"
           },
           {
             "name": "ps",
@@ -4326,19 +4761,19 @@
               "Content-Length": {
                 "schema": {
                   "type": "integer",
-                  "example": "7671"
+                  "example": "8661"
                 }
               },
               "ETag": {
                 "schema": {
                   "type": "string",
-                  "example": "W/\"1df7-NqYNd7pO2051mgGA412p6pRYBlQ\""
+                  "example": "W/\"21d5-T00T1K7dJWe2mOwS8m8tMjZ8Tf4\""
                 }
               },
               "Date": {
                 "schema": {
                   "type": "string",
-                  "example": "Mon, 09 Dec 2024 10:45:26 GMT"
+                  "example": "Fri, 13 Dec 2024 13:30:45 GMT"
                 }
               },
               "Connection": {
@@ -4367,10 +4802,20 @@
                   "data": {
                     "outboundFlights": [
                       {
-                        "flightDate": "2024-12-12",
+                        "flightDate": "2024-12-30",
                         "estimatedDuration": "3 Jam",
-                        "departureTime": "2024-12-12T06:00:00.000Z",
-                        "arrivalTime": "2024-12-12T09:00:00.000Z",
+                        "departureTime": "2024-12-30T06:00:00.000Z",
+                        "arrivalTime": "2024-12-30T09:00:00.000Z",
+                        "schedule": {
+                          "departure": {
+                            "time": "13:00",
+                            "date": "2024-12-30"
+                          },
+                          "arrival": {
+                            "time": "16:00",
+                            "date": "2024-12-30"
+                          }
+                        },
                         "seatClass": "Economy",
                         "price": "Rp 1.900.000",
                         "isTransit": true,
@@ -4392,7 +4837,7 @@
                                 "name": "Jakarta"
                               },
                               "time": "13:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "arrival": {
@@ -4402,7 +4847,7 @@
                                 "name": "Surabaya"
                               },
                               "time": "14:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "estimatedDuration": 2,
@@ -4423,7 +4868,7 @@
                                 "name": "Surabaya"
                               },
                               "time": "15:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "arrival": {
@@ -4433,20 +4878,35 @@
                                 "name": "Denpasar - Bali"
                               },
                               "time": "16:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal Domestik"
                             },
                             "estimatedDuration": 1,
                             "facility": "Wifi",
                             "price": 900000
                           }
-                        ]
+                        ],
+                        "passengerCount": {
+                          "adult": "2",
+                          "child": "0",
+                          "infant": "0"
+                        }
                       },
                       {
-                        "flightDate": "2024-12-12",
+                        "flightDate": "2024-12-30",
                         "estimatedDuration": "4.5 Jam",
-                        "departureTime": "2024-12-12T06:00:00.000Z",
-                        "arrivalTime": "2024-12-12T12:30:00.000Z",
+                        "departureTime": "2024-12-30T06:00:00.000Z",
+                        "arrivalTime": "2024-12-30T12:30:00.000Z",
+                        "schedule": {
+                          "departure": {
+                            "time": "13:00",
+                            "date": "2024-12-30"
+                          },
+                          "arrival": {
+                            "time": "19:30",
+                            "date": "2024-12-30"
+                          }
+                        },
                         "seatClass": "Economy",
                         "price": "Rp 3.750.000",
                         "isTransit": true,
@@ -4469,7 +4929,7 @@
                                 "name": "Jakarta"
                               },
                               "time": "13:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "arrival": {
@@ -4479,7 +4939,7 @@
                                 "name": "Surabaya"
                               },
                               "time": "14:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "estimatedDuration": 2,
@@ -4500,7 +4960,7 @@
                                 "name": "Surabaya"
                               },
                               "time": "16:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "arrival": {
@@ -4510,7 +4970,7 @@
                                 "name": "Yogyakarta-Java Island"
                               },
                               "time": "16:45",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal A"
                             },
                             "estimatedDuration": 1,
@@ -4531,7 +4991,7 @@
                                 "name": "Yogyakarta-Java Island"
                               },
                               "time": "18:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal A"
                             },
                             "arrival": {
@@ -4541,20 +5001,35 @@
                                 "name": "Denpasar - Bali"
                               },
                               "time": "19:30",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal Domestik"
                             },
                             "estimatedDuration": 1.5,
                             "facility": "Snack",
                             "price": 1500000
                           }
-                        ]
+                        ],
+                        "passengerCount": {
+                          "adult": "2",
+                          "child": "0",
+                          "infant": "0"
+                        }
                       },
                       {
-                        "flightDate": "2024-12-12",
+                        "flightDate": "2024-12-30",
                         "estimatedDuration": "3.5 Jam",
-                        "departureTime": "2024-12-12T07:00:00.000Z",
-                        "arrivalTime": "2024-12-12T12:30:00.000Z",
+                        "departureTime": "2024-12-30T07:00:00.000Z",
+                        "arrivalTime": "2024-12-30T12:30:00.000Z",
+                        "schedule": {
+                          "departure": {
+                            "time": "14:00",
+                            "date": "2024-12-30"
+                          },
+                          "arrival": {
+                            "time": "19:30",
+                            "date": "2024-12-30"
+                          }
+                        },
                         "seatClass": "Economy",
                         "price": "Rp 3.450.000",
                         "isTransit": true,
@@ -4577,7 +5052,7 @@
                                 "name": "Jakarta"
                               },
                               "time": "14:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 2"
                             },
                             "arrival": {
@@ -4587,7 +5062,7 @@
                                 "name": "Surabaya"
                               },
                               "time": "15:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "estimatedDuration": 1,
@@ -4608,7 +5083,7 @@
                                 "name": "Surabaya"
                               },
                               "time": "16:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "arrival": {
@@ -4618,7 +5093,7 @@
                                 "name": "Yogyakarta-Java Island"
                               },
                               "time": "16:45",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal A"
                             },
                             "estimatedDuration": 1,
@@ -4639,7 +5114,7 @@
                                 "name": "Yogyakarta-Java Island"
                               },
                               "time": "18:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal A"
                             },
                             "arrival": {
@@ -4649,20 +5124,35 @@
                                 "name": "Denpasar - Bali"
                               },
                               "time": "19:30",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal Domestik"
                             },
                             "estimatedDuration": 1.5,
                             "facility": "Snack",
                             "price": 1500000
                           }
-                        ]
+                        ],
+                        "passengerCount": {
+                          "adult": "2",
+                          "child": "0",
+                          "infant": "0"
+                        }
                       },
                       {
-                        "flightDate": "2024-12-12",
+                        "flightDate": "2024-12-30",
                         "estimatedDuration": "3 Jam",
-                        "departureTime": "2024-12-12T06:30:00.000Z",
-                        "arrivalTime": "2024-12-12T12:30:00.000Z",
+                        "departureTime": "2024-12-30T06:30:00.000Z",
+                        "arrivalTime": "2024-12-30T12:30:00.000Z",
+                        "schedule": {
+                          "departure": {
+                            "time": "13:30",
+                            "date": "2024-12-30"
+                          },
+                          "arrival": {
+                            "time": "19:30",
+                            "date": "2024-12-30"
+                          }
+                        },
                         "seatClass": "Economy",
                         "price": "Rp 2.300.000",
                         "isTransit": true,
@@ -4684,7 +5174,7 @@
                                 "name": "Jakarta"
                               },
                               "time": "13:30",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 2"
                             },
                             "arrival": {
@@ -4694,7 +5184,7 @@
                                 "name": "Yogyakarta-Java Island"
                               },
                               "time": "15:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal A"
                             },
                             "estimatedDuration": 1.5,
@@ -4715,7 +5205,7 @@
                                 "name": "Yogyakarta-Java Island"
                               },
                               "time": "18:00",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal A"
                             },
                             "arrival": {
@@ -4725,20 +5215,35 @@
                                 "name": "Denpasar - Bali"
                               },
                               "time": "19:30",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal Domestik"
                             },
                             "estimatedDuration": 1.5,
                             "facility": "Snack",
                             "price": 1500000
                           }
-                        ]
+                        ],
+                        "passengerCount": {
+                          "adult": "2",
+                          "child": "0",
+                          "infant": "0"
+                        }
                       },
                       {
-                        "flightDate": "2024-12-12",
+                        "flightDate": "2024-12-30",
                         "estimatedDuration": "3 Jam",
-                        "departureTime": "2024-12-12T06:45:00.000Z",
-                        "arrivalTime": "2024-12-12T09:45:00.000Z",
+                        "departureTime": "2024-12-30T06:45:00.000Z",
+                        "arrivalTime": "2024-12-30T09:45:00.000Z",
+                        "schedule": {
+                          "departure": {
+                            "time": "13:45",
+                            "date": "2024-12-30"
+                          },
+                          "arrival": {
+                            "time": "16:45",
+                            "date": "2024-12-30"
+                          }
+                        },
                         "seatClass": "Economy",
                         "price": "Rp 950.000",
                         "isTransit": false,
@@ -4758,7 +5263,7 @@
                                 "name": "Jakarta"
                               },
                               "time": "13:45",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "arrival": {
@@ -4768,22 +5273,37 @@
                                 "name": "Denpasar - Bali"
                               },
                               "time": "16:45",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal Domestik"
                             },
                             "estimatedDuration": 3,
                             "facility": "Wifi",
                             "price": 950000
                           }
-                        ]
+                        ],
+                        "passengerCount": {
+                          "adult": "2",
+                          "child": "0",
+                          "infant": "0"
+                        }
                       }
                     ],
                     "returnFlights": [
                       {
-                        "flightDate": "2024-12-12",
+                        "flightDate": "2024-12-30",
                         "estimatedDuration": "1.5 Jam",
-                        "departureTime": "2024-12-12T08:30:00.000Z",
-                        "arrivalTime": "2024-12-12T10:10:00.000Z",
+                        "departureTime": "2024-12-30T08:30:00.000Z",
+                        "arrivalTime": "2024-12-30T10:10:00.000Z",
+                        "schedule": {
+                          "departure": {
+                            "time": "15:30",
+                            "date": "2024-12-30"
+                          },
+                          "arrival": {
+                            "time": "17:10",
+                            "date": "2024-12-30"
+                          }
+                        },
                         "seatClass": "Economy",
                         "price": "Rp 2.000.000",
                         "isTransit": false,
@@ -4803,7 +5323,7 @@
                                 "name": "Denpasar - Bali"
                               },
                               "time": "15:30",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal Domestik"
                             },
                             "arrival": {
@@ -4813,14 +5333,19 @@
                                 "name": "Jakarta"
                               },
                               "time": "17:10",
-                              "date": "2024-12-12",
+                              "date": "2024-12-30",
                               "terminal": "Terminal 1"
                             },
                             "estimatedDuration": 1.5,
                             "facility": "Snack",
                             "price": 2000000
                           }
-                        ]
+                        ],
+                        "passengerCount": {
+                          "adult": "2",
+                          "child": "0",
+                          "infant": "0"
+                        }
                       }
                     ]
                   }
@@ -4906,6 +5431,12 @@
                   "example": "Express"
                 }
               },
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "example": "*"
+                }
+              },
               "Content-Type": {
                 "schema": {
                   "type": "string",
@@ -4915,19 +5446,19 @@
               "Content-Length": {
                 "schema": {
                   "type": "integer",
-                  "example": "362"
+                  "example": "569"
                 }
               },
               "ETag": {
                 "schema": {
                   "type": "string",
-                  "example": "W/\"16a-EbKQFdw8rf1RdlSOxVpmdRrSYxY\""
+                  "example": "W/\"239-kod35GfXVyzXRWltpoJ2Vdd9XdA\""
                 }
               },
               "Date": {
                 "schema": {
                   "type": "string",
-                  "example": "Thu, 28 Nov 2024 07:08:53 GMT"
+                  "example": "Sat, 14 Dec 2024 05:57:12 GMT"
                 }
               },
               "Connection": {
@@ -4954,18 +5485,33 @@
                     "message": "Berhasil mengambil data penerbangan"
                   },
                   "data": {
-                    "id": 3,
-                    "airlineId": 1,
-                    "flightNum": "GA123",
-                    "departureAirportId": 1,
-                    "arrivalAirportId": 2,
-                    "departureTime": "2021-08-01T00:00:00.000Z",
-                    "arrivalTime": "2021-08-01T01:00:00.000Z",
-                    "estimatedDuration": 60,
-                    "seatClass": "Economy",
-                    "seatCapacity": 100,
-                    "facility": "WIFI",
-                    "price": 1000000
+                    "flightId": 3,
+                    "flightNum": "QZ2003",
+                    "airline": {
+                      "name": "AirAsia Indonesia",
+                      "image": "https://images.flightroutes.com/airlines/100/QZ_100px.png"
+                    },
+                    "departure": {
+                      "airport": "Juanda Airport",
+                      "city": {
+                        "code": "SUB",
+                        "name": "Surabaya"
+                      },
+                      "schedule": "30-12-2024 15:00",
+                      "terminal": "Terminal 1"
+                    },
+                    "arrival": {
+                      "airport": "Ngurah Rai Airport",
+                      "city": {
+                        "code": "DPS",
+                        "name": "Denpasar - Bali"
+                      },
+                      "schedule": "30-12-2024 16:00",
+                      "terminal": "Terminal Domestik"
+                    },
+                    "estimatedDuration": 1,
+                    "facility": "Wifi, Snack",
+                    "price": 900000
                   }
                 }
               }
@@ -5626,7 +6172,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "bookingId": 1,
+                  "bookingId": 9,
                   "card_number": "5264 2210 3887 4659",
                   "card_exp_month": "10",
                   "card_exp_year": "2025",

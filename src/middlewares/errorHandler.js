@@ -8,10 +8,14 @@ export const handleOther = (err, req, res, next) => {
     if (!err) {
         return next(); 
     }
-  
+
     const statusCode = err.statusCode || 500;
     res.statusCode = statusCode;
       
+    if (process.env.NODE_ENV === 'development') {
+        console.log(err);
+    }
+
     res.status(statusCode).json({
         status: err.status || false,
         message: err.message || "Internal Server Error",

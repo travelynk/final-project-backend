@@ -146,3 +146,16 @@ export const updateVoucherParams = Joi.object({
       'any.required': 'Code wajib diisi.'
     })
 });
+
+export const getVoucherById = Joi.object({
+  id: Joi.number()
+    .integer()
+    .positive()
+    .required()
+    .messages({
+      "number.base": "id harus berupa angka.",
+      "number.integer": "id harus berupa bilangan bulat.",
+      "number.positive": "id harus bilangan positif.",
+      "any.required": "Parameter id diperlukan.",
+    }),
+});

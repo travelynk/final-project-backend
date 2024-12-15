@@ -1,5 +1,5 @@
 import prisma from "../configs/database.js";
-import { getIoInstance } from '../configs/socket.js';
+import { getIoInstance } from '../configs/websocket.js';
 import { Error400, Error404 } from "../utils/customError.js";
 
 // Create a new notification

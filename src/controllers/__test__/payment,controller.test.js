@@ -31,7 +31,6 @@ describe('Payment Controller', () => {
             });
 
             await createDebitPayment(req, res, next);
-
             expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
 
@@ -117,7 +116,6 @@ describe('Payment Controller', () => {
             });
 
             await createGoPayPayment(req, res, next);
-
             expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
 
@@ -147,7 +145,6 @@ describe('Payment Controller', () => {
             });
 
             await createCreditCardPayment(req, res, next);
-
             expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
 

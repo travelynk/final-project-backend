@@ -6,6 +6,7 @@ import airport from './airport.seed.js';
 import terminal from './terminal.seed.js';
 import airline from './airline.seed.js';
 import voucher from './voucher.seed.js';
+import flight from './flight.seed.js';
 
 async function main() {
     try {
@@ -16,6 +17,7 @@ async function main() {
         await terminal(prisma);
         await airline(prisma);
         await voucher(prisma);
+        await flight(prisma);
     } catch (error) {
         console.log(error.message);
     }

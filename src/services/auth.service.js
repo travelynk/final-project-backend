@@ -3,7 +3,9 @@ import { Error400, Error401, Error404, Error409 } from "../utils/customError.js"
 import { generateOTP, generateSecret, verifyOTP } from "../utils/otp.js";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import { google, oauth2Client, authorizationUrl } from "../configs/googleOauth.js";
+import { sendOtpEmail } from "../views/send.otp.js";
 
 export const login = async ({ email, password }) => {
     try {
@@ -13,7 +15,8 @@ export const login = async ({ email, password }) => {
         }
 
         const user = await prisma.user.findUnique({
-            where: { email }
+            where: { email },
+            include: { profile: true },
         });
 
         if (!user) {
@@ -37,7 +40,7 @@ export const login = async ({ email, password }) => {
 
         return {
             token,
-            user: { email: user.email, role: user.role }
+            user: { email: user.email, role: user.role, name: user.profile.fullName },
         };
     } catch (error) {
         if (error instanceof Error400 || error instanceof Error401) {
@@ -142,7 +145,7 @@ export const sendOtp = async (email) => {
         from: "test@gmail.com",
         to: email,
         subject: "Verification Travelynk Account",
-        text: `Your OTP code is: ${otp}`,
+        html: sendOtpEmail(otp),
     };
 
     await transporter.sendMail(mailOptions);
@@ -174,7 +177,7 @@ export const resetPassword = async (token, password) => {
     } catch (error) {
         if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
             throw new Error401('Token tidak valid atau telah kedaluwarsa. Silakan minta email reset kata sandi yang baru.');
-        } else if(error instanceof Error404) {
+        } else if (error instanceof Error404) {
             throw error;
         } else {
             throw new Error('Internal Server Error');
@@ -191,7 +194,7 @@ export const sendResetPasswordEmail = async (email) => {
 
     // Generate token reset password (contoh sederhana)
     const resetToken = jwt.sign({ email }, process.env.JWT_SECRET_FORGET, { expiresIn: "1h" });
-    const resetLink = `${process.env.DOMAIN_URL}/api/v1/auth/reset-password?token=${resetToken}`;
+    const resetLink = `${process.env.FE_DOMAIN}/auth/reset-password?token=${resetToken}`;
 
     // Konfigurasi transporter nodemailer
     const transporter = nodemailer.createTransport({
@@ -227,4 +230,54 @@ export const sendResetPasswordEmail = async (email) => {
     // Kirim email
     const info = await transporter.sendMail(mailData);
     return { messageId: info.messageId };
+};
+
+export const googleAuthorizeUrl = async () => {
+    return authorizationUrl;
+};
+
+export const googleOauthCallback = async (code) => {
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    const oauth2 = google.oauth2({
+        auth: oauth2Client,
+        version: "v2",
+    });
+
+    const { data } = await oauth2.userinfo.get();
+
+    if (!data.email || !data.verified_email) {
+        throw new Error400("Email tidak valid atau belum diverifikasi");
+    }
+
+    const email = data.email;
+    const user = await prisma.user.findUnique({ 
+        where: { email },
+        include: { profile: true }
+    });
+
+    if (!user) {
+        throw new Error404("Pengguna tidak ditemukan");
+    } else {
+        if (!user.verified) {
+            await prisma.user.update({
+                where: { email },
+                data: { verified: true },
+            })
+        }
+    }
+
+    const token = jwt.sign(
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+    );
+
+    const result = {
+        token,
+        user: { email: user.email, role: user.role, name: user.profile.fullName },
+    }
+
+    return result;
 };

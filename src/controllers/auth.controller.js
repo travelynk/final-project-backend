@@ -6,13 +6,13 @@ import { Error400, Error401, Error404 } from '../utils/customError.js';
 export const login = async (req, res, next) => {
     try {
         const { error, value } = AuthValidation.login.validate(req.body);
-        
+
         if (error) {
             return response.res400(`${error.details[0].message}`, res);
         }
 
         const result = await AuthService.login(value);
-        if(!result) {
+        if (!result) {
             throw new Error400('Email atau kata sandi tidak valid!');
         }
 
@@ -116,3 +116,43 @@ export const verifyOtp = async (req, res, next) => {
         next(error);
     };
 };
+
+export const redirectGoogleOauth = async (req, res, next) => {
+    try {
+        // res.redirect(await AuthService.googleAuthorizeUrl());
+        response.res200('Berhasil mendapatkan authorize url google', await AuthService.googleAuthorizeUrl(), res);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const googleOauthCallback = async (req, res) => {
+    try {
+        const result = await AuthService.googleOauthCallback(req.query.code);
+        // res.redirect(`${process.env.FE_DOMAIN}/auth/login?token=${token}`);
+        // response.res200('Berhasil login menggunakan google', { token }, res);
+        res.send(`
+            <html>
+              <body>
+                <script>
+                  // Kirim token ke parent window
+                  window.opener.postMessage({ result: '${JSON.stringify(result)}' }, '*');
+                  window.close(); // Tutup popup
+                </script>
+              </body>
+            </html>
+          `);
+    } catch (error) {
+        res.send(`
+            <html>
+              <body>
+                <script>
+                  // Kirim error ke parent window
+                  window.opener.postMessage({ error: '${error.message}' }, '*');
+                  window.close(); // Tutup popup
+                </script>
+              </body>
+            </html>
+          `);
+    }
+}

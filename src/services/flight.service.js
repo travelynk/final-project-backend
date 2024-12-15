@@ -258,8 +258,7 @@ export const getAvailableFlight = async (data) => {
                 },
             },
             orderBy: {
-                price: 'asc',
-                departureTime: 'desc'
+                price: 'asc'
             }
         });
 
@@ -303,8 +302,7 @@ export const getAvailableFlight = async (data) => {
             },
         },
         orderBy: {
-            price: 'asc',
-            departureTime: 'desc'
+            price: 'asc'
         }
     });
 

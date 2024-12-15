@@ -1,5 +1,5 @@
 import prisma from "../configs/database.js";
-import { Error400, Error404 } from "../utils/customError.js";
+import { Error400, Error404, Error409 } from "../utils/customError.js";
 
 export const getVouchers = async () => {
     return await prisma.voucher.findMany();
@@ -89,6 +89,18 @@ export const getVoucherByCode = async (code, totalPrice) => {
 };
 
 export const updateVoucher = async (code, dataToUpdate) => {
+    const isUsed = await prisma.booking.findFirst({
+        where: {
+            voucher: {
+                code,
+            },
+        },
+    });
+
+    if (isUsed) {
+        throw new Error409('Voucher sudah pernah digunakan dan tidak dapat diperbarui.');
+    }
+
     const updatedVoucher = await prisma.voucher.update({
         where: { code },
         data: {

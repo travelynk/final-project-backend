@@ -98,3 +98,15 @@ export const updateVoucher = async (code, dataToUpdate) => {
 
     return updatedVoucher;
 };
+
+export const getVoucherById = async (id) => {
+    const voucher = await prisma.voucher.findUnique({
+        where: { id },
+    });
+
+    if (!voucher) {
+        throw new Error404("Mohon maaf, Voucher tidak dapat ditemukan");
+    };
+
+    return voucher;
+};

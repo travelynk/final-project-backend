@@ -64,7 +64,7 @@ export const storeVoucher = Joi.object({
     .messages({
       'date.base': 'Tanggal berakhir harus berupa tanggal yang valid.',
       'date.format': 'Tanggal berakhir harus dalam format ISO.',
-      'date.greater': 'Tanggal berakhir harus setelah tanggal mulai.',
+      'date.greater': 'Tanggal Berakhir harus lebih besar dari tanggal mulai.',
       'any.required': 'Tanggal berakhir harus diisi.',
     }),
 });
@@ -120,9 +120,9 @@ export const updateVoucherBody = Joi.object({
     'date.format': 'Tanggal mulai harus dalam format ISO.',
   }),
   endDate: Joi.date().iso().greater(Joi.ref('startDate')).optional().messages({
-    'date.base': 'Tanggal selesai harus berupa tanggal yang valid.',
-    'date.format': 'Tanggal selesai harus dalam format ISO.',
-    'date.greater': 'Tanggal selesai harus lebih besar dari tanggal mulai.',
+    'date.base': 'Tanggal Berakhir harus berupa tanggal yang valid.',
+    'date.format': 'Tanggal Berakhir harus dalam format ISO.',
+    'date.greater': 'Tanggal Berakhir harus lebih besar dari tanggal mulai.',
   }),
 
 })

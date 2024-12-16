@@ -1,4 +1,4 @@
-import { jest, describe, it, expect, afterEach } from '@jest/globals';
+import { jest, describe, test, expect, afterEach } from '@jest/globals';
 import prisma from '../../configs/database.js';
 import * as VoucherService from '../voucher.service.js';
 import { Error400, Error404, Error409 } from '../../utils/customError.js';

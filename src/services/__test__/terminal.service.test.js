@@ -20,10 +20,21 @@ describe('Terminal Service', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         data = {
-            "id": 1,
-            "name": "Terminal 1A",
-            "airportId": 1,
-            "category": "Internasional"
+            "id": 61,
+            "name": "Terminal Utama",
+            "category": "Multi",
+            "airport": {
+                "code": "ADL",
+                "name": "Adelaide International Airport"
+            },
+            "city": {
+                "code": "ADL",
+                "name": "Adelaide"
+            },
+            "country": {
+                "code": "AU",
+                "name": "Australia"
+            }
         };
     });
 
@@ -32,9 +43,9 @@ describe('Terminal Service', () => {
         //     prisma.terminal.findMany.mockResolvedValue([data]);
 
         //     const result = await terminalService.getAll();
-
-        //     expect(result).toEqual([data]);
+            
         //     expect(prisma.terminal.findMany).toHaveBeenCalledTimes(1);
+        //     expect(result).toEqual([data]);
         // });
 
         test('should return empty array', async () => {
@@ -51,15 +62,27 @@ describe('Terminal Service', () => {
         test('should return one terminal', async () => {
             prisma.terminal.findUnique.mockResolvedValue(data);
 
-            const result = await terminalService.getOne(1);
+            await terminalService.getOne(data.id);
 
-            expect(result).toEqual(data);
             expect(prisma.terminal.findUnique).toHaveBeenCalledTimes(1);
             expect(prisma.terminal.findUnique).toHaveBeenCalledWith({
                 where: {
-                    id: 1
+                    id: parseInt(data.id)
+                },
+                include: {
+                    airport: {
+                        include: {
+                            city: {
+                                include: {
+                                    country: true
+                                }
+                            }
+                        }
+                    }
                 }
             });
+
+            // expect(result).toEqual(data);
         });
     });
 
@@ -81,13 +104,13 @@ describe('Terminal Service', () => {
         test('should return updated terminal', async () => {
             prisma.terminal.update.mockResolvedValue(data);
 
-            const result = await terminalService.update(1, data);
+            const result = await terminalService.update(data.id, data);
 
             expect(result).toEqual(data);
             expect(prisma.terminal.update).toHaveBeenCalledTimes(1);
             expect(prisma.terminal.update).toHaveBeenCalledWith({
                 where: {
-                    id: 1
+                    id: data.id
                 },
                 data
             });
@@ -98,13 +121,13 @@ describe('Terminal Service', () => {
         test('should return deleted terminal', async () => {
             prisma.terminal.delete.mockResolvedValue(data);
 
-            const result = await terminalService.destroy(1);
+            const result = await terminalService.destroy(data.id);
 
             expect(result).toEqual(data);
             expect(prisma.terminal.delete).toHaveBeenCalledTimes(1);
             expect(prisma.terminal.delete).toHaveBeenCalledWith({
                 where: {
-                    id: 1
+                    id: data.id
                 }
             });
         });

@@ -80,7 +80,11 @@ export const getVoucherByCode = async (code, totalPrice) => {
     if (voucher.type == "Percentage") {
         updatedTotalPrice -= (totalPrice * voucher.value / 100)
     } else if (voucher.type == "Fixed") {
-        updatedTotalPrice -= voucher.value
+        updatedTotalPrice -= voucher.value;
+
+        if (updatedTotalPrice < 0) {
+            updatedTotalPrice = 0;
+        };
     }
 
     voucher.updatedTotalPrice = updatedTotalPrice;
@@ -104,7 +108,7 @@ export const updateVoucher = async (code, dataToUpdate) => {
     const updatedVoucher = await prisma.voucher.update({
         where: { code },
         data: {
-            ...dataToUpdate, 
+            ...dataToUpdate,
         },
     });
 

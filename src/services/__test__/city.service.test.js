@@ -20,9 +20,12 @@ describe('City Service', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         data = {
-            "code": "JKT ",
-            "name": "Jakarta",
-            "countryCode": "ID"
+            "code": "AMQ",
+            "name": "Ambon",
+            "country": {
+                "code": "ID",
+                "name": "Indonesia"
+            }
         };
     });
 

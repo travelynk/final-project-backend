@@ -5,10 +5,13 @@ CREATE TYPE "Role" AS ENUM ('admin', 'buyer');
 CREATE TYPE "FlightCategory" AS ENUM ('Internasional', 'Domestik', 'Multi');
 
 -- CreateEnum
-CREATE TYPE "BookingStatus" AS ENUM ('Pending', 'Confirmed', 'Cancelled');
+CREATE TYPE "BookingStatus" AS ENUM ('Unpaid', 'Issued', 'Cancelled');
 
 -- CreateEnum
-CREATE TYPE "PaymentStatus" AS ENUM ('Pending', 'Settlement', 'Failed', 'Expired');
+CREATE TYPE "PaymentStatus" AS ENUM ('Pending', 'Settlement', 'Capture', 'Failed', 'Expired', 'Cancelled');
+
+-- CreateEnum
+CREATE TYPE "typeVoucher" AS ENUM ('Percentage', 'Fixed');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -59,6 +62,8 @@ CREATE TABLE "airports" (
     "code" VARCHAR(4) NOT NULL,
     "name" VARCHAR(100) NOT NULL,
     "city_code" TEXT NOT NULL,
+    "lat" DOUBLE PRECISION NOT NULL,
+    "long" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "airports_pkey" PRIMARY KEY ("id")
 );
@@ -79,7 +84,6 @@ CREATE TABLE "airlines" (
     "code" VARCHAR(4) NOT NULL,
     "name" VARCHAR(50) NOT NULL,
     "image" VARCHAR(255) NOT NULL,
-    "airport_id" INTEGER NOT NULL,
 
     CONSTRAINT "airlines_pkey" PRIMARY KEY ("id")
 );
@@ -89,7 +93,7 @@ CREATE TABLE "flights" (
     "id" SERIAL NOT NULL,
     "airline_id" INTEGER NOT NULL,
     "flight_num" VARCHAR(15) NOT NULL,
-    "departure_airport_id" INTEGER NOT NULL,
+    "departure_terminal_id" INTEGER NOT NULL,
     "arrival_airport_id" INTEGER NOT NULL,
     "departure_time" TIMESTAMP(3) NOT NULL,
     "arrival_time" TIMESTAMP(3) NOT NULL,
@@ -113,14 +117,32 @@ CREATE TABLE "flight_seats" (
 );
 
 -- CreateTable
+CREATE TABLE "vouchers" (
+    "id" SERIAL NOT NULL,
+    "code" VARCHAR(8) NOT NULL,
+    "type" "typeVoucher" NOT NULL,
+    "value" DOUBLE PRECISION NOT NULL,
+    "min_purchase" DOUBLE PRECISION NOT NULL,
+    "max_voucher" INTEGER NOT NULL,
+    "start_date" TIMESTAMP(3) NOT NULL,
+    "end_date" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "vouchers_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "bookings" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
     "round_trip" BOOLEAN NOT NULL DEFAULT false,
     "total_price" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "tax" DOUBLE PRECISION NOT NULL DEFAULT 0,
-    "disc" DOUBLE PRECISION NOT NULL DEFAULT 0,
-    "status" "BookingStatus" NOT NULL DEFAULT 'Pending',
+    "voucher_code" VARCHAR(8),
+    "url_qrcode" TEXT,
+    "is_scan" BOOLEAN NOT NULL DEFAULT false,
+    "status" "BookingStatus" NOT NULL DEFAULT 'Unpaid',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -170,12 +192,13 @@ CREATE TABLE "passenger_counts" (
 CREATE TABLE "payments" (
     "id" SERIAL NOT NULL,
     "booking_id" INTEGER NOT NULL,
-    "transaction_id" VARCHAR(100) NOT NULL,
-    "reference_number" VARCHAR(100) NOT NULL,
-    "total" DOUBLE PRECISION NOT NULL,
-    "method" VARCHAR(20) NOT NULL,
+    "transaction_id" VARCHAR(100),
+    "reference_number" VARCHAR(100),
+    "total" DOUBLE PRECISION,
+    "method" VARCHAR(20),
     "status" "PaymentStatus" NOT NULL DEFAULT 'Pending',
-    "amount" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "amount" DOUBLE PRECISION DEFAULT 0,
+    "deadline" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP + INTERVAL '15 minutes',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -185,10 +208,12 @@ CREATE TABLE "payments" (
 -- CreateTable
 CREATE TABLE "notifications" (
     "id" SERIAL NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "user_id" INTEGER,
     "type" TEXT NOT NULL DEFAULT 'General',
+    "title" TEXT NOT NULL,
     "message" TEXT NOT NULL,
     "is_read" BOOLEAN NOT NULL DEFAULT false,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -208,7 +233,7 @@ CREATE UNIQUE INDEX "airports_code_key" ON "airports"("code");
 CREATE UNIQUE INDEX "airlines_code_key" ON "airlines"("code");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "flights_flight_num_key" ON "flights"("flight_num");
+CREATE UNIQUE INDEX "vouchers_code_key" ON "vouchers"("code");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "passengers_identity_number_key" ON "passengers"("identity_number");
@@ -232,22 +257,22 @@ ALTER TABLE "airports" ADD CONSTRAINT "airports_city_code_fkey" FOREIGN KEY ("ci
 ALTER TABLE "terminals" ADD CONSTRAINT "terminals_airport_id_fkey" FOREIGN KEY ("airport_id") REFERENCES "airports"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "airlines" ADD CONSTRAINT "airlines_airport_id_fkey" FOREIGN KEY ("airport_id") REFERENCES "airports"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "flights" ADD CONSTRAINT "flights_airline_id_fkey" FOREIGN KEY ("airline_id") REFERENCES "airlines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "flights" ADD CONSTRAINT "flights_departure_airport_id_fkey" FOREIGN KEY ("departure_airport_id") REFERENCES "airports"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "flights" ADD CONSTRAINT "flights_departure_terminal_id_fkey" FOREIGN KEY ("departure_terminal_id") REFERENCES "terminals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "flights" ADD CONSTRAINT "flights_arrival_airport_id_fkey" FOREIGN KEY ("arrival_airport_id") REFERENCES "airports"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "flights" ADD CONSTRAINT "flights_arrival_airport_id_fkey" FOREIGN KEY ("arrival_airport_id") REFERENCES "terminals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "flight_seats" ADD CONSTRAINT "flight_seats_flight_id_fkey" FOREIGN KEY ("flight_id") REFERENCES "flights"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "bookings" ADD CONSTRAINT "bookings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "bookings" ADD CONSTRAINT "bookings_voucher_code_fkey" FOREIGN KEY ("voucher_code") REFERENCES "vouchers"("code") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "passengers" ADD CONSTRAINT "passengers_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -271,4 +296,4 @@ ALTER TABLE "passenger_counts" ADD CONSTRAINT "passenger_counts_booking_id_fkey"
 ALTER TABLE "payments" ADD CONSTRAINT "payments_booking_id_fkey" FOREIGN KEY ("booking_id") REFERENCES "bookings"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;

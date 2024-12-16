@@ -20,10 +20,19 @@ describe('Airport Service', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         data = {
-            "id": 1,
-            "code": "CGK",
-            "name": "Soekarno-Hatta International Airport",
-            "cityCode": "JKT"
+            "id": 45,
+            "code": "ADL",
+            "name": "Adelaide International Airport",
+            "lat": -34.944891,
+            "long": -34.944891,
+            "city": {
+                "code": "ADL",
+                "name": "Adelaide",
+                "country": {
+                    "code": "AU",
+                    "name": "Australia"
+                }
+            }
         };
     });
 
@@ -58,7 +67,14 @@ describe('Airport Service', () => {
             expect(prisma.airport.findUnique).toHaveBeenCalledWith({
                 where: {
                     id: 1
-                }
+                },
+                include: {
+                    city: {
+                        include: {
+                            country: true
+                        }
+                    }
+                },
             });
         });
     });

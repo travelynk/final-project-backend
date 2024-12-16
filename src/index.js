@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { app } from "./configs/app.js";
 import http from "http";
+import { app } from "./configs/app.js";
 import listEndpoints from 'express-list-endpoints';
 import { initializeWebSocket } from "./configs/websocket.js";
 

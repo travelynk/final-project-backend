@@ -14,6 +14,7 @@ import seatRouter from './seat.route.js';
 import paymentRouter from './payment.route.js';
 import bookingRouter from './booking.route.js';
 import voucherRouter from './voucher.route.js';
+import userRouter from './user.route.js';
 
 const swaggerDocument = JSON.parse(readFileSync(new URL('../../../docs/api-v1.json', import.meta.url), 'utf-8'));
 
@@ -39,4 +40,5 @@ export default (app) => {
     paymentRouter(router);
     bookingRouter(router);  
     voucherRouter(router);
+    userRouter(router);
 };

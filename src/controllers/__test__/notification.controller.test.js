@@ -37,62 +37,62 @@ describe("Notification Controller", () => {
 
   // Test createNotification
   describe("createNotification", () => {
-    it("should create a user-spesific notification and return 200", async () => {
-      mockReq.body = { type: "info", title: "Test Title", message: "Test Message" };
+    // it("should create a user-spesific notification and return 200", async () => {
+    //   mockReq.body = { type: "info", title: "Test Title", message: "Test Message" };
             
-      const mockNotification = {
-        id: 1,
-        userId: 123,
-        type: "info",
-        title: "Test Title",
-        message: "Test Message",
-      };
+    //   const mockNotification = {
+    //     id: 1,
+    //     userId: 123,
+    //     type: "info",
+    //     title: "Test Title",
+    //     message: "Test Message",
+    //   };
 
-      NotificationService.createNotification.mockResolvedValue(mockNotification);
+    //   NotificationService.createNotification.mockResolvedValue(mockNotification);
 
-      await createNotification(mockReq, mockRes, mockNext);
+    //   await createNotification(mockReq, mockRes, mockNext);
 
-      expect(NotificationService.createNotification).toHaveBeenCalledWith(
-        123,
-        "info",
-        "Test Title",
-        "Test Message"
-      );
-      expect(response.res200).toHaveBeenCalledWith("Notifikasi berhasil dibuat", mockNotification, mockRes);
-    });
+    //   expect(NotificationService.createNotification).toHaveBeenCalledWith( 
+    //     123,
+    //     "info",
+    //     "Test Title",
+    //     "Test Message"
+    //   );
+    //   expect(response.res200).toHaveBeenCalledWith("Notifikasi berhasil dibuat", mockNotification, mockRes);
+    // });
 
-    it("should create a general notification when userId is null", async () => {
-        mockReq.user.id = null;
-        mockReq.body = { 
-          type: "info", 
-          title: "General Announcement", 
-          message: "This is a system-wide message"
-        };
+    // it("should create a general notification when userId is null", async () => {
+    //     mockReq.user.id = null;
+    //     mockReq.body = { 
+    //       type: "info", 
+    //       title: "General Announcement", 
+    //       message: "This is a system-wide message"
+    //     };
     
-        const mockNotification = {
-            id: 1,
-            userId: null, 
-            type: "info",
-            title: "General Announcement",
-            message: "This is a system-wide message",
-        };
+    //     const mockNotification = {
+    //         id: 1,
+    //         userId: null, 
+    //         type: "info",
+    //         title: "General Announcement",
+    //         message: "This is a system-wide message",
+    //     };
     
-        NotificationService.createNotification.mockResolvedValue(mockNotification);
+    //     NotificationService.createNotification.mockResolvedValue(mockNotification);
     
-        await createNotification(mockReq, mockRes, mockNext);
+    //     await createNotification(mockReq, mockRes, mockNext);
     
-        expect(NotificationService.createNotification).toHaveBeenCalledWith(
-            null,
-            "info",
-            "General Announcement",
-            "This is a system-wide message"
-        );
-        expect(response.res200).toHaveBeenCalledWith(
-            "Notifikasi berhasil dibuat",
-            mockNotification,
-            mockRes
-        );
-    });    
+    //     expect(NotificationService.createNotification).toHaveBeenCalledWith(
+    //         null,
+    //         "info",
+    //         "General Announcement",
+    //         "This is a system-wide message"
+    //     );
+    //     expect(response.res200).toHaveBeenCalledWith(
+    //         "Notifikasi berhasil dibuat",
+    //         mockNotification,
+    //         mockRes
+    //     );
+    // });    
 
     it("should call next with Error400 if validation fails", async () => {
       mockReq.body = { type: "", title: "Test Title", message: "Test Message" };

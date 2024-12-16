@@ -27,12 +27,15 @@ export const getAll = async () => {
                 }
             },
         },
+        orderBy: {
+            departureTime: 'desc'
+        }
     });
 
     return flights
         .map(flight => {
             return {
-                flightId: flight.id,
+                id: flight.id,
                 flightNum: flight.flightNum,
                 airline: {
                     name: flight.airline.name,
@@ -92,9 +95,10 @@ export const getOne = async (id) => {
     });
 
     return {
-        flightId: flight.id,
+        id: flight.id,
         flightNum: flight.flightNum,
         airline: {
+            id: flight.airline.id,
             name: flight.airline.name,
             image: flight.airline.image
         },
@@ -105,7 +109,10 @@ export const getOne = async (id) => {
                 name: flight.departureTerminal.airport.city.name
             },
             schedule: formatTime(flight.departureTime).date + ' ' + formatTime(flight.departureTime).time,
-            terminal: flight.departureTerminal.name
+            terminal: {
+                id: flight.departureTerminal.id,
+                name: flight.departureTerminal.name
+            }
         },
         arrival: {
             airport: flight.arrivalTerminal.airport.name,
@@ -114,9 +121,14 @@ export const getOne = async (id) => {
                 name: flight.arrivalTerminal.airport.city.name
             },
             schedule: formatTime(flight.arrivalTime).date + ' ' + formatTime(flight.arrivalTime).time,
-            terminal: flight.arrivalTerminal.name
+            terminal: {
+                id: flight.arrivalTerminal.id,
+                name: flight.arrivalTerminal.name
+            }
         },
         estimatedDuration: flight.estimatedDuration,
+        seatClass: flight.seatClass,
+        seatCapacity: flight.seatCapacity,
         facility: flight.facility,
         price: flight.price,
     };
@@ -245,6 +257,9 @@ export const getAvailableFlight = async (data) => {
                     }
                 },
             },
+            orderBy: {
+                price: 'asc'
+            }
         });
 
         if (flights.length > 0) {
@@ -286,6 +301,9 @@ export const getAvailableFlight = async (data) => {
                 }
             },
         },
+        orderBy: {
+            price: 'asc'
+        }
     });
 
     if (flights.length > 0) {

@@ -38,19 +38,18 @@ export const flightSchema = joi.object({
         'any.required': 'Kelas kursi diperlukan',
         'string.base': 'Kelas kursi harus berupa string'
     }),
-    seatCapacity: joi.number().required().messages({
+    seatCapacity: joi.number().required().min(70).messages({
         'any.required': 'Kapasitas kursi diperlukan',
-        'number.base': 'Kapasitas kursi harus berupa angka'
+        'number.base': 'Kapasitas kursi harus berupa angka',
+        'number.min': 'Kapasitas kursi minimal 70'
     }),
-    facility: joi.string().messages({
-        'string.base': 'Fasilitas harus berupa string'
+    facility: joi.string().required().messages({
+        'string.base': 'Fasilitas harus berupa string',
+        'any.required': 'Fasilitas diperlukan'
     }),
     price: joi.number().required().messages({
         'any.required': 'Harga diperlukan',
         'number.base': 'Harga harus berupa angka'
-    }),
-    groupId: joi.number().allow(null).messages({
-        'number.base': 'ID grup harus berupa angka'
     })
 });
 

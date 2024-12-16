@@ -27,7 +27,13 @@ export const getBookings = async (userId) => {
         include: {
           flight: {
             select: {
+              id: true,
               flightNum: true,
+              departureTime: true,
+              arrivalTime: true,
+              estimatedDuration: true,
+              price: true,
+              seatClass: true,
               departureTerminal: {
                 select: {
                   id: true,
@@ -55,7 +61,12 @@ export const getBookings = async (userId) => {
                 },
               },
               airline: {
-                select: { name: true, code: true },
+                select: {
+                  id: true,
+                  name: true,
+                  code: true,
+                  image: true,
+                },
               },
             },
           },
@@ -118,7 +129,13 @@ export const getBooking = async (userId, id) => {
         include: {
           flight: {
             select: {
+              id: true,
               flightNum: true,
+              departureTime: true,
+              arrivalTime: true,
+              estimatedDuration: true,
+              price: true,
+              seatClass: true,
               departureTerminal: {
                 select: {
                   id: true,
@@ -146,7 +163,12 @@ export const getBooking = async (userId, id) => {
                 },
               },
               airline: {
-                select: { name: true, code: true },
+                select: {
+                  id: true,
+                  name: true,
+                  code: true,
+                  image: true,
+                },
               },
             },
           },
@@ -407,7 +429,13 @@ export const updateStatusBooking = async (data, id) => {
         include: {
           flight: {
             select: {
+              id: true,
               flightNum: true,
+              departureTime: true,
+              arrivalTime: true,
+              estimatedDuration: true,
+              price: true,
+              seatClass: true,
               departureTerminal: {
                 select: {
                   id: true,
@@ -435,7 +463,12 @@ export const updateStatusBooking = async (data, id) => {
                 },
               },
               airline: {
-                select: { name: true, code: true },
+                select: {
+                  id: true,
+                  name: true,
+                  code: true,
+                  image: true,
+                },
               },
             },
           },
@@ -549,7 +582,13 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
         include: {
           flight: {
             select: {
+              id: true,
               flightNum: true,
+              departureTime: true,
+              arrivalTime: true,
+              estimatedDuration: true,
+              price: true,
+              seatClass: true,
               departureTerminal: {
                 select: {
                   id: true,
@@ -577,7 +616,12 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
                 },
               },
               airline: {
-                select: { name: true, code: true },
+                select: {
+                  id: true,
+                  name: true,
+                  code: true,
+                  image: true,
+                },
               },
             },
           },
@@ -669,9 +713,13 @@ export const getTicket = async (userId, id) => {
         include: {
           flight: {
             select: {
+              id: true,
               flightNum: true,
               departureTime: true,
               arrivalTime: true,
+              estimatedDuration: true,
+              price: true,
+              seatClass: true,
               departureTerminal: {
                 select: {
                   id: true,
@@ -699,7 +747,12 @@ export const getTicket = async (userId, id) => {
                 },
               },
               airline: {
-                select: { name: true, code: true },
+                select: {
+                  id: true,
+                  name: true,
+                  code: true,
+                  image: true,
+                },
               },
             },
           },

@@ -3,7 +3,7 @@ import {
     createNotification, 
     getNotifications, 
     updateNotificationReadStatus, 
-    deleteNotification 
+    deleteNotification
 } from '../../controllers/notification.controller.js';
 import * as response from '../../utils/response.js';
 import * as NotificationService from '../../services/notification.service.js';
@@ -37,8 +37,8 @@ describe("Notification Controller", () => {
 
   // Test createNotification
   describe("createNotification", () => {
-    it("should create a notification and return 200", async () => {
-      mockReq.body = { type: "info", title: "Test Title", message: "Test Message", userId: 123 };
+    it("should create a user-spesific notification and return 200", async () => {
+      mockReq.body = { type: "info", title: "Test Title", message: "Test Message" };
             
       const mockNotification = {
         id: 1,
@@ -62,17 +62,16 @@ describe("Notification Controller", () => {
     });
 
     it("should create a general notification when userId is null", async () => {
-        // Mock the request body without userId
+        mockReq.user.id = null;
         mockReq.body = { 
           type: "info", 
           title: "General Announcement", 
-          message: "This is a system-wide message",
-          userId: null 
+          message: "This is a system-wide message"
         };
     
         const mockNotification = {
             id: 1,
-            userId: null,  // General notification
+            userId: null, 
             type: "info",
             title: "General Announcement",
             message: "This is a system-wide message",
@@ -83,7 +82,7 @@ describe("Notification Controller", () => {
         await createNotification(mockReq, mockRes, mockNext);
     
         expect(NotificationService.createNotification).toHaveBeenCalledWith(
-            null,  // Ensure userId is null
+            null,
             "info",
             "General Announcement",
             "This is a system-wide message"

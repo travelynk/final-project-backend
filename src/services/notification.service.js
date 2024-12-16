@@ -1,5 +1,4 @@
 import prisma from "../configs/database.js";
-import { getIoInstance } from '../configs/websocket.js';
 import { Error400, Error404 } from "../utils/customError.js";
 
 // Create a new notification
@@ -17,18 +16,9 @@ export const createNotification = async (userId, type, title, message) => {
             },
         });
 
-        const io = getIoInstance();
-
-        // Emit to a specific user or to all connected clients
-        if (userId) {
-            await io.to(userId.toString()).emit('notification', notification);  // User-specific
-        } else {
-            await io.emit('notification', notification);  // General notification
-        }
-
         return notification;
     } catch (error) {
-        throw new Error400(`Gagal membuat notifikasi: ${error.message}`);
+        throw new Error400('Gagal membuat notifikasi');
     }
 };
 
@@ -63,7 +53,7 @@ export const updateNotificationReadStatus = async (notificationId, userId) => {
             where: { id: notificationId },
         });
 
-        if (!existingNotification || existingNotification.userId !== userId) {
+        if (!existingNotification) {
             throw new Error404('Notifikasi tidak ditemukan.');
         }
         
@@ -82,14 +72,14 @@ export const updateNotificationReadStatus = async (notificationId, userId) => {
     }
 };
 
-// Update notification delete status
+// Soft-delete a notification (Update notification delete status) 
 export const deleteNotification = async (notificationId, userId) => {
     try {
         const existingNotification = await prisma.notification.findUnique({
             where: { id: notificationId },
         });
 
-        if (!existingNotification || existingNotification.userId !== userId) {
+        if (!existingNotification) {
             throw new Error404('Notifikasi tidak ditemukan.');
         }
         

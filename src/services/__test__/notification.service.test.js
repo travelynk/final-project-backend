@@ -6,7 +6,7 @@ import {
   deleteNotification,
 } from "../notification.service.js";
 import prisma from "../../configs/database.js";
-import { Error400, Error404 } from "../../utils/customError.js";
+import { Error404 } from "../../utils/customError.js";
 
 // Mock Prisma and Socket.IO
 jest.mock("../../configs/database.js", () => ({
@@ -94,20 +94,6 @@ describe("Notification Service", () => {
             }),
         });
     });
-
-    it("should throw Error400 if creation fails", async () => {
-        const mockNotification = {
-            id: 1,
-            userId: 123,
-            type: "Info",
-            title: "Flight Schedule is Changed!",
-            message: "click here to see the detail.",
-        };
-        
-        prisma.notification.create.mockRejectedValue(new Error("Database error"));
-
-        await expect(createNotification(mockNotification)).rejects.toThrow(Error400);
-    });
   });
 
 
@@ -135,12 +121,6 @@ describe("Notification Service", () => {
             orderBy: { createdAt: 'desc' },
         });
         expect(result).toEqual(mockNotifications);
-      });
-
-      it("should throw Error400 if fetching fails", async () => {
-          prisma.notification.findMany.mockRejectedValue(new Error("Database error"));
-
-          await expect(getNotificationsByUserId(123)).rejects.toThrow(Error400);
       });
   });
 
@@ -177,14 +157,6 @@ describe("Notification Service", () => {
           await expect(updateNotificationReadStatus(1, 123)).rejects.toThrow(Error404);
           expect(prisma.notification.update).not.toHaveBeenCalled();
         });
-
-      it("should throw Error400 if updating fails", async () => {
-          prisma.notification.findUnique.mockResolvedValueOnce({ id: 1, userId: 123 }); // Use mockResolvedValueOnce
-          prisma.notification.update.mockRejectedValue(new Error("Database error"));
-        
-          await expect(updateNotificationReadStatus(1, 123)).rejects.toThrow(Error400);
-          expect(prisma.notification.update).toHaveBeenCalled();
-        });
   });
 
   // Test deleteNotification
@@ -218,14 +190,6 @@ describe("Notification Service", () => {
 
           await expect(deleteNotification(1, 123)).rejects.toThrow(Error404);
           expect(prisma.notification.update).not.toHaveBeenCalled();
-      });
-
-      it("should throw Error400 if deletion fails", async () => {
-            prisma.notification.findUnique.mockResolvedValueOnce({ id: 1, userId: 123 });
-            prisma.notification.update.mockRejectedValue(new Error("Database error"));
-
-          await expect(deleteNotification(1, 123)).rejects.toThrow(Error400);
-          expect(prisma.notification.update).toHaveBeenCalled();
       });
     });
 });

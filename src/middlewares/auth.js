@@ -1,7 +1,7 @@
 import { Error401} from '../utils/customError.js';
 import jwt from 'jsonwebtoken';
 
-const authMiddleware = async (req, next) => {
+const authMiddleware = async (req, res, next) => {
     try {
         // Extract Authorization header
         const bearerToken = req.headers.authorization;

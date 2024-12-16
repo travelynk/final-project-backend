@@ -15,7 +15,7 @@ export const createNotification = async (req, res, next) => {
         }
 
         // Use `userId` if provided, otherwise default to the logged-in user's ID
-        const  userId = req.user?.id || null;
+        const  userId = req.user?.role === 'buyer' ? req.user?.id : null;
 
         // Call the service with the targetUserId (null for general notifications)
         const result = await NotificationService.createNotification(

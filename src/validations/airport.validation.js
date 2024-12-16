@@ -20,5 +20,13 @@ export const payload = joi.object({
         'string.min': 'Kode Kota harus memiliki panjang minimal 2 karakter',
         'string.max': 'Kode Kota harus memiliki panjang maksimal 4 karakter',
         'any.required': 'Kode Kota adalah field yang wajib diisi'
-    })
+    }),
+    lat: joi.number().required().messages({
+        'number.base': 'Latitude harus berupa angka',
+        'any.required': 'Latitude adalah field yang wajib diisi'
+    }),
+    long: joi.number().required().messages({
+        'number.base': 'Longitude harus berupa angka',
+        'any.required': 'Longitude adalah field yang wajib diisi'
+    }),
 });

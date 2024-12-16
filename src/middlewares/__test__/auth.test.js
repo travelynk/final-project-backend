@@ -9,11 +9,16 @@ jest.mock("jsonwebtoken", () => ({
 }));
 
 describe('Auth Middleware', () => {
-    let req, next;
+    let req, res, next;
 
     beforeEach(() => {
         req = {
             headers: {},
+        };
+
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
         };
 
         next = jest.fn();
@@ -22,7 +27,7 @@ describe('Auth Middleware', () => {
 
     it('should return 401 if token is missing', async () => {
         req.headers.authorization = null;
-        await authMiddleware(req, next);
+        await authMiddleware(req, res, next);
 
         const error  = new Error401('Token missing. Please log in again.');
 
@@ -35,7 +40,7 @@ describe('Auth Middleware', () => {
         jwt.verify.mockImplementationOnce(() => { throw error });
 
         req.headers.authorization = 'Bearer expired-token';
-        await authMiddleware(req, next);
+        await authMiddleware(req, res, next);
         expect(next).toHaveBeenCalledWith(error);
     });
 
@@ -45,7 +50,7 @@ describe('Auth Middleware', () => {
         jwt.verify.mockImplementationOnce(() => { throw error });
 
         req.headers.authorization = 'Bearer invalid-token';
-        await authMiddleware(req, next);
+        await authMiddleware(req, res, next);
         expect(next).toHaveBeenCalledWith(error);
     });
 
@@ -54,7 +59,7 @@ describe('Auth Middleware', () => {
         jwt.verify.mockImplementationOnce(() => decoded);
 
         req.headers.authorization = 'Bearer valid-token';
-        await authMiddleware(req, next);
+        await authMiddleware(req, res, next);
         expect(req.user).toEqual({ id: '123', role: 'user' });
         expect(next).toHaveBeenCalled();
     });
@@ -64,7 +69,7 @@ describe('Auth Middleware', () => {
         jwt.verify.mockImplementationOnce(() => { throw error });
 
         req.headers.authorization = 'Bearer valid-token';
-        await authMiddleware(req, next);
+        await authMiddleware(req, res, next);
         expect(next).toHaveBeenCalledWith(error);
     });
 });

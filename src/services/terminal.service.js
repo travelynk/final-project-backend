@@ -44,11 +44,41 @@ export const getAll = async () => {
 };
 
 export const getOne = async (id) => {
-    return await prisma.terminal.findUnique({
+    const terminal = await prisma.terminal.findUnique({
         where: {
             id: parseInt(id)
+        },
+        include: {
+            airport: {
+                include: {
+                    city: {
+                        include: {
+                            country: true
+                        }
+                    }
+                }
+            }
         }
     });
+
+    return {
+        id: terminal?.id,
+        name: terminal?.name,
+        category: terminal?.category,
+        airport: {
+            code: terminal?.airport?.code,
+            name: terminal?.airport?.name,
+        },
+        city: {
+            code: terminal?.airport?.city?.code,
+            name: terminal?.airport?.city?.name,
+        },
+        country: {
+            code: terminal?.airport?.city?.country?.code,
+            name: terminal?.airport?.city?.country?.name,
+        }
+    };
+
 };
 
 export const store = async (data) => {

@@ -1,15 +1,43 @@
 import prisma from "../configs/database.js";
+import { Error404 } from "../utils/customError.js";
 
 export const getAll = async () => {
-    return await prisma.city.findMany();
+    const cities = await prisma.city.findMany({
+        include: {
+            country: true
+        },
+    });
+
+    return cities.map((city) => {
+        return {
+            code: city.code,
+            name: city.name,
+            country: {
+                code: city.country.code,
+                name: city.country.name,
+            },
+        };
+    });
 };
 
 export const getOne = async (code) => {
-    return await prisma.city.findUnique({
+    const city = await prisma.city.findUnique({
         where: {
             code
-        }
+        },
+        include: {
+            country: true
+        },
     });
+
+    return {
+        code: city.code,
+        name: city.name,
+        country: {
+            code: city.country.code,
+            name: city.country.name,
+        },
+    };
 };
 
 export const store = async (data) => {
@@ -28,6 +56,17 @@ export const update = async (code, data) => {
 };
 
 export const destroy = async (code) => {
+    const city = await prisma.city.findUnique({
+        where: {
+            code
+        },
+        include: {
+            airports: true
+        }
+    });
+
+    if (!city) throw new Error404("Kota tidak ditemukan");
+    
     return await prisma.city.delete({
         where: {
             code

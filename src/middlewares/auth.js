@@ -1,12 +1,12 @@
-import { res401, res500 } from '../utils/response.js';
+import { Error401} from '../utils/customError.js';
 import jwt from 'jsonwebtoken';
 
-const authMiddleware = async (req, res, next) => {
+const authMiddleware = async (req, next) => {
     try {
         // Extract Authorization header
         const bearerToken = req.headers.authorization;
         if (!bearerToken) {
-            return res401('Token expired. Please log in again.', res); 
+            throw new Error401('Token missing. Please log in again.');
         }
 
         // Extract token from the header
@@ -23,12 +23,11 @@ const authMiddleware = async (req, res, next) => {
         next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            return res401('Token expired. Please log in again.', res); 
+            next(new Error401('Token expired. Please log in again.'));
         } else if (error.name === 'JsonWebTokenError') {
-            return res401('Invalid token. Please log in again.', res); 
+            next(new Error401('Invalid token. Please log in again.'));
         } else {
-            // console.error(`Authentication error: ${error.message}`);
-            return res500('Internal Server Error', res); 
+            next(error); 
         }
     }
 };

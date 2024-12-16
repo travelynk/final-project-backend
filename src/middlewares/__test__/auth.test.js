@@ -1,6 +1,6 @@
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import authMiddleware from '../auth.js';
-import { res401, res500 } from '../../utils/response.js';
+import { Error401} from '../../utils/customError.js';
 import jwt from 'jsonwebtoken';
 
 jest.mock("jsonwebtoken", () => ({
@@ -8,23 +8,12 @@ jest.mock("jsonwebtoken", () => ({
     verify: jest.fn(),
 }));
 
-jest.mock('../../utils/response.js', () => ({
-    res401: jest.fn(),
-    res500: jest.fn(),
-}));
-
 describe('Auth Middleware', () => {
-    let req, res, next;
+    let req, next;
 
     beforeEach(() => {
         req = {
             headers: {},
-        };
-
-        // Properly mock res methods: status and json
-        res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
         };
 
         next = jest.fn();
@@ -33,28 +22,31 @@ describe('Auth Middleware', () => {
 
     it('should return 401 if token is missing', async () => {
         req.headers.authorization = null;
-        await authMiddleware(req, res, next);
-        expect(res401).toHaveBeenCalledWith('Token expired. Please log in again.', res);
+        await authMiddleware(req, next);
+
+        const error  = new Error401('Token missing. Please log in again.');
+
+        expect(next).toHaveBeenCalledWith(error);
     });
 
     it('should return 401 if token is expired', async () => {
-        const error = new Error('jwt expired');
+        const error = new Error401('Token expired. Please log in again.');
         error.name = 'TokenExpiredError';
         jwt.verify.mockImplementationOnce(() => { throw error });
 
         req.headers.authorization = 'Bearer expired-token';
-        await authMiddleware(req, res, next);
-        expect(res401).toHaveBeenCalledWith('Token expired. Please log in again.', res);
+        await authMiddleware(req, next);
+        expect(next).toHaveBeenCalledWith(error);
     });
 
     it('should return 401 if token is invalid', async () => {
-        const error = new Error('invalid token');
+        const error = new Error401('Invalid token. Please log in again.');
         error.name = 'JsonWebTokenError';
         jwt.verify.mockImplementationOnce(() => { throw error });
 
         req.headers.authorization = 'Bearer invalid-token';
-        await authMiddleware(req, res, next);
-        expect(res401).toHaveBeenCalledWith('Invalid token. Please log in again.', res);
+        await authMiddleware(req, next);
+        expect(next).toHaveBeenCalledWith(error);
     });
 
     it('should call next if token is valid', async () => {
@@ -62,7 +54,7 @@ describe('Auth Middleware', () => {
         jwt.verify.mockImplementationOnce(() => decoded);
 
         req.headers.authorization = 'Bearer valid-token';
-        await authMiddleware(req, res, next);
+        await authMiddleware(req, next);
         expect(req.user).toEqual({ id: '123', role: 'user' });
         expect(next).toHaveBeenCalled();
     });
@@ -72,7 +64,7 @@ describe('Auth Middleware', () => {
         jwt.verify.mockImplementationOnce(() => { throw error });
 
         req.headers.authorization = 'Bearer valid-token';
-        await authMiddleware(req, res, next);
-        expect(res500).toHaveBeenCalledWith('Internal Server Error', res);
+        await authMiddleware(req, next);
+        expect(next).toHaveBeenCalledWith(error);
     });
 });

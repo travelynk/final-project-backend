@@ -45,7 +45,7 @@ export const storeBooking = async (req, res, next) => {
             throw new Error400(error.message);
         };
 
-        const userId = 1;
+        const userId = req.user.id;
 
         const booking = await BookingService.storeBooking(userId, value);
 

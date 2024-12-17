@@ -353,6 +353,7 @@ export const storeBooking = async (userId, data) => {
 
     const formattedDeadline = await formatedDateAndYear(payment.deadline);
     const message = `Selesaikan pembayaran Anda sebelum ${formattedDeadline} UTC!`;
+    const title = "Status Pembayaran (Unpaid)";
 
 
     const notification = await tx.notification.create({
@@ -360,6 +361,7 @@ export const storeBooking = async (userId, data) => {
         userId: userId,
         type: "Payment",
         message: message,
+        title,
         isRead: false,
       },
     });
@@ -368,7 +370,7 @@ export const storeBooking = async (userId, data) => {
 
     const io = getIoInstance();
 
-    io.emit('Status Pembayaran (Unpaid)', { message, createdAt });
+    io.emit(title, { message, createdAt });
 
     return createdBooking;
   });
@@ -531,6 +533,7 @@ export const updateStatusBooking = async (data, id) => {
     const message = `Mohon maaf, Booking Anda dengan nomor ${updatedBooking.bookingCode} telah dibatalkan karena pembayaran tidak diterima 
               sesuai batas waktu yang ditentukan. Jika membutuhkan bantuan lebih lanjut, 
               silakan hubungi kami. Terima kasih atas pengertiannya.`;
+    const title = 'Pembatalan Booking'
 
     const updatedAt = await formatedDate(updatedBooking.updatedAt);
 
@@ -538,12 +541,13 @@ export const updateStatusBooking = async (data, id) => {
       data: {
         userId: updatedBooking.userId,
         type: "Transaction",
-        message: message,
+        message,
+        title,
         isRead: false,
       },
     });
 
-    io.emit('Pembatalan Booking', { message, updatedAt });
+    io.emit(title, { message, updatedAt });
   };
 
   return updatedBooking;

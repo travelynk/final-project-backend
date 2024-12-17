@@ -1,4 +1,5 @@
 import * as VoucherController from '../../../controllers/voucher.controller.js';
+import { isAdmin } from '../../../middlewares/auth.js';
 
 export default (router) => {
     const prefix = '/vouchers';
@@ -6,6 +7,6 @@ export default (router) => {
     router.get(prefix + '/', VoucherController.getVouchers);
     router.get(prefix + '/:id', VoucherController.getVoucherById);
     router.post(prefix + '/:code', VoucherController.getVoucherByCode);
-    router.post(prefix + '/', VoucherController.storeVoucher);
-    router.put(prefix + '/:code',VoucherController.updateVoucher);
+    router.post(prefix + '/', isAdmin, VoucherController.storeVoucher);
+    router.put(prefix + '/:code',isAdmin, VoucherController.updateVoucher);
 };

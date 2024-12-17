@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 
 export const getBookings = async (req, res, next) => {
     try {
-        const userId = 1
+        const userId = req.user.id;
 
         const bookings = await BookingService.getBookings(userId);
 
@@ -25,7 +25,7 @@ export const getBooking = async (req, res, next) => {
             throw new Error400(error.message);
         };
 
-        const userId = 1
+        const userId = req.user.id;
 
         const { id } = value;
 
@@ -45,9 +45,9 @@ export const storeBooking = async (req, res, next) => {
             throw new Error400(error.message);
         };
 
-        const id = 1;
+        const userId = 1;
 
-        const booking = await BookingService.storeBooking(id, value);
+        const booking = await BookingService.storeBooking(userId, value);
 
         response.res200('Berhasil', booking, res);
     } catch (error) {
@@ -86,7 +86,7 @@ export const getBookingsByDate = async (req, res, next) => {
             throw new Error400(error.message);
         };
 
-        const userId = 1
+        const userId = req.user.id;
 
         const { startDate, endDate } = value;
 
@@ -127,7 +127,7 @@ export const getTicket = async (req, res) => {
 
         const id = await decodeBookingCode(code);
 
-        const userId = 1
+        const userId = req.user.id;
 
         const booking = await BookingService.getTicket(userId, id)
         const domainUrl = process.env.DOMAIN_URL;

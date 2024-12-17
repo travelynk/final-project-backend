@@ -16,6 +16,7 @@ import bookingRouter from './booking.route.js';
 import voucherRouter from './voucher.route.js';
 import notificationRoute from './notification.route.js';
 import userRouter from './user.route.js';
+import { authMiddleware } from '../../../middlewares/auth.js';
 
 const swaggerDocument = JSON.parse(readFileSync(new URL('../../../docs/api-v1.json', import.meta.url), 'utf-8'));
 
@@ -30,6 +31,8 @@ export default (app) => {
 
     // all main routers
     authRouter(router);
+    router.use(authMiddleware)
+
     profileRouter(router);
     countryRouter(router);
     cityRoute(router);
@@ -39,7 +42,7 @@ export default (app) => {
     flightRoute(router);
     seatRouter(router);
     paymentRouter(router);
-    bookingRouter(router);  
+    bookingRouter(router);
     voucherRouter(router);
     userRouter(router);
     notificationRoute(router);

@@ -5,7 +5,7 @@ import { Error400, Error404 } from '../utils/customError.js';
 
 export const getProfile = async (req, res, next) => {
     try {
-        const id = 3
+        const { id } = req.user
         const user = await ProfileService.getProfile(id);
         res200('Berhasil', user, res);
     } catch (error) {
@@ -21,11 +21,11 @@ export const updateProfile = async (req, res, next) => {
             throw new Error400(error.message);
         };
 
-        const id = 3;
+        const { id } = req.user
         const user = await ProfileService.updateProfile(id, value);
         res200('Berhasil', user, res);
     } catch (error) {
-        if(error.code === "P2025"){
+        if (error.code === "P2025") {
             error.message = "Pengguna tidak ditemukan. Pastikan informasi yang Anda masukkan sudah benar dan coba lagi."
             next(new Error404(error.message))
         }

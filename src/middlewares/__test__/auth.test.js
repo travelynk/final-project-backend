@@ -1,5 +1,5 @@
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
-import authMiddleware from '../auth.js';
+import { authMiddleware } from '../auth.js';
 import { Error401} from '../../utils/customError.js';
 import jwt from 'jsonwebtoken';
 

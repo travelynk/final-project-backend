@@ -1,7 +1,7 @@
-import { Error401} from '../utils/customError.js';
+import { Error401, Error403 } from '../utils/customError.js';
 import jwt from 'jsonwebtoken';
 
-const authMiddleware = async (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
     try {
         // Extract Authorization header
         const bearerToken = req.headers.authorization;
@@ -32,4 +32,9 @@ const authMiddleware = async (req, res, next) => {
     }
 };
 
-export default authMiddleware;
+export const isAdmin = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+        next(new Error403('Forbidden. Admin access only.'));
+    }
+    next();
+};

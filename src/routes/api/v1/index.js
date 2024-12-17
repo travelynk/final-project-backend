@@ -1,6 +1,4 @@
-import { readFileSync } from 'fs';
 import { Router } from 'express';
-import swaggerUi from 'swagger-ui-express';
 import * as IndexController from '../../../controllers/index.js';
 import authRouter from './auth.route.js';
 import profileRouter from './profile.route.js';
@@ -18,14 +16,12 @@ import notificationRoute from './notification.route.js';
 import userRouter from './user.route.js';
 import { authMiddleware } from '../../../middlewares/auth.js';
 
-const swaggerDocument = JSON.parse(readFileSync(new URL('../../../docs/api-v1.json', import.meta.url), 'utf-8'));
 
 export default (app) => {
     const router = Router();
 
     // prefix all routes
     app.use('/api/v1', router);
-    app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     router.get('/', IndexController.index);
 
@@ -34,6 +30,7 @@ export default (app) => {
     cityRoute(router);
     countryRouter(router);
     flightRoute(router);
+    bookingRouter(router);
     
     router.use(authMiddleware);
 
@@ -43,7 +40,6 @@ export default (app) => {
     terminalRoute(router);
     seatRouter(router);
     paymentRouter(router);
-    bookingRouter(router);
     voucherRouter(router);
     userRouter(router);
     notificationRoute(router);

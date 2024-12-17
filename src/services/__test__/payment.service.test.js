@@ -13,6 +13,7 @@ import {
 jest.mock("../../configs/database.js", () => ({
   booking: { findUnique: jest.fn(), update: jest.fn() },
   payment: { create: jest.fn(), update: jest.fn(), findUnique: jest.fn() },
+  notification: { create: jest.fn() }, // Tambahkan mock untuk notification
 }));
 
 jest.mock("../../configs/midtransClient.js", () => ({
@@ -47,6 +48,12 @@ jest.mock('nodemailer', () => ({
   createTransport: jest.fn().mockReturnValue({
     sendMail: jest.fn().mockResolvedValue({}),
   }),
+}));
+
+jest.mock("../../configs/websocket.js", () => ({
+  getIoInstance: jest.fn(() => ({
+    emit: jest.fn(),
+  })),
 }));
 
 afterEach(() => jest.clearAllMocks());

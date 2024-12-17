@@ -42,7 +42,7 @@ export const storeCountry = async (req, res, next) => {
 
 export const updateCountry = async (req, res, next) => {
   try {
-    const { error, value } = CountryValidation.payload.validate(req.body);
+    const { error, value } = CountryValidation.payloadUpdate.validate(req.body);
 
     if (error) throw new Error400(`${error.details[0].message}`);
 

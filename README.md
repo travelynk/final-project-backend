@@ -36,7 +36,6 @@ Once completed, you can run various commands provided from the command line.
 
 The [package.json](/package.json) includes the following commands and tasks:
 
-|-------------------------------------------------------------------------------------|
 | Task                       | Description                                            |
 | ---------------------------| -------------------------------------------------------|
 | `npm install`              | Untuk menginstal semua dependensi proyek.              |

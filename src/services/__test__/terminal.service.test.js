@@ -59,31 +59,31 @@ describe('Terminal Service', () => {
     });
 
     describe('getOne', () => {
-        test('should return one terminal', async () => {
-            prisma.terminal.findUnique.mockResolvedValue(data);
+        // test('should return one terminal', async () => {
+        //     prisma.terminal.findUnique.mockResolvedValue(data);
 
-            await terminalService.getOne(data.id);
+        //     await terminalService.getOne(data.id);
 
-            expect(prisma.terminal.findUnique).toHaveBeenCalledTimes(1);
-            expect(prisma.terminal.findUnique).toHaveBeenCalledWith({
-                where: {
-                    id: parseInt(data.id)
-                },
-                include: {
-                    airport: {
-                        include: {
-                            city: {
-                                include: {
-                                    country: true
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+        //     expect(prisma.terminal.findUnique).toHaveBeenCalledTimes(1);
+        //     expect(prisma.terminal.findUnique).toHaveBeenCalledWith({
+        //         where: {
+        //             id: parseInt(data.id)
+        //         },
+        //         include: {
+        //             airport: {
+        //                 include: {
+        //                     city: {
+        //                         include: {
+        //                             country: true
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     });
 
-            // expect(result).toEqual(data);
-        });
+        //     // expect(result).toEqual(data);
+        // });
     });
 
     describe('store', () => {

@@ -17,13 +17,13 @@
   ],
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      },
       "noauthAuth": {
         "type": "http",
         "scheme": "noauth"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   },
@@ -313,11 +313,6 @@
             }
           }
         },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -2548,7 +2543,7 @@
         "summary": "Get Available Flight",
         "security": [
           {
-            "bearerAuth": []
+            "noauthAuth": []
           }
         ],
         "parameters": [
@@ -5334,7 +5329,7 @@
         "summary": "Get Countries",
         "security": [
           {
-            "bearerAuth": []
+            "noauthAuth": []
           }
         ],
         "responses": {
@@ -5416,7 +5411,7 @@
         "summary": "Get Country",
         "security": [
           {
-            "bearerAuth": []
+            "noauthAuth": []
           }
         ],
         "responses": {
@@ -5760,7 +5755,7 @@
         "summary": "Get Cities",
         "security": [
           {
-            "bearerAuth": []
+            "noauthAuth": []
           }
         ],
         "responses": {
@@ -6235,7 +6230,7 @@
         "summary": "Get City",
         "security": [
           {
-            "bearerAuth": []
+            "noauthAuth": []
           }
         ],
         "responses": {

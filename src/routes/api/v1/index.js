@@ -31,15 +31,16 @@ export default (app) => {
 
     // all main routers
     authRouter(router);
-    router.use(authMiddleware)
+    cityRoute(router);
+    countryRouter(router);
+    flightRoute(router);
+    
+    router.use(authMiddleware);
 
     profileRouter(router);
-    countryRouter(router);
-    cityRoute(router);
     airportRoute(router);
-    terminalRoute(router);
     airlineRoute(router);
-    flightRoute(router);
+    terminalRoute(router);
     seatRouter(router);
     paymentRouter(router);
     bookingRouter(router);

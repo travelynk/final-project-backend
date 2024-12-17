@@ -73,7 +73,7 @@ export const createDebitPayment = async (bookingId, bank) => {
     );
 
     // Membuat notifikasi untuk pembayaran pending
-    const message = `Pembayaran Anda untuk pemesanan dengan nomor booking ${bookingId} telah diterima dan menunggu konfirmasi. 
+    const message = `Pembayaran Anda untuk pemesanan dengan reference number ${chargeResponse.order_id} telah diterima dan menunggu konfirmasi. 
         Silakan lakukan pembayaran melalui Virtual Account ${virtualAccount}. 
         Pembayaran harus dilakukan sebelum ${expiredDate}.`;
 
@@ -121,7 +121,7 @@ export const cancelPayment = async (transactionId) => {
     );
 
     // Membuat notifikasi pembayaran dibatalkan
-    await createNotification(currentPayment.booking.userId, `Pembayaran untuk pemesanan ${currentPayment.booking.id} telah dibatalkan.`);
+    await createNotification(currentPayment.booking.userId, `Pembayaran untuk pemesanan ${transactionId} telah dibatalkan.`);
 
     return cancelResponse;
 };
@@ -146,11 +146,11 @@ export const checkPaymentStatus = async (transactionId) => {
     let message;
     if (transactionStatus.transaction_status === "pending") {
         statusFormatted = "Pending";
-        message = `Pembayaran Anda untuk pemesanan dengan nomor booking ${currentPayment.booking.id} sedang menunggu pembayaran.`;
+        message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} sedang menunggu pembayaran.`;
 
     } else if (["settlement", "capture"].includes(transactionStatus.transaction_status)) {
         statusFormatted = "Settlement";
-        message = `Pembayaran Anda untuk pemesanan ${currentPayment.booking.id} telah berhasil.`;
+        message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} telah berhasil.`;
 
         // Update status booking menjadi Issued jika pembayaran berhasil
         await prisma.booking.update({
@@ -159,7 +159,7 @@ export const checkPaymentStatus = async (transactionId) => {
         });
     } else if (["cancel", "expire"].includes(transactionStatus.transaction_status)) {
         statusFormatted = "Cancelled";
-        message = `Pembayaran Anda untuk pemesanan ${currentPayment.booking.id} dibatalkan.`;
+        message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} dibatalkan.`;
 
         // Update status booking menjadi Cancelled jika pembayaran dibatalkan
         await prisma.booking.update({
@@ -168,7 +168,7 @@ export const checkPaymentStatus = async (transactionId) => {
         });
     } else if (transactionStatus.transaction_status === "expire") {
         statusFormatted = "Expired";
-        message = `Pembayaran Anda untuk pemesanan ${currentPayment.booking.id} telah kedaluwarsa.`;
+        message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} telah kedaluwarsa.`;
     } else {
         throw new Error("Transaction status tidak dikenali");
     }
@@ -263,7 +263,7 @@ export const createGoPayPayment = async (bookingId) => {
     );
 
     // Membuat notifikasi untuk pembayaran pending
-    const message = `Pembayaran Anda untuk pemesanan dengan nomor booking ${bookingId} telah diterima dan menunggu konfirmasi. 
+    const message = `Pembayaran Anda untuk pemesanan dengan reference number ${chargeResponse.order_id} telah diterima dan menunggu konfirmasi. 
       Silakan lakukan pembayaran melalui GoPay. Pembayaran harus dilakukan sebelum ${expiredDate}.`;
 
     // Menambahkan notifikasi menggunakan fungsi createNotification

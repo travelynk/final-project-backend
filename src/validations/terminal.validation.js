@@ -10,7 +10,7 @@ export const payload = joi.object({
         'number.base': 'ID Bandara harus berupa angka',
         'any.required': 'ID Bandara adalah field yang wajib diisi'
     }),
-    category: joi.string().valid('Internasional', 'Domestik').required().messages({
+    category: joi.string().valid('Internasional', 'Domestik', 'Multi').required().messages({
         'string.base': 'Kategori harus berupa teks',
         'any.only': 'Kategori harus salah satu dari [Internasional, Domestik]',
         'any.required': 'Kategori adalah field yang wajib diisi'

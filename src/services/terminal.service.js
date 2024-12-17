@@ -27,6 +27,7 @@ export const getAll = async () => {
             name: terminal.name,
             category: terminal.category,
             airport: {
+                id: terminal.airport.id,
                 code: terminal.airport.code,
                 name: terminal.airport.name,
             },
@@ -62,20 +63,21 @@ export const getOne = async (id) => {
     });
 
     return {
-        id: terminal?.id,
-        name: terminal?.name,
-        category: terminal?.category,
+        id: terminal.id,
+        name: terminal.name,
+        category: terminal.category,
         airport: {
-            code: terminal?.airport?.code,
-            name: terminal?.airport?.name,
+            id: terminal.airport.id,
+            code: terminal.airport.code,
+            name: terminal.airport.name,
         },
         city: {
-            code: terminal?.airport?.city?.code,
-            name: terminal?.airport?.city?.name,
+            code: terminal.airport.city.code,
+            name: terminal.airport.city.name,
         },
         country: {
-            code: terminal?.airport?.city?.country?.code,
-            name: terminal?.airport?.city?.country?.name,
+            code: terminal.airport.city.country.code,
+            name: terminal.airport.city.country.name,
         }
     };
 

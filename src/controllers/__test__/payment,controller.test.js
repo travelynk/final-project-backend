@@ -79,6 +79,20 @@ describe('Payment Controller', () => {
                 res
             );
         });
+
+        it('should return 400 on error if validation error', async () => {
+            const validationError = { details: [{ message: 'Validation error' }] };
+            jest.spyOn(PaymentValidation.cancelPaymentSchema, 'validate').mockReturnValue({ error: validationError });
+
+            await cancelPayment(req, res, next);
+
+            expect(paymentService.cancelPayment).not.toHaveBeenCalled();
+            expect(response.res201).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalledTimes(1);
+            expect(next.mock.calls[0][0]).toBeInstanceOf(Error400);
+            expect(next.mock.calls[0][0].message).toBe('Validation error');
+        });
+
     });
 
     describe('checkPaymentStatus', () => {
@@ -106,6 +120,20 @@ describe('Payment Controller', () => {
                 { status: 'Paid' },
                 res
             );
+        });
+
+        it('should return 400 on error if validation error', async () => {
+            const validationError = { details: [{ message: 'Validation error' }] };
+            jest.spyOn(PaymentValidation.checkPaymentStatusSchema, 'validate').mockReturnValue({ error: validationError });
+
+            await checkPaymentStatus(req, res, next);
+
+            expect(paymentService.cancelPayment).not.toHaveBeenCalled();
+            expect(response.res201).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalledTimes(1);
+            expect(next.mock.calls[0][0]).toBeInstanceOf(Error400);
+            expect(next.mock.calls[0][0].message).toBe('Validation error');
+
         });
     });
 

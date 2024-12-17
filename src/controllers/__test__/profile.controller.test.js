@@ -1,16 +1,16 @@
 import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
-import { getProfile, updateProfile } from '../../controllers/profile.controller.js';
-import { Error400 } from '../../utils/customError.js';
-// import * as response from '../../utils/response.js';
+import { Error400, Error404 } from '../../utils/customError.js';
 import * as ProfileService from '../../services/profile.service.js';
 import * as ProfileValidation from '../../validations/profile.validation.js';
+import * as response from '../../utils/response.js';
 
 jest.mock('../../services/profile.service.js');
 jest.mock('../../utils/response.js');
-jest.mock('../../validations/profile.validation.js');
+
+import { getProfile, updateProfile } from '../profile.controller.js';
 
 describe('Profile Controller', () => {
-    let req, res, next;
+    let req, res, next, mockData;
 
     beforeEach(() => {
         req = {
@@ -25,6 +25,12 @@ describe('Profile Controller', () => {
             status: jest.fn().mockReturnThis()
         };
         next = jest.fn();
+        mockData = {
+            "id": 3,
+            "fullName": "Travelynk",
+            "phone": "1234567890",
+            "email": "travelynk@test.com"
+        };
     });
 
     afterEach(() => {
@@ -32,59 +38,70 @@ describe('Profile Controller', () => {
     });
 
     describe('getProfile', () => {
-        it('should return 200 when profile is fetched successfully', async () => {
-            const mockUser = { id: 3, name: 'John Doe', email: 'john.doe@example.com' };
-            ProfileService.getProfile.mockResolvedValue(mockUser);
+        it('should return 200 on successful get profile', async () => {
+            req.user = { id: 123 };
+            ProfileService.getProfile.mockResolvedValue(mockData);
 
             await getProfile(req, res, next);
 
-            // expect(ProfileService.getProfile).toHaveBeenCalledWith(3);
-            // expect(response.res200).toHaveBeenCalledWith('Berhasil', mockUser, res);
+            expect(response.res200).toHaveBeenCalledWith('Berhasil', mockData, res);
         });
 
-        it('should call next with an error when an error occurs while fetching profile', async () => {
-            ProfileService.getProfile.mockRejectedValue(new Error('Internal Server Error'));
+        it('should return 404 if user is not found', async () => {
+            req.user = { id: 8 };
+            ProfileService.getProfile.mockRejectedValue({ code: 'P2025' });
 
             await getProfile(req, res, next);
 
-            // expect(next).toHaveBeenCalledWith(new Error('Internal Server Error'));
+            expect(next).toHaveBeenCalledWith({ code: 'P2025' });
         });
     });
 
     describe('updateProfile', () => {
-        it('should return 200 when profile is updated successfully', async () => {
-            jest.spyOn(ProfileValidation.updateProfile, 'validate').mockReturnValue({ error: null, value: req.body });
+        it('should return 400 on validation error', async () => {
+            req.body = { name: 'mockName', email: 'mockEmail' };
+            jest.spyOn(ProfileValidation.updateProfile, 'validate').mockReturnValue({
+                error: { message: 'Validation error' },
+            });
 
+            await updateProfile(req, res, next);
+            expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
+        });
+
+        it('should return 200 on successful profile update', async () => {
             const mockUpdatedUser = { id: 3, ...req.body };
+            jest.spyOn(ProfileValidation.updateProfile, 'validate').mockReturnValue({ error: null, value: req.body });
+            req.user = { id: '123' };
+
             ProfileService.updateProfile.mockResolvedValue(mockUpdatedUser);
 
             await updateProfile(req, res, next);
 
-            expect(ProfileValidation.updateProfile.validate).toHaveBeenCalledWith(req.body);
-            // expect(ProfileService.updateProfile).toHaveBeenCalledWith(3, req.body);
-            // expect(response.res200).toHaveBeenCalledWith('Berhasil', mockUpdatedUser, res);
+            expect(response.res200).toHaveBeenCalledWith('Berhasil', mockUpdatedUser, res);
         });
 
-        it('should call next with Error400 when validation fails', async () => {
-            const mockError = { message: 'Validation error' };
-            jest.spyOn(ProfileValidation.updateProfile, 'validate').mockReturnValue({ error: mockError });
-
-            await updateProfile(req, res, next);
-
-            expect(ProfileValidation.updateProfile.validate).toHaveBeenCalledWith(req.body);
-            expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
-        });
-
-        it('should call next with an error when an error occurs while updating profile', async () => {
+        it('should return 404 if user is not found', async () => {
+            req.user = { id: '123' };
             jest.spyOn(ProfileValidation.updateProfile, 'validate').mockReturnValue({ error: null, value: req.body });
 
-            ProfileService.updateProfile.mockRejectedValue(new Error('Internal Server Error'));
+            ProfileService.updateProfile.mockRejectedValue({ code: 'P2025' });
 
             await updateProfile(req, res, next);
 
-            expect(ProfileValidation.updateProfile.validate).toHaveBeenCalledWith(req.body);
-            // expect(ProfileService.updateProfile).toHaveBeenCalledWith(3, req.body);
-            // expect(next).toHaveBeenCalledWith(new Error('Internal Server Error'));
+            expect(next).toHaveBeenCalledWith(new Error404('Pengguna tidak ditemukan. Pastikan informasi yang Anda masukkan sudah benar dan coba lagi.'));
         });
+
+        it('should return 500 on error', async () => {
+            req.user = { id: '123' };
+            jest.spyOn(ProfileValidation.updateProfile, 'validate').mockReturnValue({ error: null, value: req.body });
+
+            ProfileService.updateProfile.mockRejectedValue(new Error('Unexpected error'));
+
+            await updateProfile(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(new Error('Unexpected error'));
+        });
+
     });
+
 });

@@ -3,12 +3,12 @@ name: CI
 on:
   push:
     branches:
-      - develop
-      - main
+    - develop
+    - main
   pull_request:
     branches:
-      - develop
-      - main
+    - develop
+    - main
 
 jobs:
   CI:
@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18]  # Test against multiple Node.js versions
+        node-version: [ 18 ] # Test against multiple Node.js versions
 
     env:
       IMAGEKIT_PUBLIC_KEY: ${{ secrets.IMAGEKIT_PUBLIC_KEY }}
@@ -24,34 +24,34 @@ jobs:
       IMAGEKIT_URL_ENDPOINT: ${{ secrets.IMAGEKIT_URL_ENDPOINT }}
 
     steps:
-      # Step 1: Check out the repository
-      - name: Check out repository
-        uses: actions/checkout@v4
+    # Step 1: Check out the repository
+    - name: Check out repository
+      uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js
-      - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
+    # Step 2: Set up Node.js
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
-        run: npm install
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: npm install
 
-      # Step 4: Lint code
-      - name: Lint code
-        run: npm run lint
+    # Step 4: Lint code
+    - name: Lint code
+      run: npm run lint
 
-      # Step 5: Run tests
-      - name: Run tests
-        env:
-          NODE_ENV: test
-        run: npm run test
+    # Step 5: Run tests
+    - name: Run tests
+      env:
+        NODE_ENV: test
+      run: npm run test
 
-      # Step 6: Upload coverage to Codecov
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./coverage/lcov.info    # Path to coverage file, ensure this path is correct
-          flags: unittests
-          token: ${{ secrets.CODECOV_TOKEN }} # Required for private repositories
+    # Step 6: Upload coverage to Codecov
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage/lcov.info # Path to coverage file, ensure this path is correct
+        flags: unittests
+        token: ${{ secrets.CODECOV_TOKEN }} # Required for private repositories

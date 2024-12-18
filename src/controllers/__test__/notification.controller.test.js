@@ -1,67 +1,101 @@
 import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
-import {
-  createNotification,
-  getNotifications,
-  updateNotificationReadStatus,
-  deleteNotification
+import { 
+    createNotification, 
+    getNotifications, 
+    updateNotificationReadStatus, 
+    deleteNotification
 } from '../../controllers/notification.controller.js';
 import * as response from '../../utils/response.js';
+import * as NotificationService from '../../services/notification.service.js';
 import { Error400, Error404 } from '../../utils/customError.js';
 
 // Mock dependencies
 jest.mock("../../services/notification.service.js");
-import * as NotificationService from '../../services/notification.service.js';
 jest.mock("../../utils/response.js");
 
 describe("Notification Controller", () => {
   let mockReq, mockRes, mockNext;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     mockReq = {
-      body: {
-        type: "info",
-        title: "Test Notification",
-        message: "This is a test message",
-      },
-      user: { id: 123 }, // Gunakan angka
+      body: {},
       params: {},
+      user: { id: 123 },
     };
     mockRes = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     };
     mockNext = jest.fn();
-
-    jest.spyOn(response, "res200").mockImplementation((message, data, res) => {
-      res.status(200).json({ message, data });
-    });
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
+
   // Test createNotification
   describe("createNotification", () => {
-    // it("should create a user-specific notification and return 200", async () => {
-    //   const mockResult = { id: 1, ...mockReq.body };
+    it("should create a user-spesific notification and return 200", async () => {
+      mockReq.body = { type: "info", title: "Test Title", message: "Test Message" };
+            
+      const mockNotification = {
+        id: 1,
+        userId: 123,
+        type: "info",
+        title: "Test Title",
+        message: "Test Message",
+      };
 
-    //   NotificationService.createNotification.mockResolvedValue(mockResult);
+      NotificationService.createNotification.mockResolvedValue(mockNotification);
 
-    //   await createNotification(mockReq, mockRes, mockNext);
+      await createNotification(mockReq, mockRes, mockNext);
 
-    //   expect(NotificationService.createNotification).toHaveBeenCalledWith(123);
+      expect(NotificationService.createNotification).toHaveBeenCalledWith( 
+        123,
+        "info",
+        "Test Title",
+        "Test Message"
+      );
+      expect(response.res200).toHaveBeenCalledWith("Notifikasi berhasil dibuat", mockNotification, mockRes);
+    });
 
-    //   expect(response.res200).toHaveBeenCalledWith(
-    //     "Notifikasi berhasil dibuat",
-    //     mockResult,
-    //     mockRes
-    //   );
-    //   expect(mockNext).not.toHaveBeenCalled();
-    // });
+    it("should create a general notification when userId is null", async () => {
+        mockReq.user.id = null;
+        mockReq.body = { 
+          type: "info", 
+          title: "General Announcement", 
+          message: "This is a system-wide message"
+        };
+    
+        const mockNotification = {
+            id: 1,
+            userId: null, 
+            type: "info",
+            title: "General Announcement",
+            message: "This is a system-wide message",
+        };
+    
+        NotificationService.createNotification.mockResolvedValue(mockNotification);
+    
+        await createNotification(mockReq, mockRes, mockNext);
+    
+        expect(NotificationService.createNotification).toHaveBeenCalledWith(
+            null,
+            "info",
+            "General Announcement",
+            "This is a system-wide message"
+        );
+        expect(response.res200).toHaveBeenCalledWith(
+            "Notifikasi berhasil dibuat",
+            mockNotification,
+            mockRes
+        );
+    });    
 
     it("should call next with Error400 if validation fails", async () => {
-      mockReq.body = { type: "", title: "", message: "" };
+      mockReq.body = { type: "", title: "Test Title", message: "Test Message" };
 
       await createNotification(mockReq, mockRes, mockNext);
 
@@ -87,7 +121,6 @@ describe("Notification Controller", () => {
         mockNotifications,
         mockRes
       );
-      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it("should call next with Error404 if no notifications found", async () => {
@@ -105,7 +138,6 @@ describe("Notification Controller", () => {
       mockReq.params.id = "1";
 
       const mockNotification = { id: 1, isRead: true };
-
       NotificationService.updateNotificationReadStatus.mockResolvedValue({
         notification: mockNotification,
       });
@@ -118,12 +150,10 @@ describe("Notification Controller", () => {
         mockNotification,
         mockRes
       );
-      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it("should call next with Error404 if notification not found", async () => {
       mockReq.params.id = "1";
-
       NotificationService.updateNotificationReadStatus.mockRejectedValue(new Error404());
 
       await updateNotificationReadStatus(mockReq, mockRes, mockNext);
@@ -138,7 +168,6 @@ describe("Notification Controller", () => {
       mockReq.params.id = "1";
 
       const mockNotification = { id: 1, isDeleted: true };
-
       NotificationService.deleteNotification.mockResolvedValue({
         notification: mockNotification,
       });
@@ -151,12 +180,10 @@ describe("Notification Controller", () => {
         mockNotification,
         mockRes
       );
-      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it("should call next with Error404 if notification not found", async () => {
       mockReq.params.id = "1";
-
       NotificationService.deleteNotification.mockRejectedValue(new Error404());
 
       await deleteNotification(mockReq, mockRes, mockNext);

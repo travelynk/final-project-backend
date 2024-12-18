@@ -90,13 +90,13 @@ describe("User Service", () => {
     // Test update
     describe("update", () => {
         it("should update a user's role", async () => {
-            const mockUpdatedUser = {
+            const mockUpdateUser = {
                 id: 3,
                 email: "updated@example.com",
                 role: "buyer",
             };
             
-            prisma.user.update.mockResolvedValue(mockUpdatedUser);
+            prisma.user.update.mockResolvedValue(mockUpdateUser);
 
             const result = await update(3, { role: "admin" });
 
@@ -104,7 +104,7 @@ describe("User Service", () => {
                 where: { id: 3 },
                 data: { role: "admin" },
             });
-            expect(result).toEqual(mockUpdatedUser);
+            expect(result).toEqual(mockUpdateUser);
         });
     });
 });

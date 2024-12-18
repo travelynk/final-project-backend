@@ -6,13 +6,11 @@ import { imagekit } from '../utils/imagekit.js';
 import { encodeBookingCode } from '../utils/hashids.js';
 import jwt from 'jsonwebtoken';
 import { createNotification } from "../services/notification.service.js";
-import { getIoInstance } from "../configs/websocket.js";
 import { vaNumberPaymentEmail } from "../views/send.email.payment.js";
 import { gopayPaymentEmail } from "../views/send.email.payment.js";
 import { cardPaymentEmail } from "../views/send.email.payment.js";
 import { cancelPaymentEmail } from "../views/send.email.payment.js";
 import { paymentStatusEmail } from "../views/send.email.payment.js";
-import { formatTime } from "../utils/formatTime.js";
 
 export const createDebitPayment = async (bookingId, bank) => {
     const booking = await prisma.booking.findUnique({
@@ -76,11 +74,6 @@ export const createDebitPayment = async (bookingId, bank) => {
     // Tambahkan notifikasi menggunakan createNotification dari notification.service.js
     const message = `Pembayaran Anda untuk pemesanan dengan reference number ${chargeResponse.order_id} telah diterima dan menunggu konfirmasi. Silakan lakukan pembayaran sebelum ${expiredDate}.`;
     await createNotification(booking.userId, "Payment", "Menunggu Pembayaran", message);
-
-    const io = getIoInstance();
-    const createdAt = formatTime(new Date());
-
-    io.emit("Payment", { message, createdAt });
 
     return chargeResponse;
 };
@@ -393,5 +386,4 @@ export const generateQrcode = async (id) => {
     });
 
     return updatedBooking
-}
-
+};

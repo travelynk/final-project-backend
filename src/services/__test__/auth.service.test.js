@@ -1,5 +1,5 @@
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
-import { login, verifyOtp, sendOtp, register, resetPassword, sendResetPasswordEmail } from "../auth.service.js";
+import { login, verifyOtp, sendOtp, register, resetPassword, sendResetPasswordEmail, googleAuthorizeUrl } from "../auth.service.js";
 import prisma from "../../configs/database";
 import { Error400, Error401, Error404, Error409 } from "../../utils/customError";
 import { generateOTP, generateSecret, verifyOTP } from "../../utils/otp";
@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
 import { sendOtpEmail } from '../../views/send.otp.js';
-
+import { authorizationUrl } from "../../configs/googleOauth.js";
 
 jest.mock("../../configs/database", () => ({
     user: {
@@ -39,6 +39,15 @@ jest.mock("jsonwebtoken", () => ({
     verify: jest.fn(),
 }));
 
+jest.mock("../../configs/googleOauth.js", () => ({
+    google: jest.fn(),
+    oauth2Client: {
+        getToken: jest.fn(),
+    },
+    authorization: jest.fn(),
+
+}));
+
 describe("Auth Service", () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -55,16 +64,16 @@ describe("Auth Service", () => {
         };
         const mockData = {
             email: "test@example.com",
-            password: "password123", 
+            password: "password123",
         };
 
         it("should return token and user info when login success", async () => {
             prisma.user.findUnique.mockResolvedValue(mockUser);
             bcrypt.compare.mockResolvedValue(true);
             jwt.sign.mockReturnValue("mockToken");
-        
+
             const result = await login(mockData);
-            
+
             expect(prisma.user.findUnique).toHaveBeenCalledWith({
                 where: { email: mockData.email },
                 include: { profile: true },
@@ -73,27 +82,27 @@ describe("Auth Service", () => {
             expect(bcrypt.compare).toHaveBeenCalledWith(mockData.password, mockUser.password);
 
             expect(jwt.sign).toHaveBeenCalledWith(
-              { id: mockUser.id, role: mockUser.role },
-              process.env.JWT_SECRET,
-              { expiresIn: "1d" }
+                { id: mockUser.id, role: mockUser.role },
+                process.env.JWT_SECRET,
+                { expiresIn: "1d" }
             );
 
             expect(result).toEqual({
-              token: "mockToken",
-              user: { email: mockUser.email, role: mockUser.role, name: mockUser.profile.fullName },
+                token: "mockToken",
+                user: { email: mockUser.email, role: mockUser.role, name: mockUser.profile.fullName },
             });
         });
-  
+
         it("should throw Error400 if email or password are not filled", async () => {
             await expect(login({ email: null, password: "password123" })).rejects.toThrowError(Error400);
-            await expect(login({ email: "test@example.com", password: null })).rejects.toThrowError(Error400);        
+            await expect(login({ email: "test@example.com", password: null })).rejects.toThrowError(Error400);
         });
-      
+
         it("should throw Error400 if user email is not found", async () => {
-          prisma.user.findUnique.mockResolvedValue(null);
-      
-          await expect(login(mockData)).rejects.toThrowError(Error400);
-          await expect(login(mockData)).rejects.toThrow("Email tidak valid!");
+            prisma.user.findUnique.mockResolvedValue(null);
+
+            await expect(login(mockData)).rejects.toThrowError(Error400);
+            await expect(login(mockData)).rejects.toThrow("Email tidak valid!");
         });
 
         it("should throw Error401 if user is not verified", async () => {
@@ -105,22 +114,22 @@ describe("Auth Service", () => {
         });
 
         it("should throw Error400 if password is incorrect", async () => {
-          prisma.user.findUnique.mockResolvedValue(mockUser);
-          bcrypt.compare.mockResolvedValue(false);
-      
-          await expect(login(mockData)).rejects.toThrowError(Error400);
-          await expect(login(mockData)).rejects.toThrow("Kata sandi tidak valid!");
+            prisma.user.findUnique.mockResolvedValue(mockUser);
+            bcrypt.compare.mockResolvedValue(false);
+
+            await expect(login(mockData)).rejects.toThrowError(Error400);
+            await expect(login(mockData)).rejects.toThrow("Kata sandi tidak valid!");
         });
 
         it("should throw Error500 if an unexpected error occurs", async () => {
             prisma.user.findUnique.mockRejectedValue(new Error("Database error"));
-      
+
             await expect(login(mockData)).rejects.toThrow("Internal Server Error");
         });
 
     });
-  
-   describe('register', () => {
+
+    describe('register', () => {
         it("should register a user and send OTP", async () => {
             const data = { email: "newuser@example.com", password: "password123", fullName: "it User", phone: "1234567890" };
 
@@ -261,11 +270,11 @@ describe("Auth Service", () => {
                 error.name = "JsonWebTokenError";
                 throw error;
             });
-    
+
             await expect(
                 resetPassword("invalidToken", { newPassword: "newPassword123" })
             ).rejects.toThrow(Error401);
-    
+
             await expect(
                 resetPassword("invalidToken", { newPassword: "newPassword123" })
             ).rejects.toThrow("Token tidak valid atau telah kedaluwarsa. Silakan minta email reset kata sandi yang baru.");
@@ -312,4 +321,12 @@ describe("Auth Service", () => {
             await expect(sendResetPasswordEmail("unknown@example.com")).rejects.toThrow("User not found");
         });
     });
+
+    describe("googleAuthorizeUrl", () => {
+        it("should return google authorization URL", async () => {
+            const result = await googleAuthorizeUrl();
+            expect(result).toBe(authorizationUrl);
+        });
+    });
+
 });

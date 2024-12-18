@@ -5,7 +5,6 @@ import { generateQrPng } from '../utils/qrcode.js';
 import { imagekit } from '../utils/imagekit.js';
 import { encodeBookingCode } from '../utils/hashids.js';
 import jwt from 'jsonwebtoken';
-
 import { vaNumberPaymentEmail } from "../views/send.email.payment.js";
 import { gopayPaymentEmail } from "../views/send.email.payment.js";
 import { cardPaymentEmail } from "../views/send.email.payment.js";
@@ -114,7 +113,6 @@ export const cancelPayment = async (transactionId) => {
     return cancelResponse;
 };
 
-
 export const checkPaymentStatus = async (transactionId) => {
     const currentPayment = await prisma.payment.findUnique({
         where: { transactionId },
@@ -126,9 +124,6 @@ export const checkPaymentStatus = async (transactionId) => {
     }
 
     const transactionStatus = await snap.transaction.status(transactionId);
-
-    // const statusFormatted = transactionStatus.transaction_status.charAt(0).toUpperCase() +
-    //     transactionStatus.transaction_status.slice(1);
 
     let statusFormatted;
     if (transactionStatus.transaction_status === "pending") {
@@ -152,7 +147,6 @@ export const checkPaymentStatus = async (transactionId) => {
     } else {
         throw new Error("Transaction status tidak dikenali");
     }
-
 
     await prisma.payment.update({
         where: { transactionId },
@@ -209,15 +203,15 @@ export const createGoPayPayment = async (bookingId) => {
         ).toLocaleString()
         : "N/A"; // Expired Date (24 jam setelah transaksi dibuat)
 
-        // URL untuk generasi QR Code
-        const gopayQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
-         gopayDeepLink
-        )}&size=200x200`;
+    // URL untuk generasi QR Code
+    const gopayQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
+        gopayDeepLink
+    )}&size=200x200`;
 
-        // Generate QR Code tambahan untuk informasi pemesanan
-        const infoQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
-            `https://yourapp.com/booking/${bookingId}`
-        )}&size=200x200`;
+    // Generate QR Code tambahan untuk informasi pemesanan
+    const infoQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
+        `https://yourapp.com/booking/${bookingId}`
+    )}&size=200x200`;
 
 
     await prisma.payment.create({
@@ -320,8 +314,6 @@ export const createCardPayment = async (bookingId, cardToken) => {
     return chargeResponse;
 };
 
-
-
 // Fungsi untuk mengirim email notifikasi pembayaran
 export const sendPaymentEmail = async (email, subject, htmlContent) => {
     // Konfigurasi transporter nodemailer
@@ -349,7 +341,6 @@ export const sendPaymentEmail = async (email, subject, htmlContent) => {
     return { messageId: info.messageId };
 };
 
-
 export const generateQrcode = async (id) => {
     const code = await encodeBookingCode(id);
     const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
@@ -369,5 +360,5 @@ export const generateQrcode = async (id) => {
         data: { urlQrcode: qrCode.url },
     });
 
-    return updatedBooking
-}
+    return updatedBooking;
+};

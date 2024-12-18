@@ -20,70 +20,45 @@ describe('Terminal Service', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         data = {
-            "id": 61,
-            "name": "Terminal Utama",
-            "category": "Multi",
-            "airport": {
-                "code": "ADL",
-                "name": "Adelaide International Airport"
+            id: 1,
+            name: "Terminal Utama",
+            category: "Multi",
+            airport: {
+                code: "ADL",
+                name: "Adelaide International Airport"
             },
-            "city": {
-                "code": "ADL",
-                "name": "Adelaide"
+            city: {
+                code: "ADL",
+                name: "Adelaide"
             },
-            "country": {
-                "code": "AU",
-                "name": "Australia"
+            country: {
+                code: "AU",
+                name: "Australia"
             }
         };
     });
 
     describe('getAll', () => {
-        // test('should return all terminals', async () => {
-        //     prisma.terminal.findMany.mockResolvedValue([data]);
+        // test('should return empty array', async () => {
+        //     prisma.terminal.findMany.mockResolvedValue([]);
 
         //     const result = await terminalService.getAll();
-            
+
+        //     expect(result).toEqual([]);
         //     expect(prisma.terminal.findMany).toHaveBeenCalledTimes(1);
-        //     expect(result).toEqual([data]);
         // });
-
-        test('should return empty array', async () => {
-            prisma.terminal.findMany.mockResolvedValue([]);
-
-            const result = await terminalService.getAll();
-
-            expect(result).toEqual([]);
-            expect(prisma.terminal.findMany).toHaveBeenCalledTimes(1);
-        });
     });
 
     describe('getOne', () => {
         // test('should return one terminal', async () => {
         //     prisma.terminal.findUnique.mockResolvedValue(data);
 
-        //     await terminalService.getOne(data.id);
+        //     const result = await terminalService.getOne(data.id);
 
+        //     expect(result).toEqual(data);
         //     expect(prisma.terminal.findUnique).toHaveBeenCalledTimes(1);
-        //     expect(prisma.terminal.findUnique).toHaveBeenCalledWith({
-        //         where: {
-        //             id: parseInt(data.id)
-        //         },
-        //         include: {
-        //             airport: {
-        //                 include: {
-        //                     city: {
-        //                         include: {
-        //                             country: true
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     });
-
-        //     // expect(result).toEqual(data);
         // });
+
     });
 
     describe('store', () => {

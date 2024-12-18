@@ -123,15 +123,6 @@ export const sendOtp = async (email) => {
 
     const otp = generateOTP(user.otpSecret);
 
-    // const transporter = nodemailer.createTransport({
-    //     host: "smtp.mailtrap.io",
-    //     port: 2525,
-    //     auth: {
-    //         user: process.env.MAILTRAP_USER,
-    //         pass: process.env.MAILTRAP_PASS,
-    //     },
-    // });
-
     const transporter = nodemailer.createTransport({
         service: "gmail",
         secure: true,

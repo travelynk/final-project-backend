@@ -123,15 +123,6 @@ export const sendOtp = async (email) => {
 
     const otp = generateOTP(user.otpSecret);
 
-    // const transporter = nodemailer.createTransport({
-    //     host: "smtp.mailtrap.io",
-    //     port: 2525,
-    //     auth: {
-    //         user: process.env.MAILTRAP_USER,
-    //         pass: process.env.MAILTRAP_PASS,
-    //     },
-    // });
-
     const transporter = nodemailer.createTransport({
         service: "gmail",
         secure: true,
@@ -252,13 +243,31 @@ export const googleOauthCallback = async (code) => {
     }
 
     const email = data.email;
-    const user = await prisma.user.findUnique({ 
+    let user = await prisma.user.findUnique({ 
         where: { email },
         include: { profile: true }
     });
 
     if (!user) {
-        throw new Error404("Pengguna tidak ditemukan");
+        const secret = generateSecret();
+        const password = Math.random().toString(36).slice(-10);
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        user = await prisma.user.create({
+            data: {
+                email,
+                password: hashedPassword,
+                role: "buyer",
+                otpSecret: secret,
+                verified: true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                profile: {
+                    create: { fullName: data.name, phone: "628", gender: "Laki-laki" },
+                },
+            },
+            include: { profile: true },
+        });
     } else {
         if (!user.verified) {
             await prisma.user.update({

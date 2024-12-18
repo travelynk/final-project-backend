@@ -7,12 +7,14 @@ import {
   checkPaymentStatus,
   createGoPayPayment,
   createCardPayment,
+  createCardToken,
 } from "../payment.service.js";
 
 // Mock dependencies
 jest.mock("../../configs/database.js", () => ({
   booking: { findUnique: jest.fn(), update: jest.fn() },
   payment: { create: jest.fn(), update: jest.fn(), findUnique: jest.fn() },
+  notification: { create: jest.fn() }, // Tambahkan mock untuk notification
 }));
 
 jest.mock("../../configs/midtransClient.js", () => ({
@@ -47,6 +49,12 @@ jest.mock('nodemailer', () => ({
   createTransport: jest.fn().mockReturnValue({
     sendMail: jest.fn().mockResolvedValue({}),
   }),
+}));
+
+jest.mock("../../configs/websocket.js", () => ({
+  getIoInstance: jest.fn(() => ({
+    emit: jest.fn(),
+  })),
 }));
 
 afterEach(() => jest.clearAllMocks());
@@ -186,6 +194,36 @@ describe("Payment Service Tests", () => {
 
       await expect(cancelPayment("txn_123")).rejects.toThrow("Network issue");
     });
+
+    it("should handle transaction status cancel", async () => {
+      prisma.payment.findUnique.mockResolvedValue({
+        id: 1,
+        transactionId: "txn_123",
+        status: "pending",
+        booking: { user: { email: "fulan@gmail.com" } },
+      });
+
+      snap.transaction.status.mockResolvedValue({ transaction_status: "cancel" });
+
+      const response = await cancelPayment("txn_123");
+
+      expect(response).toEqual({
+        message: "Transaction with ID txn_123 is already cancelled.",
+        status: "Cancelled",
+      });
+
+      expect(prisma.payment.update).not.toHaveBeenCalled();
+
+      expect(snap.transaction.status).toHaveBeenCalledWith("txn_123");
+
+      expect(snap.transaction.cancel).not.toHaveBeenCalled();
+
+      expect(prisma.payment.findUnique).toHaveBeenCalledWith({
+        where: { transactionId: "txn_123" },
+        include: { booking: { include: { user: true } } },
+      });
+    });
+
   });
 
   describe("checkPaymentStatus", () => {
@@ -225,8 +263,19 @@ describe("Payment Service Tests", () => {
 
       await expect(checkPaymentStatus("txn_123")).rejects.toThrow("Transaction status tidak dikenali");
     });
+
+    it("should handle error if payment is not found", async () => {
+      prisma.payment.findUnique.mockResolvedValue(null);
+      await expect(checkPaymentStatus("txn_123")).rejects.toThrow("Pembayaran tidak ditemukan");
+
+      expect(prisma.payment.findUnique).toHaveBeenCalledWith({
+        where: { transactionId: "txn_123" },
+        include: { booking: { include: { user: true } } },
+      });
+    });
   });
 
+  
   describe("createGoPayPayment", () => {
     it("should throw error if booking is not found", async () => {
       prisma.booking.findUnique.mockResolvedValue(null);
@@ -284,51 +333,51 @@ describe("Payment Service Tests", () => {
         totalPrice: 800000,
         user: { email: "test@example.com", profile: { fullName: "Test User" } },
       };
-    
+
       const mockChargeResponse = {
         transaction_id: "txn_101",
         order_id: "order_101",
         gross_amount: "800000",
         transaction_status: "capture",
       };
-    
-    
+
+
       prisma.booking.findUnique.mockResolvedValue(mockBooking);
       prisma.booking.update.mockResolvedValue({
         ...mockBooking,
         status: "Pending",
       });
-    
-     
+
+
       coreApi.charge.mockResolvedValue(mockChargeResponse);
-    
-     
+
+
       const mockPayment = {
-        id: 1, 
+        id: 1,
         transactionId: mockChargeResponse.transaction_id,
         status: "Pending",
         bookingId: mockBooking.id,
       };
-    
+
       prisma.payment.create.mockResolvedValue(mockPayment);
-    
+
       const fixedTimestamp = 1734098960934;
       jest.spyOn(Date, "now").mockReturnValue(fixedTimestamp);
-    
+
       const response = await createCardPayment(1, "validCardToken");
-    
+
       expect(coreApi.charge).toHaveBeenCalledWith({
         payment_type: "credit_card",
         credit_card: {
           authentication: false,
-          token_id: "validCardToken", 
+          token_id: "validCardToken",
         },
         transaction_details: {
-          gross_amount: 800000, 
-          order_id: `BOOKING-1-${fixedTimestamp}`, 
+          gross_amount: 800000,
+          order_id: `BOOKING-1-${fixedTimestamp}`,
         },
       });
-    
+
       expect(prisma.payment.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           transactionId: mockChargeResponse.transaction_id,
@@ -336,15 +385,41 @@ describe("Payment Service Tests", () => {
           bookingId: mockBooking.id,
         }),
       });
-    
+
       expect(prisma.payment.update).toHaveBeenCalledWith({
         where: { id: mockPayment.id },
         data: { status: "Settlement" },
       });
-    
+
       expect(response).toEqual(mockChargeResponse);
     });
-    
-  });    
+  });
+
+  describe("createCardToken", () => {
+    it("should create card token successfully", async () => {
+      const mockCardToken = "mockCardToken";
+      coreApi.cardToken.mockResolvedValue({ token_id: mockCardToken });
+
+      const payload = {
+        card_number: "4811111111111114",
+        card_exp_month: "12",
+        card_exp_year: "2025",
+        card_cvv: "123",
+      };
+
+      const response = await createCardToken(payload);
+
+      expect(coreApi.cardToken).toHaveBeenCalledWith({
+        card_number: "4811111111111114",
+        card_exp_month: "12",
+        card_exp_year: "2025",
+        card_cvv: "123",
+        client_key: process.env.MIDTRANS_CLIENT_KEY,
+      });
+      expect(response).toEqual(mockCardToken);
+
+    });
+
+  });
 
 });

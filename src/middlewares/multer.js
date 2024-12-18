@@ -4,7 +4,7 @@ import { Error400 } from "../utils/customError.js";
 const allowedMimesTypes = ["image/jpeg", "image/png", "image/png"];
 const MAX_FILE_SIZE = 1024 * 1024 * 3; // 3MB
 
-const fileFilter = (req, file, cb) => {
+export const fileFilter = (req, file, cb) => {
     if (allowedMimesTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {

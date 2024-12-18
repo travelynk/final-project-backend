@@ -119,7 +119,6 @@ export const verifyOtp = async (req, res, next) => {
 
 export const redirectGoogleOauth = async (req, res, next) => {
     try {
-        // res.redirect(await AuthService.googleAuthorizeUrl());
         response.res200('Berhasil mendapatkan authorize url google', await AuthService.googleAuthorizeUrl(), res);
     } catch (error) {
         next(error);
@@ -129,8 +128,6 @@ export const redirectGoogleOauth = async (req, res, next) => {
 export const googleOauthCallback = async (req, res) => {
     try {
         const result = await AuthService.googleOauthCallback(req.query.code);
-        // res.redirect(`${process.env.FE_DOMAIN}/auth/login?token=${token}`);
-        // response.res200('Berhasil login menggunakan google', { token }, res);
         res.send(`
             <html>
               <body>
@@ -148,11 +145,11 @@ export const googleOauthCallback = async (req, res) => {
               <body>
                 <script>
                   // Kirim error ke parent window
-                  window.opener.postMessage({ error: '${error.message}' }, '*');
+                  window.opener.postMessage({ error: "${error.message}" }, '*');
                   window.close(); // Tutup popup
                 </script>
               </body>
             </html>
           `);
     }
-}
+};

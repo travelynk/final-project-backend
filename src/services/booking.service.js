@@ -102,7 +102,60 @@ export const getBookings = async (userId) => {
     }))
   );
 
-  return bookingsWithHash
+  const bookingsWithMapping = getTotalPriceForEachPassengerInSegments(bookingsWithHash)
+  return bookingsWithMapping
+};
+
+const getTotalPriceForEachPassengerInSegments = (bookings) => {
+  return bookings.map(booking => {
+    let passengerTotalPrices = {};
+
+    booking.segments.forEach(segment => {
+      const passengerId = segment.passengerId;
+
+      if (!passengerTotalPrices[passengerId]) {
+        passengerTotalPrices[passengerId] = 0;
+      }
+
+      passengerTotalPrices[passengerId] += segment.flight.price;
+    });
+
+    const firstPrice = Object.values(passengerTotalPrices)[0];
+
+    const adultTotalPrice = firstPrice * booking.passengerCount.adult;
+    const childTotalPrice = firstPrice * booking.passengerCount.child;
+
+    return {
+      ...booking,
+      adultTotalPrice,
+      childTotalPrice
+    };
+  });
+};
+
+const getTotalPriceForEachPassengerInSegment = (booking) => {
+    let passengerTotalPrices = {};
+
+    booking.segments.forEach(segment => {
+      const passengerId = segment.passengerId;
+
+      if (!passengerTotalPrices[passengerId]) {
+        passengerTotalPrices[passengerId] = 0;
+      }
+
+      passengerTotalPrices[passengerId] += segment.flight.price;
+    });
+
+    const firstPrice = Object.values(passengerTotalPrices)[0];
+
+    const adultTotalPrice = firstPrice * booking.passengerCount.adult;
+    const childTotalPrice = firstPrice * booking.passengerCount.child;
+
+    return {
+      ...booking,
+      adultTotalPrice,
+      childTotalPrice
+    };
 };
 
 export const getBooking = async (userId, id) => {
@@ -200,7 +253,9 @@ export const getBooking = async (userId, id) => {
 
   booking.bookingCode = await encodeBookingCode(booking.id);
 
-  return booking;
+  const bookingWithMapping = getTotalPriceForEachPassengerInSegment(booking)
+
+  return bookingWithMapping;
 };
 
 export const storeBooking = async (userId, data) => {
@@ -240,7 +295,7 @@ export const storeBooking = async (userId, data) => {
     maxVouchers = voucher.maxVoucher;
   };
 
-  totalSum -= (totalSum * tax / 100);
+  totalSum += (totalSum * tax / 100);
 
   const totalPrice = totalSum;
 
@@ -353,6 +408,7 @@ export const storeBooking = async (userId, data) => {
 
     const formattedDeadline = await formatedDateAndYear(payment.deadline);
     const message = `Selesaikan pembayaran Anda sebelum ${formattedDeadline} UTC!`;
+    const title = "Status Pembayaran (Unpaid)";
 
 
     const notification = await tx.notification.create({
@@ -360,6 +416,7 @@ export const storeBooking = async (userId, data) => {
         userId: userId,
         type: "Payment",
         message: message,
+        title,
         isRead: false,
       },
     });
@@ -368,7 +425,7 @@ export const storeBooking = async (userId, data) => {
 
     const io = getIoInstance();
 
-    io.emit('Status Pembayaran (Unpaid)', { message, createdAt });
+    io.emit(title, { message, createdAt });
 
     return createdBooking;
   });
@@ -531,6 +588,7 @@ export const updateStatusBooking = async (data, id) => {
     const message = `Mohon maaf, Booking Anda dengan nomor ${updatedBooking.bookingCode} telah dibatalkan karena pembayaran tidak diterima 
               sesuai batas waktu yang ditentukan. Jika membutuhkan bantuan lebih lanjut, 
               silakan hubungi kami. Terima kasih atas pengertiannya.`;
+    const title = 'Pembatalan Booking'
 
     const updatedAt = await formatedDate(updatedBooking.updatedAt);
 
@@ -538,12 +596,13 @@ export const updateStatusBooking = async (data, id) => {
       data: {
         userId: updatedBooking.userId,
         type: "Transaction",
-        message: message,
+        message,
+        title,
         isRead: false,
       },
     });
 
-    io.emit('Pembatalan Booking', { message, updatedAt });
+    io.emit(title, { message, updatedAt });
   };
 
   return updatedBooking;
@@ -657,7 +716,9 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
     }))
   );
 
-  return bookingsByDateWithHash;
+  const bookingsByDateWithMapping = getTotalPriceForEachPassengerInSegments(bookingsByDateWithHash)
+
+  return bookingsByDateWithMapping;
 };
 
 export const scanQrcode = async (id) => {

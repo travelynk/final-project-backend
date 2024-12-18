@@ -4055,7 +4055,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userId\": 4\r\n}\r\n",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -5744,7 +5744,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"CGK\",\r\n    \"name\": \"Soekarno-Hatta International Airports\",\r\n    \"cityCode\" : \"JKT\"\r\n}",
+									"raw": "{\r\n    \"code\": \"CGK\",\r\n    \"name\": \"Soekarno-Hatta International Airports\",\r\n    \"cityCode\" : \"JKT\",\r\n    \"lat\": -12.01325,\r\n    \"long\": 885.01246\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"

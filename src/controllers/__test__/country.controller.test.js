@@ -8,6 +8,9 @@ jest.mock("../../services/country.service.js");
 jest.mock("../../validations/country.validation.js", () => ({
     payload: {
         validate: jest.fn()
+    },
+    payloadUpdate: {
+        validate: jest.fn()
     }
 }));
 
@@ -171,13 +174,14 @@ describe("Country Controller", () => {
     describe("updateCountry", () => {
         test("should update one country", async () => {
             req.params = { id: 1 };
-            CountryValidation.payload.validate.mockReturnValue({ value: req.body });
+            delete req.body.code;
+            CountryValidation.payloadUpdate.validate.mockReturnValue({ value: req.body });
             CountryService.update.mockResolvedValue(data);
 
             await CountryController.updateCountry(req, res, next);
 
-            expect(CountryValidation.payload.validate).toHaveBeenCalledTimes(1);
-            expect(CountryValidation.payload.validate).toHaveBeenCalledWith(req.body);
+            expect(CountryValidation.payloadUpdate.validate).toHaveBeenCalledTimes(1);
+            expect(CountryValidation.payloadUpdate.validate).toHaveBeenCalledWith(req.body);
             expect(CountryService.update).toHaveBeenCalledTimes(1);
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({
@@ -192,7 +196,7 @@ describe("Country Controller", () => {
         test('calls next with Error400 if validation fails', async () => {
             // Mock validasi gagal
             const validationError = { details: [{ message: 'Validation error' }] };
-            CountryValidation.payload.validate.mockReturnValue({ error: validationError });
+            CountryValidation.payloadUpdate.validate.mockReturnValue({ error: validationError });
 
             await CountryController.updateCountry(req, res, next);
 
@@ -206,7 +210,7 @@ describe("Country Controller", () => {
         test("should return error", async () => {
             req.params = { id: 1 };
             const error = new Error("error message");
-            CountryValidation.payload.validate.mockReturnValue({ value: req.body });
+            CountryValidation.payloadUpdate.validate.mockReturnValue({ value: req.body });
             CountryService.update.mockRejectedValue(error);
 
             await CountryController.updateCountry(req, res, next);
@@ -218,7 +222,7 @@ describe("Country Controller", () => {
             req.params = { id: 1 };
             const error = new Error("error message");
             error.code = "P2002";
-            CountryValidation.payload.validate.mockReturnValue({ value: req.body });
+            CountryValidation.payloadUpdate.validate.mockReturnValue({ value: req.body });
             CountryService.update.mockRejectedValue(error);
 
             await CountryController.updateCountry(req, res, next);

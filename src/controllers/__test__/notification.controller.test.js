@@ -7,11 +7,17 @@ import {
 } from '../../controllers/notification.controller.js';
 import * as response from '../../utils/response.js';
 import * as NotificationService from '../../services/notification.service.js';
+import { notification } from '../../validations/notification.validator.js';
 import { Error400, Error404 } from '../../utils/customError.js';
 
 // Mock dependencies
 jest.mock("../../services/notification.service.js");
 jest.mock("../../utils/response.js");
+jest.mock("../../validations/notification.validator.js", () => ({
+  notification: {
+    validate: jest.fn(),
+  }
+}));
 
 describe("Notification Controller", () => {
   let mockReq, mockRes, mockNext;
@@ -21,7 +27,7 @@ describe("Notification Controller", () => {
     mockReq = {
       body: {},
       params: {},
-      user: { id: 123 },
+      user: { id: 123, role: "buyer" },
     };
     mockRes = {
       status: jest.fn().mockReturnThis(),
@@ -48,12 +54,41 @@ describe("Notification Controller", () => {
         message: "Test Message",
       };
 
+      notification.validate.mockResolvedValue({ value: mockReq.body });
+
       NotificationService.createNotification.mockResolvedValue(mockNotification);
 
       await createNotification(mockReq, mockRes, mockNext);
 
       expect(NotificationService.createNotification).toHaveBeenCalledWith( 
         123,
+        "info",
+        "Test Title",
+        "Test Message"
+      );
+      expect(response.res200).toHaveBeenCalledWith("Notifikasi berhasil dibuat", mockNotification, mockRes);
+    });
+
+    it("should create a user-general notification and return 200", async () => {
+      mockReq.user.role = "admin";
+      mockReq.body = { type: "info", title: "Test Title", message: "Test Message" };
+            
+      const mockNotification = {
+        id: 1,
+        userId: null,
+        type: "info",
+        title: "Test Title",
+        message: "Test Message",
+      };
+
+      notification.validate.mockResolvedValue({ value: mockReq.body });
+
+      NotificationService.createNotification.mockResolvedValue(mockNotification);
+
+      await createNotification(mockReq, mockRes, mockNext);
+
+      expect(NotificationService.createNotification).toHaveBeenCalledWith( 
+        null,
         "info",
         "Test Title",
         "Test Message"
@@ -92,15 +127,31 @@ describe("Notification Controller", () => {
             mockNotification,
             mockRes
         );
-    });    
-
-    it("should call next with Error400 if validation fails", async () => {
-      mockReq.body = { type: "", title: "Test Title", message: "Test Message" };
-
-      await createNotification(mockReq, mockRes, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(expect.any(Error400));
     });
+
+    it("should call next with Error400 if validation error", async () => {
+        const validationError = { details: [{ message: "Validation error" }] };
+        notification.validate.mockReturnValue({ error: validationError });
+
+        await createNotification(mockReq, mockRes, mockNext);
+
+        expect(NotificationService.createNotification).not.toHaveBeenCalled();
+        expect(response.res200).not.toHaveBeenCalled();
+        expect(mockNext).toHaveBeenCalledTimes(1);
+        expect(mockNext.mock.calls[0][0]).toBeInstanceOf(Error400);
+        expect(mockNext.mock.calls[0][0].message).toBe("Validation error");
+    });
+
+    it("should call next with error if service throws an error", async () => {
+        const serviceError = new Error("Service error");
+        notification.validate.mockResolvedValue({ value: mockReq.body });
+        NotificationService.createNotification.mockRejectedValue(serviceError);
+
+        await createNotification(mockReq, mockRes, mockNext);
+
+        expect(mockNext).toHaveBeenCalledWith(serviceError);
+    });
+
   });
 
   // Test getNotifications

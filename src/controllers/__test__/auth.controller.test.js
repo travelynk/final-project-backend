@@ -1,5 +1,5 @@
 import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
-import { login, register, sendOtp, verifyOtp, resetPassword, sendResetPasswordEmail } from '../../controllers/auth.controller.js';
+import { login, register, sendOtp, verifyOtp, resetPassword, sendResetPasswordEmail, redirectGoogleOauth, googleOauthCallback } from '../../controllers/auth.controller.js';
 import { Error400, Error401, Error404 } from '../../utils/customError.js';
 import * as response from '../../utils/response.js';
 import * as AuthValidation from '../../validations/auth.validation.js';
@@ -19,6 +19,7 @@ describe('Auth Controller', () => {
         res = {
             json: jest.fn(),
             status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
         };
         next = jest.fn();
     });
@@ -34,14 +35,14 @@ describe('Auth Controller', () => {
             jest.spyOn(AuthValidation.login, 'validate').mockReturnValue({ error: null, value: req.body });
             AuthService.login.mockResolvedValue({
                 token: 'mock-token',
-                user: { email: 'test@example.com', role: 'buyer'},
+                user: { email: 'test@example.com', role: 'buyer' },
             });
 
             await login(req, res);
 
             expect(response.res200).toHaveBeenCalledWith(
-                'Login berhasil', 
-                { token: 'mock-token', user: { email: 'test@example.com', role: 'buyer' }},
+                'Login berhasil',
+                { token: 'mock-token', user: { email: 'test@example.com', role: 'buyer' } },
                 res
             );
         });
@@ -69,7 +70,7 @@ describe('Auth Controller', () => {
 
         it('should return 401 for unverified account', async () => {
             req.body = { email: 'test@example.com', password: 'password' };
-            
+
             jest.spyOn(AuthValidation.login, 'validate').mockReturnValue({ error: null, value: req.body });
             AuthService.login.mockRejectedValue(new Error401('Akun belum diverifikasi'));
 
@@ -78,7 +79,7 @@ describe('Auth Controller', () => {
             expect(next).toHaveBeenCalledWith(new Error401('Akun belum diverifikasi'));
         });
 
-        
+
 
         it('should return 500 for internal server error', async () => {
             jest.spyOn(AuthValidation.login, 'validate').mockImplementation(() => {
@@ -201,8 +202,8 @@ describe('Auth Controller', () => {
             expect(next).toHaveBeenCalledWith(new Error('Internal Server Error'));
         });
     });
-  
-   describe('resetPassword', () => {
+
+    describe('resetPassword', () => {
         it('should return 200 on successful password reset', async () => {
             req.body = { newPassword: 'new-password' };
             req.query = { token: 'mock-token' };
@@ -288,4 +289,64 @@ describe('Auth Controller', () => {
             expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
     });
+
+    describe('redirectGoogleOauth', () => {
+        it('should return 200 with google authorize url', async () => {
+            const mockUrl = 'http://google.com/authorize';
+            AuthService.googleAuthorizeUrl.mockResolvedValue(mockUrl);
+
+            await redirectGoogleOauth(req, res);
+
+            expect(response.res200).toHaveBeenCalledWith('Berhasil mendapatkan authorize url google', mockUrl, res);
+        });
+
+        it('should return 500 for internal server error', async () => {
+            AuthService.googleAuthorizeUrl.mockRejectedValue(new Error('Internal Server Error'));
+
+            await redirectGoogleOauth(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(new Error('Internal Server Error'));
+        });
+    });
+
+    describe('googleOauthCallback', () => {
+        it('should return result to parent window', async () => {
+            req.query = { code: 'mock-code' };
+
+            const mockResult = { token: 'mock token' };
+            AuthService.googleOauthCallback.mockResolvedValue(mockResult);
+
+            await googleOauthCallback(req, res);
+
+            expect(res.send).toHaveBeenCalledWith(expect.stringContaining('window.opener.postMessage'));
+
+            const script = res.send.mock.calls[0][0];
+
+            expect(script).toContain(JSON.stringify(mockResult));
+
+            expect(AuthService.googleOauthCallback).toHaveBeenCalledWith('mock-code');
+
+            expect(res.send).toHaveBeenCalledTimes(1);
+
+        });
+
+        it('should return error to parent window', async () => {
+            req.query = { code: 'mock-code' };
+
+            AuthService.googleOauthCallback.mockRejectedValue(new Error('Error message'));
+
+            await googleOauthCallback(req, res);
+
+            expect(res.send).toHaveBeenCalledWith(expect.stringContaining('window.opener.postMessage'));
+
+            const script = res.send.mock.calls[0][0];
+
+            expect(script).toContain('Error message');
+
+            expect(AuthService.googleOauthCallback).toHaveBeenCalledWith('mock-code');
+
+            expect(res.send).toHaveBeenCalledTimes(1);
+        });
+    });
+
 });

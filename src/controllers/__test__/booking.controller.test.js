@@ -1,3 +1,4 @@
+import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 import * as BookingService from '../../services/booking.service.js';
 import * as BookingValidation from '../../validations/booking.validation.js';
 import * as response from '../../utils/response.js';
@@ -7,7 +8,13 @@ import jwt from 'jsonwebtoken';
 import { decodeBookingCode } from '../../utils/hashids.js';
 
 jest.mock('../../services/booking.service.js');
-jest.mock('../../validations/booking.validation.js');
+jest.mock('../../validations/booking.validation.js', () => ({
+    getBooking: { validate: jest.fn() },
+    storeBooking: { validate: jest.fn() },
+    updateStatusBookingBody: { validate: jest.fn() },
+    updateStatusBookingParams: { validate: jest.fn() },
+    getBookingsByDate: { validate: jest.fn() },
+}));
 jest.mock('../../utils/response.js');
 jest.mock('../../utils/hashids.js');
 jest.mock('jsonwebtoken');
@@ -46,7 +53,7 @@ describe('Booking Controller', () => {
     describe('getBooking', () => {
         test('should return a single booking', async () => {
             const mockBooking = { id: 1 };
-            BookingValidation.getBooking = { validate: jest.fn().mockReturnValue({ value: { id: 1 } }) };
+            BookingValidation.getBooking.validate.mockReturnValue({ value: { id: 1 } });
             BookingService.getBooking.mockResolvedValue(mockBooking);
             req.params = { id: 1 };
 
@@ -59,7 +66,7 @@ describe('Booking Controller', () => {
 
         test('should throw validation error', async () => {
             const error = new Error400('Validation Error');
-            BookingValidation.getBooking = { validate: jest.fn().mockReturnValue({ error }) };
+            BookingValidation.getBooking.validate.mockReturnValue({ error });
 
             await BookingController.getBooking(req, res, next);
 
@@ -70,7 +77,7 @@ describe('Booking Controller', () => {
     describe('storeBooking', () => {
         test('should store a booking successfully', async () => {
             const mockBooking = { id: 1 };
-            BookingValidation.storeBooking = { validate: jest.fn().mockReturnValue({ value: { flight: 'A123' } }) };
+            BookingValidation.storeBooking.validate.mockReturnValue({ value: { flight: 'A123' } });
             BookingService.storeBooking.mockResolvedValue(mockBooking);
 
             await BookingController.storeBooking(req, res, next);
@@ -81,7 +88,7 @@ describe('Booking Controller', () => {
 
         test('should handle validation error', async () => {
             const error = new Error400('Validation Error');
-            BookingValidation.storeBooking = { validate: jest.fn().mockReturnValue({ error }) };
+            BookingValidation.storeBooking.validate.mockReturnValue({ error });
 
             await BookingController.storeBooking(req, res, next);
 
@@ -92,8 +99,8 @@ describe('Booking Controller', () => {
     describe('updateStatusBooking', () => {
         test('should update booking status', async () => {
             const updatedBooking = { id: 1, status: 'confirmed' };
-            BookingValidation.updateStatusBookingBody = { validate: jest.fn().mockReturnValue({ value: { status: 'confirmed' } }) };
-            BookingValidation.updateStatusBookingParams = { validate: jest.fn().mockReturnValue({ value: { id: 1 } }) };
+            BookingValidation.updateStatusBookingBody.validate.mockReturnValue({ value: { status: 'confirmed' } });
+            BookingValidation.updateStatusBookingParams.validate.mockReturnValue({ value: { id: 1 } });
             BookingService.updateStatusBooking.mockResolvedValue(updatedBooking);
 
             req.params = { id: 1 };
@@ -143,7 +150,7 @@ describe('Booking Controller', () => {
     describe('getBookingsByDate', () => {
         test('should return bookings by date', async () => {
             const bookings = [{ id: 1 }];
-            BookingValidation.getBookingsByDate = { validate: jest.fn().mockReturnValue({ value: { startDate: '2024-06-01', endDate: '2024-06-10' } }) };
+            BookingValidation.getBookingsByDate.validate.mockReturnValue({ value: { startDate: '2024-06-01', endDate: '2024-06-10' } });
             BookingService.getBookingsByDate.mockResolvedValue(bookings);
 
             req.query = { startDate: '2024-06-01', endDate: '2024-06-10' };
@@ -155,7 +162,7 @@ describe('Booking Controller', () => {
 
         test('should handle validation errors', async () => {
             const error = new Error400('Validation Error');
-            BookingValidation.getBookingsByDate = { validate: jest.fn().mockReturnValue({ error }) };
+            BookingValidation.getBookingsByDate.validate.mockReturnValue({ error });
 
             await BookingController.getBookingsByDate(req, res, next);
 

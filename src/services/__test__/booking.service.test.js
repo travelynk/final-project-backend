@@ -3,7 +3,6 @@ import * as BookingService from '../booking.service.js';
 import prisma from '../../configs/database.js';
 import { Error404, Error400 } from '../../utils/customError.js';
 import { encodeBookingCode } from '../../utils/hashids.js';
-import { getIoInstance } from '../../configs/websocket.js';
 
 jest.mock('../../configs/database.js', () => ({
     __esModule: true,

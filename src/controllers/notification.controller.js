@@ -25,7 +25,7 @@ export const createNotification = async (req, res, next) => {
             message
         );
 
-        response.res200("Notifikasi berhasil dibuat", result, res);
+        response.res201("Notifikasi berhasil dibuat", result, res);
     } catch (error) {
         next(error);
     }
@@ -66,8 +66,9 @@ export const deleteNotification = async (req, res, next) => {
     try {
         const { id } = req.params; 
         const userId = req.user.id;
+        const role = req.user.role;
 
-        const result = await NotificationService.deleteNotification(parseInt(id), userId);
+        const result = await NotificationService.deleteNotification(parseInt(id), userId, role);
 
         response.res200('Notifikasi berhasil dihapus.', result.notification, res);
     } catch (error) {

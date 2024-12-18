@@ -102,7 +102,60 @@ export const getBookings = async (userId) => {
     }))
   );
 
-  return bookingsWithHash
+  const bookingsWithMapping = getTotalPriceForEachPassengerInSegments(bookingsWithHash)
+  return bookingsWithMapping
+};
+
+const getTotalPriceForEachPassengerInSegments = (bookings) => {
+  return bookings.map(booking => {
+    let passengerTotalPrices = {};
+
+    booking.segments.forEach(segment => {
+      const passengerId = segment.passengerId;
+
+      if (!passengerTotalPrices[passengerId]) {
+        passengerTotalPrices[passengerId] = 0;
+      }
+
+      passengerTotalPrices[passengerId] += segment.flight.price;
+    });
+
+    const firstPrice = Object.values(passengerTotalPrices)[0];
+
+    const adultTotalPrice = firstPrice * booking.passengerCount.adult;
+    const childTotalPrice = firstPrice * booking.passengerCount.child;
+
+    return {
+      ...booking,
+      adultTotalPrice,
+      childTotalPrice
+    };
+  });
+};
+
+const getTotalPriceForEachPassengerInSegment = (booking) => {
+    let passengerTotalPrices = {};
+
+    booking.segments.forEach(segment => {
+      const passengerId = segment.passengerId;
+
+      if (!passengerTotalPrices[passengerId]) {
+        passengerTotalPrices[passengerId] = 0;
+      }
+
+      passengerTotalPrices[passengerId] += segment.flight.price;
+    });
+
+    const firstPrice = Object.values(passengerTotalPrices)[0];
+
+    const adultTotalPrice = firstPrice * booking.passengerCount.adult;
+    const childTotalPrice = firstPrice * booking.passengerCount.child;
+
+    return {
+      ...booking,
+      adultTotalPrice,
+      childTotalPrice
+    };
 };
 
 export const getBooking = async (userId, id) => {
@@ -200,7 +253,9 @@ export const getBooking = async (userId, id) => {
 
   booking.bookingCode = await encodeBookingCode(booking.id);
 
-  return booking;
+  const bookingWithMapping = getTotalPriceForEachPassengerInSegment(booking)
+
+  return bookingWithMapping;
 };
 
 export const storeBooking = async (userId, data) => {
@@ -240,7 +295,7 @@ export const storeBooking = async (userId, data) => {
     maxVouchers = voucher.maxVoucher;
   };
 
-  totalSum -= (totalSum * tax / 100);
+  totalSum += (totalSum * tax / 100);
 
   const totalPrice = totalSum;
 
@@ -661,7 +716,9 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
     }))
   );
 
-  return bookingsByDateWithHash;
+  const bookingsByDateWithMapping = getTotalPriceForEachPassengerInSegments(bookingsByDateWithHash)
+
+  return bookingsByDateWithMapping;
 };
 
 export const scanQrcode = async (id) => {

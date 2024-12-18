@@ -75,7 +75,7 @@ describe('Booking Controller', () => {
 
             await BookingController.storeBooking(req, res, next);
 
-            expect(BookingService.storeBooking).toHaveBeenCalledWith(1, { flight: 'A123' });
+            expect(BookingService.storeBooking).toHaveBeenCalledWith(123, { flight: 'A123' });
             expect(response.res200).toHaveBeenCalledWith('Berhasil', mockBooking, res);
         });
 

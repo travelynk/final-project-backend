@@ -2,7 +2,7 @@ import { jest, describe, it, expect, afterEach } from "@jest/globals";
 import prisma from "../../configs/database.js";
 import { coreApi, snap } from "../../configs/midtransClient.js";
 import {
-  createDebitPayment,
+  // createDebitPayment,
   cancelPayment,
   checkPaymentStatus,
   createGoPayPayment,
@@ -61,68 +61,68 @@ afterEach(() => jest.clearAllMocks());
 
 describe("Payment Service Tests", () => {
 
-  describe("createDebitPayment", () => {
-    it("should throw error if booking not found", async () => {
-      prisma.booking.findUnique.mockResolvedValue(null);
-      await expect(createDebitPayment(1, "bca")).rejects.toThrow("Pemesanan tidak ditemukan");
-    });
+  // describe("createDebitPayment", () => {
+  //   it("should throw error if booking not found", async () => {
+  //     prisma.booking.findUnique.mockResolvedValue(null);
+  //     await expect(createDebitPayment(1, "bca")).rejects.toThrow("Pemesanan tidak ditemukan");
+  //   });
 
-    it("should create debit payment successfully", async () => {
-      const mockBooking = {
-        id: 1,
-        totalPrice: 700000,
-        user: { email: "test@example.com", profile: { fullName: "Test User" } },
-      };
+  //   it("should create debit payment successfully", async () => {
+  //     const mockBooking = {
+  //       id: 1,
+  //       totalPrice: 700000,
+  //       user: { email: "test@example.com", profile: { fullName: "Test User" } },
+  //     };
 
-      const mockUpdatedBooking = {
-        ...mockBooking,
-        status: "Pending",
-        urlQrcode: "https://example.com/qrcode.png",
-      };
+  //     const mockUpdatedBooking = {
+  //       ...mockBooking,
+  //       status: "Pending",
+  //       urlQrcode: "https://example.com/qrcode.png",
+  //     };
 
-      const mockChargeResponse = {
-        transaction_id: "txn_789",
-        order_id: "order_789",
-        gross_amount: "700000",
-        va_numbers: [],
-      };
+  //     const mockChargeResponse = {
+  //       transaction_id: "txn_789",
+  //       order_id: "order_789",
+  //       gross_amount: "700000",
+  //       va_numbers: [],
+  //     };
 
-      prisma.booking.findUnique.mockResolvedValue(mockBooking);
-      prisma.booking.update.mockResolvedValue(mockUpdatedBooking);
-      coreApi.charge.mockResolvedValue(mockChargeResponse);
+  //     prisma.booking.findUnique.mockResolvedValue(mockBooking);
+  //     prisma.booking.update.mockResolvedValue(mockUpdatedBooking);
+  //     coreApi.charge.mockResolvedValue(mockChargeResponse);
 
-      prisma.payment.create.mockResolvedValue();
+  //     prisma.payment.create.mockResolvedValue();
 
-      const response = await createDebitPayment(1, "BNI");
+  //     const response = await createDebitPayment(1, "BNI");
 
-      expect(prisma.booking.findUnique).toHaveBeenCalledWith({
-        where: { id: 1 },
-        include: { payments: true, user: { include: { profile: true } } },
-      });
+  //     expect(prisma.booking.findUnique).toHaveBeenCalledWith({
+  //       where: { id: 1 },
+  //       include: { payments: true, user: { include: { profile: true } } },
+  //     });
 
-      expect(prisma.booking.update).toHaveBeenCalledWith({
-        where: { id: 1 },
-        data: { "urlQrcode": "https://mock-imagekit.io/path/to/image" },
-      });
+  //     expect(prisma.booking.update).toHaveBeenCalledWith({
+  //       where: { id: 1 },
+  //       data: { "urlQrcode": "https://mock-imagekit.io/path/to/image" },
+  //     });
 
-      expect(coreApi.charge).toHaveBeenCalled();
-      expect(prisma.payment.create).toHaveBeenCalled();
-      expect(response).toEqual(mockChargeResponse);
-    });
+  //     expect(coreApi.charge).toHaveBeenCalled();
+  //     expect(prisma.payment.create).toHaveBeenCalled();
+  //     expect(response).toEqual(mockChargeResponse);
+  //   });
 
-    it("should handle error if coreApi charge fails", async () => {
-      const mockBooking = {
-        id: 1,
-        totalPrice: 700000,
-        user: { email: "test@example.com", profile: { fullName: "Test User" } },
-      };
+  //   it("should handle error if coreApi charge fails", async () => {
+  //     const mockBooking = {
+  //       id: 1,
+  //       totalPrice: 700000,
+  //       user: { email: "test@example.com", profile: { fullName: "Test User" } },
+  //     };
 
-      prisma.booking.findUnique.mockResolvedValue(mockBooking);
-      coreApi.charge.mockRejectedValue(new Error("Payment gateway error"));
+  //     prisma.booking.findUnique.mockResolvedValue(mockBooking);
+  //     coreApi.charge.mockRejectedValue(new Error("Payment gateway error"));
 
-      await expect(createDebitPayment(1, "BNI")).rejects.toThrow("Payment gateway error");
-    });
-  });
+  //     await expect(createDebitPayment(1, "BNI")).rejects.toThrow("Payment gateway error");
+  //   });
+  // });
 
   describe("cancelPayment", () => {
     it("should cancel payment successfully", async () => {

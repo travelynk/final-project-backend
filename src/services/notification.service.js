@@ -55,7 +55,7 @@ export const updateNotificationReadStatus = async (notificationId, userId) => {
 };
 
 // Soft-delete a notification (Update notification delete status) 
-export const deleteNotification = async (notificationId, userId) => {
+export const deleteNotification = async (notificationId, userId, role) => {
     const existingNotification = await prisma.notification.findUnique({
         where: { id: notificationId },
     });
@@ -64,10 +64,19 @@ export const deleteNotification = async (notificationId, userId) => {
         throw new Error404('Notifikasi tidak ditemukan.');
     }
     
-    const notification = await prisma.notification.update({
-        where: { id: notificationId, userId },
-        data: { isDeleted: true },
-    });
+    let notification;
+    
+    if(role === 'admin'){
+        notification = await prisma.notification.update({
+            where: { id: notificationId },
+            data: { isDeleted: true },
+        });
+    } else {
+        notification = await prisma.notification.update({
+            where: { id: notificationId, userId },
+            data: { isDeleted: true },
+        });
+    }
     
     return { notification, message: 'Notifikasi berhasil dihapus.' };
 };

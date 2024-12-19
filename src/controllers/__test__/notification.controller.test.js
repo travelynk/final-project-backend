@@ -66,10 +66,10 @@ describe("Notification Controller", () => {
         "Test Title",
         "Test Message"
       );
-      expect(response.res200).toHaveBeenCalledWith("Notifikasi berhasil dibuat", mockNotification, mockRes);
+      expect(response.res201).toHaveBeenCalledWith("Notifikasi berhasil dibuat", mockNotification, mockRes);
     });
 
-    it("should create a user-general notification and return 200", async () => {
+    it("should create a user-general notification and return 201", async () => {
       mockReq.user.role = "admin";
       mockReq.body = { type: "info", title: "Test Title", message: "Test Message" };
             
@@ -93,7 +93,7 @@ describe("Notification Controller", () => {
         "Test Title",
         "Test Message"
       );
-      expect(response.res200).toHaveBeenCalledWith("Notifikasi berhasil dibuat", mockNotification, mockRes);
+      expect(response.res201).toHaveBeenCalledWith("Notifikasi berhasil dibuat", mockNotification, mockRes);
     });
 
     it("should create a general notification when userId is null", async () => {
@@ -122,7 +122,7 @@ describe("Notification Controller", () => {
             "General Announcement",
             "This is a system-wide message"
         );
-        expect(response.res200).toHaveBeenCalledWith(
+        expect(response.res201).toHaveBeenCalledWith(
             "Notifikasi berhasil dibuat",
             mockNotification,
             mockRes
@@ -136,7 +136,7 @@ describe("Notification Controller", () => {
         await createNotification(mockReq, mockRes, mockNext);
 
         expect(NotificationService.createNotification).not.toHaveBeenCalled();
-        expect(response.res200).not.toHaveBeenCalled();
+        expect(response.res201).not.toHaveBeenCalled();
         expect(mockNext).toHaveBeenCalledTimes(1);
         expect(mockNext.mock.calls[0][0]).toBeInstanceOf(Error400);
         expect(mockNext.mock.calls[0][0].message).toBe("Validation error");
@@ -225,7 +225,7 @@ describe("Notification Controller", () => {
 
       await deleteNotification(mockReq, mockRes, mockNext);
 
-      expect(NotificationService.deleteNotification).toHaveBeenCalledWith(1, 123);
+      expect(NotificationService.deleteNotification).toHaveBeenCalledWith(1, 123, mockReq.user.role);
       expect(response.res200).toHaveBeenCalledWith(
         "Notifikasi berhasil dihapus.",
         mockNotification,

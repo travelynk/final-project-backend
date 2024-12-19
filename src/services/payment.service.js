@@ -10,7 +10,7 @@ import { vaNumberPaymentEmail } from "../views/send.email.payment.js";
 import { gopayPaymentEmail } from "../views/send.email.payment.js";
 import { cardPaymentEmail } from "../views/send.email.payment.js";
 import { cancelPaymentEmail } from "../views/send.email.payment.js";
-import { paymentStatusEmail } from "../views/send.email.payment.js";
+// import { paymentStatusEmail } from "../views/send.email.payment.js";
 
 export const createDebitPayment = async (bookingId, bank) => {
     const booking = await prisma.booking.findUnique({
@@ -149,6 +149,13 @@ export const checkPaymentStatus = async (transactionId) => {
             where: { id: currentPayment.booking.id },
             data: { status: "Issued" },
         });
+
+        // // Kirim email dengan status pembayaran
+        // await sendPaymentEmail(
+        //     currentPayment.booking.user.email,
+        //     "Status Pembayaran Diperbarui",
+        //     paymentStatusEmail(transactionId, statusFormatted)
+        // );
     } else if (["cancel", "expire"].includes(transactionStatus.transaction_status)) {
         statusFormatted = "Cancelled";
         message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} dibatalkan.`;
@@ -158,6 +165,13 @@ export const checkPaymentStatus = async (transactionId) => {
             where: { id: currentPayment.booking.id },
             data: { status: "Cancelled" },
         });
+
+        // // Kirim email dengan status pembayaran
+        // await sendPaymentEmail(
+        //     currentPayment.booking.user.email,
+        //     "Status Pembayaran Diperbarui",
+        //     paymentStatusEmail(transactionId, statusFormatted)
+        // );
     } else if (transactionStatus.transaction_status === "expire") {
         statusFormatted = "Expired";
         message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} telah kedaluwarsa.`;
@@ -169,13 +183,6 @@ export const checkPaymentStatus = async (transactionId) => {
         where: { transactionId },
         data: { status: statusFormatted },
     });
-
-    // Kirim email dengan status pembayaran
-    await sendPaymentEmail(
-        currentPayment.booking.user.email,
-        "Status Pembayaran Diperbarui",
-        paymentStatusEmail(transactionId, statusFormatted)
-    );
 
     // Membuat notifikasi pembayaran
     await createNotification(currentPayment.booking.userId, "Payment", "Status Pembayaran Diperbarui", message);
@@ -335,7 +342,7 @@ export const createCardPayment = async (bookingId, cardToken) => {
 
     const message = `Pembayaran Anda untuk pemesanan dengan nomor booking ${bookingId} telah berhasil.`;
     await createNotification(booking.userId, "Payment", "Pembayaran Berhasil", message);
-    
+
     return chargeResponse;
 };
 

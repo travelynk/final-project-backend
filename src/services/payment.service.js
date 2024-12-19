@@ -49,8 +49,7 @@ export const createDebitPayment = async (bookingId, bank) => {
         "N/A"; // Tambahkan expired date (24 jam setelah transaksi dibuat)
 
     // Generate QR Code setelah pembayaran sukses
-    // const updatedBooking = await generateQrcode(bookingId);
-
+    await generateQrcode(bookingId);
 
     await prisma.payment.create({
         data: {

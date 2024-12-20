@@ -217,6 +217,7 @@ export const getAvailableFlight = async (data) => {
     const [depCity, arrCity] = route;
     let outboundFlights = [];
     let returnFlights = [];
+    const now = new Date();
 
     if (schedule.length > 1) {
         const returnStartDay = new Date(schedule[1]);
@@ -226,7 +227,7 @@ export const getAvailableFlight = async (data) => {
         const flights = await prisma.flight.findMany({
             where: {
                 departureTime: {
-                    gte: returnStartDay,
+                    gte: now,
                     lt: returnEndDay,
                 },
                 seatClass,
@@ -270,7 +271,7 @@ export const getAvailableFlight = async (data) => {
     const flights = await prisma.flight.findMany({
         where: {
             departureTime: {
-                gte: startDay,
+                gte: now,
                 lt: endDay,
             },
             seatClass,

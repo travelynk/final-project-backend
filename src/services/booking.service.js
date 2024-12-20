@@ -855,13 +855,37 @@ export const getTicket = async (userId, id) => {
 };
 
 export const updateTotalBooking = async (id, data) => {
-  const { totalPrice } = data;
+  const {
+    totalPrice, voucherCode
+  } = data;
+
+  const booking = await prisma.booking.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+  });
+
+  if (!booking) {
+    throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
+  };
+
+  if (booking.status == "Issued") {
+    throw new Error400('Status Booking sudah tidak bisa diubah karena sudah dilakukan pembayaran.');
+  };
+  
+  const voucher = await VoucherService.getVoucherByCode(voucherCode, totalPrice);
+
+  if (!voucher) {
+    throw new Error400('Code Voucher tidak valid.');
+  }
 
   const updatedBooking = await prisma.booking.update({
     where: { id: parseInt(id) },
-    data: { totalPrice },
+    data: { 
+      totalPrice,
+      voucherCode
+     },
   });
 
   return updatedBooking;
-
 };

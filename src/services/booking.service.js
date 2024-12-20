@@ -749,10 +749,9 @@ export const scanQrcode = async (id) => {
   return updatedBooking;
 };
 
-export const getTicket = async (userId, id) => {
+export const getTicket = async (id) => {
   const booking = await prisma.booking.findUnique({
     where: {
-      userId,
       id: parseInt(id),
     },
     include: {

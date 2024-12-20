@@ -134,28 +134,28 @@ const getTotalPriceForEachPassengerInSegments = (bookings) => {
 };
 
 const getTotalPriceForEachPassengerInSegment = (booking) => {
-    let passengerTotalPrices = {};
+  let passengerTotalPrices = {};
 
-    booking.segments.forEach(segment => {
-      const passengerId = segment.passengerId;
+  booking.segments.forEach(segment => {
+    const passengerId = segment.passengerId;
 
-      if (!passengerTotalPrices[passengerId]) {
-        passengerTotalPrices[passengerId] = 0;
-      }
+    if (!passengerTotalPrices[passengerId]) {
+      passengerTotalPrices[passengerId] = 0;
+    }
 
-      passengerTotalPrices[passengerId] += segment.flight.price;
-    });
+    passengerTotalPrices[passengerId] += segment.flight.price;
+  });
 
-    const firstPrice = Object.values(passengerTotalPrices)[0];
+  const firstPrice = Object.values(passengerTotalPrices)[0];
 
-    const adultTotalPrice = firstPrice * booking.passengerCount.adult;
-    const childTotalPrice = firstPrice * booking.passengerCount.child;
+  const adultTotalPrice = firstPrice * booking.passengerCount.adult;
+  const childTotalPrice = firstPrice * booking.passengerCount.child;
 
-    return {
-      ...booking,
-      adultTotalPrice,
-      childTotalPrice
-    };
+  return {
+    ...booking,
+    adultTotalPrice,
+    childTotalPrice
+  };
 };
 
 export const getBooking = async (userId, id) => {
@@ -749,7 +749,6 @@ export const scanQrcode = async (id) => {
   return updatedBooking;
 };
 
-
 export const getTicket = async (userId, id) => {
   const booking = await prisma.booking.findUnique({
     where: {
@@ -853,4 +852,16 @@ export const getTicket = async (userId, id) => {
   booking.bookingCode = await encodeBookingCode(booking.id);
 
   return booking;
+};
+
+export const updateTotalBooking = async (id, data) => {
+  const { totalPrice } = data;
+
+  const updatedBooking = await prisma.booking.update({
+    where: { id: parseInt(id) },
+    data: { totalPrice },
+  });
+
+  return updatedBooking;
+
 };

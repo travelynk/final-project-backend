@@ -148,3 +148,15 @@ export const getTicket = async (req, res) => {
         
     }
 };
+
+export const updateTotalBooking = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const updatedBooking = await BookingService.updateTotalBooking(id, req.body);
+
+        response.res200('Berhasil', updatedBooking, res);
+    } catch (error) {
+        next(error)
+    }
+};

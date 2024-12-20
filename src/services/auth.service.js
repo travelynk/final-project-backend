@@ -38,9 +38,16 @@ export const login = async ({ email, password }) => {
             { expiresIn: '1d' }
         );
 
+        const userData = {
+            userId: user.id,
+            email: user.email,
+            role: user.role,
+            name: user.profile.fullName,
+        };
+
         return {
             token,
-            user: { email: user.email, role: user.role, name: user.profile.fullName },
+            user: userData,
         };
     } catch (error) {
         if (error instanceof Error400 || error instanceof Error401) {

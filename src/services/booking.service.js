@@ -413,7 +413,7 @@ export const storeBooking = async (userId, data) => {
 
     const notification = await tx.notification.create({
       data: {
-        userId: userId,
+        userId,
         type: "Payment",
         message: message,
         title,
@@ -425,7 +425,7 @@ export const storeBooking = async (userId, data) => {
 
     const io = getIoInstance();
 
-    io.emit(title, { message, createdAt });
+    io.emit(title, { message, userId, createdAt });
 
     return createdBooking;
   });

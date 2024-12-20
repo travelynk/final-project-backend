@@ -11,5 +11,6 @@ export default (router) => {
     router.get(prefix + '/:id', authMiddleware, BookingController.getBooking);
     router.post(prefix + '/', authMiddleware, BookingController.storeBooking);
     router.patch(prefix + '/:id', authMiddleware, BookingController.updateStatusBooking);
+    router.patch(prefix + '/total/:id', authMiddleware, BookingController.updateTotalBooking);
 
 }

@@ -1,5 +1,5 @@
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
-import { login, verifyOtp, sendOtp, register, resetPassword, sendResetPasswordEmail, googleAuthorizeUrl } from "../auth.service.js";
+import { login, verifyOtp, sendOtp, register, resetPassword, sendResetPasswordEmail, googleAuthorizeUrl, googleOauthCallback } from "../auth.service.js";
 import prisma from "../../configs/database";
 import { Error400, Error401, Error404, Error409 } from "../../utils/customError";
 import { generateOTP, generateSecret, verifyOTP } from "../../utils/otp";
@@ -7,13 +7,16 @@ import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
 import { sendOtpEmail } from '../../views/send.otp.js';
-import { authorizationUrl } from "../../configs/googleOauth.js";
+import { authorizationUrl, google, oauth2Client } from "../../configs/googleOauth.js";
 
-jest.mock("../../configs/database", () => ({
-    user: {
-        findUnique: jest.fn(),
-        update: jest.fn(),
-        create: jest.fn(),
+jest.mock('../../configs/database.js', () => ({
+    __esModule: true,
+    default: {
+        user: {
+            findUnique: jest.fn(),
+            create: jest.fn(),
+            update: jest.fn(),
+        },
     },
 }));
 
@@ -39,13 +42,18 @@ jest.mock("jsonwebtoken", () => ({
     verify: jest.fn(),
 }));
 
-jest.mock("../../configs/googleOauth.js", () => ({
-    google: jest.fn(),
+jest.mock('../../configs/googleOauth.js', () => ({
+    __esModule: true,
+    google: {
+        oauth2: jest.fn().mockReturnValue({
+            userinfo: { get: jest.fn() },
+        }),
+    },
     oauth2Client: {
         getToken: jest.fn(),
+        setCredentials: jest.fn(),
     },
-    authorization: jest.fn(),
-
+    authorizationUrl: "https://example.com/oauth2/authorize",
 }));
 
 describe("Auth Service", () => {
@@ -326,6 +334,100 @@ describe("Auth Service", () => {
         it("should return google authorization URL", async () => {
             const result = await googleAuthorizeUrl();
             expect(result).toBe(authorizationUrl);
+        });
+    });
+
+    describe("googleOauthCallback", () => {
+        const mockGoogleUserData = {
+            email: "test@example.com",
+            verified_email: true,
+            name: "Test User",
+        };
+
+        const mockUnverifiedUser = {
+            id: 1,
+            email: "test@example.com",
+            verified: false,
+            profile: { fullName: "Test User", role: "buyer" },
+        };
+    
+        const mockUser = {
+            id: 1,
+            email: "test@example.com",
+            verified: true,
+            role: "buyer",
+            profile: { fullName: "Test User", role: "buyer" },
+        };
+
+        const mockToken = "mock-jwt-token";
+
+        it("should create a new user if not exists", async () => {
+            oauth2Client.getToken.mockResolvedValue({ tokens: { access_token: "mock-access-token" } });
+            google.oauth2().userinfo.get.mockResolvedValue({ data: mockGoogleUserData });
+            prisma.user.findUnique.mockResolvedValue(null);
+            prisma.user.create.mockResolvedValue(mockUser);
+            jest.spyOn(jwt, 'sign').mockReturnValue(mockToken);
+
+            const result = await googleOauthCallback("mock-code");
+
+            expect(oauth2Client.getToken).toHaveBeenCalledWith("mock-code");
+            expect(oauth2Client.setCredentials).toHaveBeenCalledWith({ access_token: "mock-access-token" });
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({
+                 where: { email: "test@example.com" },
+                 include: { profile: true },
+                });
+            expect(prisma.user.create).toHaveBeenCalled();
+            expect(result).toEqual({
+                token: mockToken,
+                user: { email: "test@example.com", role: "buyer", name: "Test User" },
+            });
+        });
+
+        it("should return existing user if already exists", async () => {
+            oauth2Client.getToken.mockResolvedValue({ tokens: { access_token: "mock-access-token" } });
+            google.oauth2().userinfo.get.mockResolvedValue({ data: mockGoogleUserData });
+            prisma.user.findUnique.mockResolvedValue(mockUser);
+            jest.spyOn(jwt, 'sign').mockReturnValue(mockToken);
+
+            const result = await googleOauthCallback("mock-code");
+
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({ 
+                where: { email: "test@example.com" },
+                include: { profile: true },
+            });
+            expect(prisma.user.create).not.toHaveBeenCalled();
+            expect(result).toEqual({
+                token: mockToken,
+                user: { email: "test@example.com", role: "buyer", name: "Test User" },
+            });
+        });
+
+        it("should update user verification if not verified", async () => {
+            oauth2Client.getToken.mockResolvedValue({ tokens: { access_token: "mock-access-token" } });
+            google.oauth2().userinfo.get.mockResolvedValue({ data: mockGoogleUserData });
+            prisma.user.findUnique.mockResolvedValue(mockUnverifiedUser);
+            prisma.user.update.mockResolvedValue({ ...mockUnverifiedUser, verified: true });
+            jest.spyOn(jwt, 'sign').mockReturnValue(mockToken);
+    
+            const result = await googleOauthCallback("mock-code");
+    
+            expect(prisma.user.update).toHaveBeenCalledWith({
+                where: { email: "test@example.com" },
+                data: { verified: true },
+            });
+            expect(result).toEqual({
+                token: mockToken,
+                user: { email: "test@example.com", name: "Test User" },
+            });
+        });
+
+        it("should throw error if email is not verified", async () => {
+            oauth2Client.getToken.mockResolvedValue({ tokens: { access_token: "mock-access-token" } });
+            google.oauth2().userinfo.get.mockResolvedValue({
+                data: { email: "test@example.com", verified_email: false },
+            });
+
+            await expect(googleOauthCallback("mock-code")).rejects.toThrow("Email tidak valid atau belum diverifikasi");
         });
     });
 

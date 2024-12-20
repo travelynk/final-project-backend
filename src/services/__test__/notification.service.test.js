@@ -145,7 +145,7 @@ describe("Notification Service", () => {
 
           expect(result.notification).toEqual(mockNotification);
           expect(prisma.notification.update).toHaveBeenCalledWith({
-                where: { id: 1, userId: 123 },
+                where: { id: 1 },
                 data: { isRead: true },
             });
         });
@@ -180,7 +180,7 @@ describe("Notification Service", () => {
 
           expect(result.notification).toEqual(mockNotification);
           expect(prisma.notification.update).toHaveBeenCalledWith({
-              where: { id: 1, userId: 123 },
+              where: { id: 1 },
               data: { isDeleted: true },
           });
       });

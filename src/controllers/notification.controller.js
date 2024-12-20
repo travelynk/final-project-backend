@@ -50,10 +50,9 @@ export const getNotifications = async (req, res, next) => {
 // Update notification read status
 export const updateNotificationReadStatus = async (req, res, next) => {
     try {
-        const { id } = req.params; 
-        const userId = req.user.id;
+        const { id } = req.params;
 
-        const result = await NotificationService.updateNotificationReadStatus(parseInt(id), userId);
+        const result = await NotificationService.updateNotificationReadStatus(parseInt(id));
 
         response.res200('Status notifikasi berhasil diperbarui.', result.notification, res);
     } catch (error) {
@@ -65,10 +64,8 @@ export const updateNotificationReadStatus = async (req, res, next) => {
 export const deleteNotification = async (req, res, next) => {
     try {
         const { id } = req.params; 
-        const userId = req.user.id;
-        const role = req.user.role;
 
-        const result = await NotificationService.deleteNotification(parseInt(id), userId, role);
+        const result = await NotificationService.deleteNotification(parseInt(id));
 
         response.res200('Notifikasi berhasil dihapus.', result.notification, res);
     } catch (error) {

@@ -97,7 +97,7 @@ describe("Auth Service", () => {
 
             expect(result).toEqual({
                 token: "mockToken",
-                user: { email: mockUser.email, role: mockUser.role, name: mockUser.profile.fullName },
+                user: { userId: mockUser.id, email: mockUser.email, role: mockUser.role, name: mockUser.profile.fullName },
             });
         });
 

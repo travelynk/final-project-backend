@@ -15,97 +15,107 @@ jest.mock('../../configs/database.js', () => ({
     },
 }));
 
-describe('Terminal Service', () => {
-    let data;
-    beforeEach(() => {
-        jest.clearAllMocks();
-        data = {
-            id: 1,
-            name: "Terminal Utama",
-            category: "Multi",
-            airport: {
-                code: "ADL",
-                name: "Adelaide International Airport"
-            },
-            city: {
-                code: "ADL",
-                name: "Adelaide"
-            },
-            country: {
-                code: "AU",
-                name: "Australia"
-            }
-        };
+describe("Terminal Service", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const mockTerminalData = {
+    id: 1,
+    name: "Terminal 1",
+    category: "Domestic",
+    airport: {
+      id: 1,
+      code: "ABC",
+      name: "Airport A",
+      city: {
+        code: "CTY",
+        name: "City A",
+        country: { code: "CTR", name: "Country A" },
+      },
+    },
+  };
+
+  describe("getAll", () => {
+    test("should return a list of terminals", async () => {
+      prisma.terminal.findMany.mockResolvedValue([mockTerminalData]);
+
+      const result = await terminalService.getAll();
+
+      expect(prisma.terminal.findMany).toHaveBeenCalled();
+      expect(result).toEqual([
+        {
+          id: 1,
+          name: "Terminal 1",
+          category: "Domestic",
+          airport: { id: 1, code: "ABC", name: "Airport A" },
+          city: { code: "CTY", name: "City A" },
+          country: { code: "CTR", name: "Country A" },
+        },
+      ]);
     });
+  });
 
-    describe('getAll', () => {
-        // test('should return empty array', async () => {
-        //     prisma.terminal.findMany.mockResolvedValue([]);
+  describe("getOne", () => {
+    test("should return a single terminal by id", async () => {
+      prisma.terminal.findUnique.mockResolvedValue(mockTerminalData);
 
-        //     const result = await terminalService.getAll();
+      const result = await terminalService.getOne(1);
 
-        //     expect(result).toEqual([]);
-        //     expect(prisma.terminal.findMany).toHaveBeenCalledTimes(1);
-        // });
+      expect(prisma.terminal.findUnique).toHaveBeenCalledWith({
+        where: { id: 1 },
+        include: expect.anything(),
+      });
+      expect(result).toEqual({
+        id: 1,
+        name: "Terminal 1",
+        category: "Domestic",
+        airport: { id: 1, code: "ABC", name: "Airport A" },
+        city: { code: "CTY", name: "City A" },
+        country: { code: "CTR", name: "Country A" },
+      });
     });
+  });
 
-    describe('getOne', () => {
-        // test('should return one terminal', async () => {
-        //     prisma.terminal.findUnique.mockResolvedValue(data);
+  describe("store", () => {
+    test("should create a new terminal", async () => {
+      const inputData = { name: "Terminal 1", category: "Domestic" };
+      const mockData = { id: 1, ...inputData };
 
-        //     const result = await terminalService.getOne(data.id);
+      prisma.terminal.create.mockResolvedValue(mockData);
 
-        //     expect(result).toEqual(data);
-        //     expect(prisma.terminal.findUnique).toHaveBeenCalledTimes(1);
-        // });
+      const result = await terminalService.store(inputData);
 
+      expect(prisma.terminal.create).toHaveBeenCalledWith({ data: inputData });
+      expect(result).toEqual(mockData);
     });
+  });
 
-    describe('store', () => {
-        test('should return new terminal', async () => {
-            prisma.terminal.create.mockResolvedValue(data);
+  describe("update", () => {
+    test("should update an existing terminal", async () => {
+      const inputData = { name: "Updated Terminal" };
+      const mockData = { id: 1, name: "Updated Terminal", category: "Domestic" };
 
-            const result = await terminalService.store(data);
+      prisma.terminal.update.mockResolvedValue(mockData);
 
-            expect(result).toEqual(data);
-            expect(prisma.terminal.create).toHaveBeenCalledTimes(1);
-            expect(prisma.terminal.create).toHaveBeenCalledWith({
-                data
-            });
-        });
+      const result = await terminalService.update(1, inputData);
+
+      expect(prisma.terminal.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: inputData,
+      });
+      expect(result).toEqual(mockData);
     });
+  });
 
-    describe('update', () => {
-        test('should return updated terminal', async () => {
-            prisma.terminal.update.mockResolvedValue(data);
+  describe("destroy", () => {
+    test("should delete an existing terminal", async () => {
+      prisma.terminal.delete.mockResolvedValue(mockTerminalData);
 
-            const result = await terminalService.update(data.id, data);
+      const result = await terminalService.destroy(1);
 
-            expect(result).toEqual(data);
-            expect(prisma.terminal.update).toHaveBeenCalledTimes(1);
-            expect(prisma.terminal.update).toHaveBeenCalledWith({
-                where: {
-                    id: data.id
-                },
-                data
-            });
-        });
+      expect(prisma.terminal.delete).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(result).toEqual(mockTerminalData);
     });
-
-    describe('destroy', () => {
-        test('should return deleted terminal', async () => {
-            prisma.terminal.delete.mockResolvedValue(data);
-
-            const result = await terminalService.destroy(data.id);
-
-            expect(result).toEqual(data);
-            expect(prisma.terminal.delete).toHaveBeenCalledTimes(1);
-            expect(prisma.terminal.delete).toHaveBeenCalledWith({
-                where: {
-                    id: data.id
-                }
-            });
-        });
-    });
-
+  });
 });

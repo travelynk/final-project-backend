@@ -16,18 +16,23 @@ jest.mock('../../configs/database.js', () => ({
         flightSeats: { update: jest.fn() },
         bookingSegments: { create: jest.fn() },
         notification: { create: jest.fn() },
-        $transaction: jest.fn(), 
+        $transaction: jest.fn(),
     },
 }));
 
 jest.mock('../../utils/hashids.js');
-jest.mock('../../configs/websocket.js');
+jest.mock('../../configs/websocket.js', () => ({
+    __esModule: true,
+    getIoInstance: jest.fn(() => ({
+        emit: jest.fn(),
+    })),
+}));
 
 const mockGetTotalPriceForEachPassengerInSegments = (bookings) => {
     return bookings.map(booking => ({
         ...booking,
-        adultTotalPrice: 100,  
-        childTotalPrice: 50,   
+        adultTotalPrice: 100,
+        childTotalPrice: 50,
     }));
 };
 
@@ -213,6 +218,8 @@ describe('Booking Service', () => {
             );
         });
     });
+
+    //describe('getBookingsByDate', () => {
     //     const mockUserId = 1;
     //     const mockStartDate = '2024-01-01';
     //     const mockEndDate = '2024-12-31';
@@ -290,8 +297,8 @@ describe('Booking Service', () => {
                         { passengerId: 2, flight: { price: 150 } },
                     ],
                     passengerCount: { adult: 1, child: 2 },
-                    adultTotalPrice: 100,  
-                    childTotalPrice: 50,   
+                    adultTotalPrice: 100,
+                    childTotalPrice: 50,
                 },
             ];
 
@@ -326,8 +333,8 @@ describe('Booking Service', () => {
                         { passengerId: 2, flight: { price: 300 } },
                     ],
                     passengerCount: { adult: 1, child: 1 },
-                    adultTotalPrice: 100,  
-                    childTotalPrice: 50,   
+                    adultTotalPrice: 100,
+                    childTotalPrice: 50,
                 },
             ];
 
@@ -336,7 +343,7 @@ describe('Booking Service', () => {
             expect(result).toEqual(expectedResult);
         });
     });
-    
+
     describe('updateStatusBooking', () => {
         const mockBooking = {
             id: 1,
@@ -355,7 +362,7 @@ describe('Booking Service', () => {
         });
 
         test('should throw error if booking is not found', async () => {
-            prisma.booking.findUnique.mockResolvedValue(null); 
+            prisma.booking.findUnique.mockResolvedValue(null);
 
             const data = { status: 'Cancelled' };
             await expect(BookingService.updateStatusBooking(data, 1)).rejects.toThrowError(
@@ -364,7 +371,7 @@ describe('Booking Service', () => {
         });
 
         test('should throw error if booking status is "Issued"', async () => {
-            prisma.booking.findUnique.mockResolvedValue({ ...mockBooking, status: 'Issued' }); 
+            prisma.booking.findUnique.mockResolvedValue({ ...mockBooking, status: 'Issued' });
 
             const data = { status: 'Cancelled' };
             await expect(BookingService.updateStatusBooking(data, 1)).rejects.toThrowError(
@@ -373,7 +380,7 @@ describe('Booking Service', () => {
         });
 
         test('should throw error if booking status is "Cancelled"', async () => {
-            prisma.booking.findUnique.mockResolvedValue({ ...mockBooking, status: 'Cancelled' }); 
+            prisma.booking.findUnique.mockResolvedValue({ ...mockBooking, status: 'Cancelled' });
 
             const data = { status: 'Pending' };
             await expect(BookingService.updateStatusBooking(data, 1)).rejects.toThrowError(
@@ -382,13 +389,87 @@ describe('Booking Service', () => {
         });
 
         test('should throw error if an invalid status is provided', async () => {
-            const data = { status: 'InvalidStatus' }; 
+            const data = { status: 'InvalidStatus' };
 
             await expect(BookingService.updateStatusBooking(data, 1)).rejects.toThrowError(
                 new Error400('Status Booking sudah tidak bisa diubah karena sudah dilakukan pembatalan.')
             );
         });
-    });   
+    });
+
+    describe('storeBooking', () => {
+        const mockUserId = 1;
+        const mockBookingData = {
+            roundTrip: true,
+            voucherCode: 'DISCOUNT10',
+            passengerCount: { adult: 1, child: 1 },
+            flightSegments: [
+                { flightId: 1, seatId: 1, passenger: { identityNumber: '12345' } },
+            ],
+        };
+
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
+
+        test('should throw an error if voucher is invalid', async () => {
+            prisma.flight.findMany.mockResolvedValue([{ id: 1, price: 100 }]);
+            prisma.voucher.findUnique.mockResolvedValue(null);
+
+            await expect(BookingService.storeBooking(mockUserId, mockBookingData)).rejects.toThrowError(
+                new Error400('Mohon maaf, Voucher tidak dapat ditemukan')
+            );
+        });
+
+        test('should throw an error if no seats are available', async () => {
+            prisma.flight.findMany.mockResolvedValue([]);
+            prisma.voucher.findUnique.mockResolvedValue({
+                id: 1,
+                discount: 10,
+                maxUsage: 5,
+            });
+
+            await expect(BookingService.storeBooking(mockUserId, mockBookingData)).rejects.toThrowError(
+                new Error400("Cannot read properties of undefined (reading 'id')")
+            );
+        });
+
+        test('should successfully store booking and return booking code', async () => {
+            prisma.flight.findMany.mockResolvedValue([{ id: 1, price: 100 }]);
+            prisma.voucher.findUnique.mockResolvedValue({
+                id: 1,
+                discount: 10,
+                maxUsage: 5,
+            });
+            prisma.$transaction.mockResolvedValue({ id: 1 });
+            encodeBookingCode.mockResolvedValue('BOOKING_CODE_1');
+
+            const result = await BookingService.storeBooking(mockUserId, mockBookingData);
+
+            expect(prisma.flight.findMany).toHaveBeenCalledWith({
+                where: { id: { in: [1] } },
+                select: { id: true, price: true },
+            });
+            expect(result).toHaveProperty('bookingCode', 'BOOKING_CODE_1');
+        });
+    });
+
+    describe('getBookingsByDate', () => {
+        const mockStartDate = '2024-01-01';
+        const mockEndDate = '2024-12-31';
+
+        test('should throw an error if no bookings are found within date range', async () => {
+            prisma.booking.findMany.mockResolvedValue([]);
+
+            await expect(BookingService.getBookingsByDate(1, mockStartDate, mockEndDate)).rejects.toThrowError(
+                new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.')
+            );
+        });
+    });
+
+
+
+
 });
 
 

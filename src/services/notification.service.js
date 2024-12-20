@@ -37,7 +37,7 @@ export const getNotificationsByUserId = async (userId) => {
 };
 
 // Update notification read status
-export const updateNotificationReadStatus = async (notificationId, userId) => {
+export const updateNotificationReadStatus = async (notificationId) => {
     const existingNotification = await prisma.notification.findUnique({
         where: { id: notificationId },
     });
@@ -47,7 +47,7 @@ export const updateNotificationReadStatus = async (notificationId, userId) => {
     }
     
     const notification = await prisma.notification.update({
-        where: { id: notificationId, userId },
+        where: { id: notificationId },
         data: { isRead: true },
     });
 
@@ -55,7 +55,7 @@ export const updateNotificationReadStatus = async (notificationId, userId) => {
 };
 
 // Soft-delete a notification (Update notification delete status) 
-export const deleteNotification = async (notificationId, userId, role) => {
+export const deleteNotification = async (notificationId) => {
     const existingNotification = await prisma.notification.findUnique({
         where: { id: notificationId },
     });
@@ -65,18 +65,12 @@ export const deleteNotification = async (notificationId, userId, role) => {
     }
     
     let notification;
-    
-    if(role === 'admin'){
-        notification = await prisma.notification.update({
-            where: { id: notificationId },
-            data: { isDeleted: true },
-        });
-    } else {
-        notification = await prisma.notification.update({
-            where: { id: notificationId, userId },
-            data: { isDeleted: true },
-        });
-    }
+
+    notification = await prisma.notification.update({
+        where: { id: notificationId },
+        data: { isDeleted: true },
+    });
+
     
     return { notification, message: 'Notifikasi berhasil dihapus.' };
 };

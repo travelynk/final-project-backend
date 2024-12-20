@@ -195,7 +195,7 @@ describe("Notification Controller", () => {
 
       await updateNotificationReadStatus(mockReq, mockRes, mockNext);
 
-      expect(NotificationService.updateNotificationReadStatus).toHaveBeenCalledWith(1, 123);
+      expect(NotificationService.updateNotificationReadStatus).toHaveBeenCalledWith(1);
       expect(response.res200).toHaveBeenCalledWith(
         "Status notifikasi berhasil diperbarui.",
         mockNotification,
@@ -225,7 +225,7 @@ describe("Notification Controller", () => {
 
       await deleteNotification(mockReq, mockRes, mockNext);
 
-      expect(NotificationService.deleteNotification).toHaveBeenCalledWith(1, 123, mockReq.user.role);
+      expect(NotificationService.deleteNotification).toHaveBeenCalledWith(1);
       expect(response.res200).toHaveBeenCalledWith(
         "Notifikasi berhasil dihapus.",
         mockNotification,

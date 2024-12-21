@@ -154,66 +154,7 @@
     </div>
 
     <script>
-        const token = '<%= token %>';
-        const domainUrl = '<%= domainUrl %>';
-        console.log(domainUrl);
-        console.log("Token yang diterima: ", token);
-
-        async function submitTicket() {
-            try {
-                const response = await fetch(`http://${domainUrl}/api/v1/bookings/scan?token=${token}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Request failed with status ' + response.status);
-                }
-
-                const data = await response.json();
-                console.log('Response yang diterima: ', data);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        function showPopup(message) {
-            const popup = document.createElement('div');
-            popup.style.position = 'fixed';
-            popup.style.top = '50%';
-            popup.style.left = '50%';
-            popup.style.transform = 'translate(-50%, -50%)';
-            popup.style.backgroundColor = '#ffffff';
-            popup.style.padding = '20px';
-            popup.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';
-            popup.style.borderRadius = '8px';
-            popup.style.zIndex = '1000';
-            popup.innerHTML = `<p>${message}</p>
-                                <button onclick="handlePopupClick(true, this)" style="margin-top: 10px; padding: 10px 20px; background-color: #27ae60; color: #fff; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">Yes</button>
-                                <button onclick="handlePopupClick(false, this)" style="margin-top: 10px; padding: 10px 20px; background-color: #e74c3c; color: #fff; border: none; border-radius: 5px; cursor: pointer;">No</button>`;
-
-            document.body.appendChild(popup);
-        }
-
-        async function handlePopupClick(isYes, button) {
-            const popup = button.parentElement;
-            document.body.removeChild(popup);
-            if (isYes) {
-                submitTicket();
-            } else {
-                await window.print();
-                window.addEventListener("afterprint", () => {
-                    showPopup("Apakah Tiket sudah selesai di print?");
-                });
-            }
-        }
-
         window.print();
-        window.addEventListener("afterprint", () => {
-            showPopup("Apakah Tiket sudah selesai di print?");
-        });
     </script>
 </body>
 

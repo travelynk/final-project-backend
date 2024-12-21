@@ -127,14 +127,9 @@ export const getTicket = async (req, res) => {
 
         const id = await decodeBookingCode(code);
 
-        const userId = req.user.id;
-
-        const booking = await BookingService.getTicket(userId, id)
-        const domainUrl = process.env.DOMAIN_URL;
+        const booking = await BookingService.getTicket(id)
 
         res.render('tickets', {
-            token,
-            domainUrl,
             data: booking
         });
     } catch (error) {

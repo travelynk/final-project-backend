@@ -1,5 +1,8 @@
 import Joi from "joi";
 
+const today = new Date(); 
+today.setHours(0, 0, 0, 0); 
+
 export const storeBooking = Joi.object({
   // userId: Joi.number().integer().positive().required()
   //   .messages({
@@ -183,17 +186,19 @@ export const updateStatusBookingParams = Joi.object({
 
 export const getBookingsByDate = Joi.object({
   startDate: Joi.date()
-    .iso()
-    .optional()
-    .messages({
-      'date.format': 'startDate harus dalam format ISO 8601 (YYYY-MM-DD)',
-    }),
-  endDate: Joi.date()
-    .iso()
-    .greater(Joi.ref('startDate'))
-    .optional()
-    .messages({
-      'date.format': 'endDate harus dalam format ISO 8601 (YYYY-MM-DD)',
-      'date.greater': 'endDate harus lebih besar dari startDate',
-    }),
+  .iso()
+  .min(today)
+  .optional()
+  .messages({
+    'date.format': 'startDate harus dalam format ISO 8601 (YYYY-MM-DD)',
+    'date.min': 'startDate harus lebih besar dari atau sama dengan tanggal hari ini',
+  }),
+endDate: Joi.date()
+  .iso()
+  .greater(Joi.ref('startDate'))
+  .optional()
+  .messages({
+    'date.format': 'endDate harus dalam format ISO 8601 (YYYY-MM-DD)',
+    'date.greater': 'endDate harus lebih besar dari startDate',
+  }),
 });

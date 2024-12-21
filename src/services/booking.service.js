@@ -3,6 +3,7 @@ import { Error400, Error403, Error404, Error409 } from "../utils/customError.js"
 import * as VoucherService from './voucher.service.js';
 import { encodeBookingCode } from "../utils/hashids.js";
 import { getIoInstance } from "../configs/websocket.js";
+import jwt from 'jsonwebtoken';
 
 export const getBookings = async (userId) => {
   const bookings = await prisma.booking.findMany({
@@ -96,13 +97,24 @@ export const getBookings = async (userId) => {
   }
 
   const bookingsWithHash = await Promise.all(
-    bookings.map(async (booking) => ({
-      ...booking,
-      bookingCode: await encodeBookingCode(booking.id),
-    }))
+    bookings.map(async (booking) => {
+      const code = await encodeBookingCode(booking.id);
+      let urlTicket = null;
+      if(booking.status == "Issued") {
+      const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
+      urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
+    }
+      
+      return {
+        ...booking,
+        bookingCode: code,
+        urlTicket,
+      };
+    })
   );
 
   const bookingsWithMapping = getTotalPriceForEachPassengerInSegments(bookingsWithHash)
+
   return bookingsWithMapping
 };
 
@@ -251,7 +263,17 @@ export const getBooking = async (userId, id) => {
     throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
   }
 
-  booking.bookingCode = await encodeBookingCode(booking.id);
+  const code = await encodeBookingCode(booking.id);
+  let urlTicket = null;
+
+  if(booking.status == "Issued") {
+  const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
+  urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
+}
+
+  booking.bookingCode = code;
+  booking.urlTicket = urlTicket;
+
 
   const bookingWithMapping = getTotalPriceForEachPassengerInSegment(booking)
 
@@ -710,10 +732,21 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
   }
 
   const bookingsByDateWithHash = await Promise.all(
-    bookingsByDate.map(async (booking) => ({
-      ...booking,
-      bookingCode: await encodeBookingCode(booking.id),
-    }))
+    bookingsByDate.map(async (booking) => {
+      const code = await encodeBookingCode(booking.id);
+      let urlTicket = null;
+
+      if(booking.status == "Issued") {
+      const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
+      urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
+    }
+      
+      return {
+        ...booking,
+        bookingCode: code,
+        urlTicket,
+      };
+    })
   );
 
   const bookingsByDateWithMapping = getTotalPriceForEachPassengerInSegments(bookingsByDateWithHash)
@@ -842,12 +875,19 @@ export const getTicket = async (userId, id) => {
     throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
   }
 
+  const latestDepartureTime = booking.segments.reduce((latest, segment) => {
+    const currentDepartureTime = new Date(segment.flight.departureTime);
+    const latestDepartureTime = new Date(latest.flight.departureTime);
+  
+    return currentDepartureTime > latestDepartureTime ? segment : latest;
+  }).flight.departureTime;
+
   if (booking.status != "Issued") {
     throw new Error403("Akses ditolak, pembayaran diperlukan.");
   }
 
-  if (booking.isScan == true) {
-    throw new Error409("Tiket ini sudah dicetak sebelumnya. Tidak dapat mencetak tiket yang sama lebih dari sekali.");
+  if (latestDepartureTime < new Date()) {
+    throw new Error403("Maaf, akses tidak dapat dilakukan. Tiket Anda sudah melewati batas waktu penggunaan.");
   }
 
   booking.bookingCode = await encodeBookingCode(booking.id);

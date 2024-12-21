@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "payments" ALTER COLUMN "deadline" SET DEFAULT CURRENT_TIMESTAMP + INTERVAL '15 minutes';

@@ -39,7 +39,6 @@ enum typeVoucher {
   Fixed
 }
 
-// Define the models
 model User {
   id            Int            @id @default(autoincrement())
   email         String         @unique @db.VarChar(150)
@@ -49,7 +48,7 @@ model User {
   verified      Boolean        @default(false)
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
-  deletedAt      DateTime?      @map("deleted_at")
+  deletedAt     DateTime?      @map("deleted_at")
 
   profile       Profile?
   bookings      Booking[]
@@ -84,6 +83,7 @@ model Country {
 model City {
   code        String    @id @db.VarChar(4)
   name        String    @db.VarChar(50)
+  image       String    @db.VarChar(255) @default("https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710")
   countryCode String    @map("country_code")
 
   country     Country   @relation(fields: [countryCode], references: [code])

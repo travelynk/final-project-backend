@@ -5,6 +5,7 @@ export default (router) => {
     const prefix = '/flights';
 
     router.get(prefix + '/search', FlightController.getAvailableFlight);
+    router.get(prefix + '/destination/favorites', FlightController.getFavoriteFlights);
     router.get(prefix + '/', authMiddleware, isAdmin, FlightController.getFlights);
     router.get(prefix + '/:id', authMiddleware, FlightController.getFlight);
     router.post(prefix + '/', authMiddleware, isAdmin, FlightController.storeFlight);

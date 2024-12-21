@@ -81,3 +81,12 @@ export const getAvailableFlight = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getFavoriteFlights = async (req, res, next) => {
+    try {
+        const flights = await FlightService.getFavoriteFlights();
+        res200('Berhasil mengambil data penerbangan dengan destinasi favorit', flights, res);
+    } catch (error) {
+        next(error);
+    }
+};

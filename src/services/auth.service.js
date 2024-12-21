@@ -15,7 +15,10 @@ export const login = async ({ email, password }) => {
         }
 
         const user = await prisma.user.findUnique({
-            where: { email },
+            where: { 
+                email,
+                deletedAt: null
+            },
             include: { profile: true },
         });
 
@@ -98,7 +101,10 @@ export const verifyOtp = async (data) => {
     const { email, otp } = data;
 
     const user = await prisma.user.findUnique({
-        where: { email },
+        where: { 
+            email,
+            deletedAt: null
+        },
     });
 
     if (!user) {
@@ -121,7 +127,10 @@ export const verifyOtp = async (data) => {
 
 export const sendOtp = async (email) => {
     const user = await prisma.user.findUnique({
-        where: { email },
+        where: { 
+            email,
+            deletedAt: null
+        },
     });
 
     if (!user) {
@@ -151,14 +160,19 @@ export const sendOtp = async (email) => {
     return "Email untuk memverifikasi akun Anda telah dikirim.";
 };
 
-// Reset password function, using token to update password
 export const resetPassword = async (token, password) => {
     try {
         // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET_FORGET);
         const { email } = decoded;
 
-        const user = await prisma.user.findUnique({ where: { email } });
+        const user = await prisma.user.findUnique({ 
+            where: { 
+                email,
+                deletedAt: null
+            } 
+        });
+
         if (!user) {
             throw new Error404("Akun pengguna tidak di temukan");
         }
@@ -183,9 +197,14 @@ export const resetPassword = async (token, password) => {
     }
 };
 
-// New function to send a reset password email
 export const sendResetPasswordEmail = async (email) => {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ 
+        where: {
+            email,
+            deletedAt: null 
+        } 
+    });
+
     if (!user) {
         throw new Error404("User not found");
     }
@@ -251,7 +270,10 @@ export const googleOauthCallback = async (code) => {
 
     const email = data.email;
     let user = await prisma.user.findUnique({ 
-        where: { email },
+        where: { 
+            email,
+            deletedAt: null
+        },
         include: { profile: true }
     });
 

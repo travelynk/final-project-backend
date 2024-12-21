@@ -83,7 +83,10 @@ describe("Auth Service", () => {
             const result = await login(mockData);
 
             expect(prisma.user.findUnique).toHaveBeenCalledWith({
-                where: { email: mockData.email },
+                where: { 
+                    email: mockData.email,
+                    deletedAt: null,
+                },
                 include: { profile: true },
             });
 
@@ -313,7 +316,12 @@ describe("Auth Service", () => {
 
             const result = await sendResetPasswordEmail("test@example.com");
 
-            expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: "test@example.com" } });
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({ 
+                where: { 
+                    email: "test@example.com",
+                    deletedAt: null
+                } 
+            });
             expect(jwt.sign).toHaveBeenCalledWith({ email: "test@example.com" }, process.env.JWT_SECRET_FORGET, { expiresIn: "1h" });
             expect(sendMailMock).toHaveBeenCalledWith(expect.objectContaining({
                 to: "test@example.com",
@@ -373,7 +381,10 @@ describe("Auth Service", () => {
             expect(oauth2Client.getToken).toHaveBeenCalledWith("mock-code");
             expect(oauth2Client.setCredentials).toHaveBeenCalledWith({ access_token: "mock-access-token" });
             expect(prisma.user.findUnique).toHaveBeenCalledWith({
-                 where: { email: "test@example.com" },
+                 where: { 
+                    email: "test@example.com",
+                    deletedAt: null,
+                },
                  include: { profile: true },
                 });
             expect(prisma.user.create).toHaveBeenCalled();
@@ -392,7 +403,10 @@ describe("Auth Service", () => {
             const result = await googleOauthCallback("mock-code");
 
             expect(prisma.user.findUnique).toHaveBeenCalledWith({ 
-                where: { email: "test@example.com" },
+                where: { 
+                    email: "test@example.com",
+                    deletedAt: null,
+                },
                 include: { profile: true },
             });
             expect(prisma.user.create).not.toHaveBeenCalled();
@@ -412,7 +426,9 @@ describe("Auth Service", () => {
             const result = await googleOauthCallback("mock-code");
     
             expect(prisma.user.update).toHaveBeenCalledWith({
-                where: { email: "test@example.com" },
+                where: { 
+                    email: "test@example.com"
+                },
                 data: { verified: true },
             });
             expect(result).toEqual({

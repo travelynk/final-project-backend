@@ -1,8 +1,8 @@
 import { jest, describe, beforeEach, it, expect } from "@jest/globals";
-import { getAll, getOne, update } from "../user.service";
+import * as UserService from "../user.service";
 import prisma from "../../configs/database";
 
-jest.mock("../../configs/database", () => ({   
+jest.mock("../../configs/database", () => ({
     user: {
         findMany: jest.fn(),
         findUnique: jest.fn(),
@@ -10,14 +10,14 @@ jest.mock("../../configs/database", () => ({
     },
 }));
 
-describe("User Service", () => {   
+describe("User Service", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     const mockUsers = [
-        { 
-            id: 1, 
+        {
+            id: 1,
             email: "newuser@example.com",
             role: "buyer",
             verified: true,
@@ -47,7 +47,7 @@ describe("User Service", () => {
         it("should return all users with their profiles", async () => {
             prisma.user.findMany.mockResolvedValue(mockUsers);
 
-            const result = await getAll();
+            const result = await UserService.getAll();
 
             expect(prisma.user.findMany).toHaveBeenCalledWith({
                 include: { profile: true },
@@ -63,20 +63,20 @@ describe("User Service", () => {
         it("should return a user with their profile", async () => {
             prisma.user.findUnique.mockResolvedValue(mockUsers[1]);
 
-            const result = await getOne(3);
+            const result = await UserService.getOne(3);
 
             expect(prisma.user.findUnique).toHaveBeenCalledWith({
                 where: { id: 3 },
                 include: { profile: true },
             });
-            
+
             expect(result).toEqual(mockUsers[1]);
         });
 
-        it("should return null if user not found", async () => {   
+        it("should return null if user not found", async () => {
             prisma.user.findUnique.mockResolvedValue(null);
 
-            const result = await getOne(99);
+            const result = await UserService.getOne(99);
 
             expect(prisma.user.findUnique).toHaveBeenCalledWith({
                 where: { id: 99 },
@@ -95,16 +95,39 @@ describe("User Service", () => {
                 email: "updated@example.com",
                 role: "buyer",
             };
-            
+
             prisma.user.update.mockResolvedValue(mockUpdateUser);
 
-            const result = await update(3, { role: "admin" });
+            const result = await UserService.update(3, { role: "admin" });
 
             expect(prisma.user.update).toHaveBeenCalledWith({
-                where: { id: 3 },
+                where: {
+                    id: 3,
+                    deletedAt: null,
+                },
                 data: { role: "admin" },
             });
             expect(result).toEqual(mockUpdateUser);
         });
     });
+
+    describe("destroy", () => {
+        it("should delete a user", async () => {
+            const deletedAt = new Date().toISOString();
+            const mockUser = {
+                id: 3,
+                email: "fulan@gmail.com",
+                role: "buyer",
+                deletedAt,
+            };
+
+            prisma.user.update.mockResolvedValue(mockUser);
+
+            await UserService.destroy(3);
+
+            expect(prisma.user.update).toHaveBeenCalledTimes(1);
+        });
+
+    });
+
 });

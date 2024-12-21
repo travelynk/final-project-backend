@@ -7,5 +7,5 @@ export default (router) => {
     router.get(prefix + '/', isAdmin, UserController.getUsers);
     router.get(prefix + '/:id', isAdmin, UserController.getUser);
     router.patch(prefix + '/:id', isAdmin, UserController.updateRoleUser);
-    router.delete(prefix + '/:id', authMiddleware, UserController.deleteUser);
+    router.delete(prefix + '/destroy', authMiddleware, UserController.deleteUser);
 }

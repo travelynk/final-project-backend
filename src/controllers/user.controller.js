@@ -36,3 +36,13 @@ export const updateRoleUser = async (req, res, next) => {
         next(error);
     }
 };
+
+export const deleteUser = async (req, res, next) => {
+    try {
+        await UserService.destroy(req.user.id);
+        res200('Berhasil menghapus user', null, res);
+    } catch (error) {
+        if (error.code === 'P2025') return next(new Error404('Data user tidak ditemukan'));
+        next(error);
+    }
+};

@@ -23,6 +23,7 @@ CREATE TABLE "users" (
     "verified" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "deleted_at" TIMESTAMP(3),
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -51,6 +52,7 @@ CREATE TABLE "countries" (
 CREATE TABLE "cities" (
     "code" VARCHAR(4) NOT NULL,
     "name" VARCHAR(50) NOT NULL,
+    "image" VARCHAR(255) NOT NULL DEFAULT 'https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710',
     "country_code" TEXT NOT NULL,
 
     CONSTRAINT "cities_pkey" PRIMARY KEY ("code")

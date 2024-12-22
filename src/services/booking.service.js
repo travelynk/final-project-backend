@@ -134,28 +134,28 @@ const getTotalPriceForEachPassengerInSegments = (bookings) => {
 };
 
 const getTotalPriceForEachPassengerInSegment = (booking) => {
-    let passengerTotalPrices = {};
+  let passengerTotalPrices = {};
 
-    booking.segments.forEach(segment => {
-      const passengerId = segment.passengerId;
+  booking.segments.forEach(segment => {
+    const passengerId = segment.passengerId;
 
-      if (!passengerTotalPrices[passengerId]) {
-        passengerTotalPrices[passengerId] = 0;
-      }
+    if (!passengerTotalPrices[passengerId]) {
+      passengerTotalPrices[passengerId] = 0;
+    }
 
-      passengerTotalPrices[passengerId] += segment.flight.price;
-    });
+    passengerTotalPrices[passengerId] += segment.flight.price;
+  });
 
-    const firstPrice = Object.values(passengerTotalPrices)[0];
+  const firstPrice = Object.values(passengerTotalPrices)[0];
 
-    const adultTotalPrice = firstPrice * booking.passengerCount.adult;
-    const childTotalPrice = firstPrice * booking.passengerCount.child;
+  const adultTotalPrice = firstPrice * booking.passengerCount.adult;
+  const childTotalPrice = firstPrice * booking.passengerCount.child;
 
-    return {
-      ...booking,
-      adultTotalPrice,
-      childTotalPrice
-    };
+  return {
+    ...booking,
+    adultTotalPrice,
+    childTotalPrice
+  };
 };
 
 export const getBooking = async (userId, id) => {
@@ -413,7 +413,7 @@ export const storeBooking = async (userId, data) => {
 
     const notification = await tx.notification.create({
       data: {
-        userId: userId,
+        userId,
         type: "Payment",
         message: message,
         title,
@@ -425,7 +425,7 @@ export const storeBooking = async (userId, data) => {
 
     const io = getIoInstance();
 
-    io.emit(title, { message, createdAt });
+    io.emit(title, { message, userId, createdAt });
 
     return createdBooking;
   });
@@ -749,11 +749,9 @@ export const scanQrcode = async (id) => {
   return updatedBooking;
 };
 
-
-export const getTicket = async (userId, id) => {
+export const getTicket = async (id) => {
   const booking = await prisma.booking.findUnique({
     where: {
-      userId,
       id: parseInt(id),
     },
     include: {
@@ -853,4 +851,40 @@ export const getTicket = async (userId, id) => {
   booking.bookingCode = await encodeBookingCode(booking.id);
 
   return booking;
+};
+
+export const updateTotalBooking = async (id, data) => {
+  const {
+    totalPrice, voucherCode
+  } = data;
+
+  const booking = await prisma.booking.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+  });
+
+  if (!booking) {
+    throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
+  };
+
+  if (booking.status == "Issued") {
+    throw new Error400('Status Booking sudah tidak bisa diubah karena sudah dilakukan pembayaran.');
+  };
+  
+  const voucher = await VoucherService.getVoucherByCode(voucherCode, totalPrice);
+
+  if (!voucher) {
+    throw new Error400('Code Voucher tidak valid.');
+  }
+
+  const updatedBooking = await prisma.booking.update({
+    where: { id: parseInt(id) },
+    data: { 
+      totalPrice,
+      voucherCode
+     },
+  });
+
+  return updatedBooking;
 };

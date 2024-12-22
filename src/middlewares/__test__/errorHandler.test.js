@@ -90,7 +90,7 @@ describe('Error Handler Middleware', () => {
             expect(next).toHaveBeenCalled();
         });
 
-        it('should log the error if in development mode', () => {
+        it('should log the error message if in development mode', () => {
             process.env.NODE_ENV = 'development';
             const err = new Error('Unknown error');
             console.log = jest.fn();
@@ -98,9 +98,23 @@ describe('Error Handler Middleware', () => {
             ErrorHandler.handleOther(err, req, res, next);
 
             expect(console.log).toHaveBeenCalledTimes(1);
-            expect(console.log).toHaveBeenCalledWith(err);
-
-
+            expect(console.log).toHaveBeenCalledWith(err.message);
         });
+
+        it('should log the error message if statusCode 500', () => {
+            process.env.NODE_ENV = 'production';
+
+            const err = new Error('Unknown error');
+
+            console.log = jest.fn();
+
+            ErrorHandler.handleOther(err, req, res, next);
+
+            expect(console.log).toHaveBeenCalledTimes(1);
+
+            expect(console.log).toHaveBeenCalledWith(err.message);
+            
+        });
+
     });
 });

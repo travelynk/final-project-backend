@@ -312,4 +312,32 @@ describe("Voucher Service", () => {
             expect(result).toEqual(mockVoucher);
         });
     });
+
+    test("should set updatedTotalPrice to 0 if the fixed discount is larger than the total price", async () => {
+        // Pastikan voucher bertipe 'Fixed' dan diskonnya lebih besar dari totalPrice
+        prisma.voucher.findUnique.mockResolvedValue({
+            code: "FIXED_OVERDISCOUNT",
+            type: "Fixed",   // Tipe voucher "Fixed"
+            value: 500,      // Diskon lebih besar dari totalPrice
+            startDate: new Date("2024-12-01"),
+            endDate: new Date("2024-12-31"),
+            minPurchase: 50,
+            maxVoucher: 10,
+        });
+    
+        prisma.booking.count.mockResolvedValue(0);
+        prisma.booking.findFirst.mockResolvedValue(null);
+    
+        // Menggunakan totalPrice yang lebih kecil dari nilai voucher
+        const result = await VoucherService.getVoucherByCode("FIXED_OVERDISCOUNT", 100);
+    
+        // Memastikan harga total di-update menjadi 0
+        expect(result.updatedTotalPrice).toBe(0);
+    
+        // Memastikan hasil sesuai dengan voucher
+        expect(result).toMatchObject({
+            code: "FIXED_OVERDISCOUNT",
+        });
+    });
+    
 });

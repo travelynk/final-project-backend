@@ -156,12 +156,10 @@
     <script>
         const token = '<%= token %>';
         const domainUrl = '<%= domainUrl %>';
-        console.log(domainUrl);
-        console.log("Token yang diterima: ", token);
 
         async function submitTicket() {
             try {
-                const response = await fetch(`http://${domainUrl}/api/v1/bookings/scan?token=${token}`, {
+                const response = await fetch(`${domainUrl}/api/v1/bookings/scan?token=${token}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -173,9 +171,9 @@
                 }
 
                 const data = await response.json();
-                console.log('Response yang diterima: ', data);
+                // console.log('Response yang diterima: ', data);
             } catch (error) {
-                console.error('Error:', error);
+                // console.error('Error:', error);
             }
         }
 

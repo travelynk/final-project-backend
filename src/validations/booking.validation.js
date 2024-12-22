@@ -1,32 +1,14 @@
 import Joi from "joi";
 
+// const today = new Date(); 
+// today.setHours(0, 0, 0, 0); 
+
 export const storeBooking = Joi.object({
-  // userId: Joi.number().integer().positive().required()
-  //   .messages({
-  //     'number.base': 'userId harus berupa angka.',
-  //     'number.integer': 'userId harus berupa angka bulat.',
-  //     'number.positive': 'userId harus bernilai positif.',
-  //     'any.required': 'userId wajib diisi.'
-  //   }),
   roundTrip: Joi.boolean().required()
     .messages({
       'boolean.base': 'roundTrip harus berupa nilai boolean.',
       'any.required': 'roundTrip wajib diisi.'
     }),
-  // totalPrice: Joi.number().precision(2).positive().required()
-  //   .messages({
-  //     'number.base': 'totalPrice harus berupa angka.',
-  //     'number.precision': 'totalPrice harus memiliki dua angka di belakang koma.',
-  //     'number.positive': 'totalPrice harus bernilai positif.',
-  //     'any.required': 'totalPrice wajib diisi.'
-  //   }),
-  // tax: Joi.number().precision(2).positive().required()
-  //   .messages({
-  //     'number.base': 'tax harus berupa angka.',
-  //     'number.precision': 'tax harus memiliki dua angka di belakang koma.',
-  //     'number.positive': 'tax harus bernilai positif.',
-  //     'any.required': 'tax wajib diisi.'
-  //   }),
   voucherCode: Joi.string()
     .alphanum()
     .length(8)
@@ -183,17 +165,19 @@ export const updateStatusBookingParams = Joi.object({
 
 export const getBookingsByDate = Joi.object({
   startDate: Joi.date()
-    .iso()
-    .optional()
-    .messages({
-      'date.format': 'startDate harus dalam format ISO 8601 (YYYY-MM-DD)',
-    }),
-  endDate: Joi.date()
-    .iso()
-    .greater(Joi.ref('startDate'))
-    .optional()
-    .messages({
-      'date.format': 'endDate harus dalam format ISO 8601 (YYYY-MM-DD)',
-      'date.greater': 'endDate harus lebih besar dari startDate',
-    }),
+  .iso()
+  // .min(today)
+  .optional()
+  .messages({
+    'date.format': 'startDate harus dalam format ISO 8601 (YYYY-MM-DD)',
+    // 'date.min': 'startDate harus lebih besar dari atau sama dengan tanggal hari ini',
+  }),
+endDate: Joi.date()
+  .iso()
+  .greater(Joi.ref('startDate'))
+  .optional()
+  .messages({
+    'date.format': 'endDate harus dalam format ISO 8601 (YYYY-MM-DD)',
+    'date.greater': 'endDate harus lebih besar dari startDate',
+  }),
 });

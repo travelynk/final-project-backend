@@ -63,7 +63,7 @@ export const vaNumberPaymentEmail = (bank, totalPrice, orderId, virtualAccount, 
             <p><strong>Expired Date:</strong> ${expiredDate}</p>
             <p>Silakan lakukan pembayaran sebelum tanggal jatuh tempo menggunakan Virtual Account yang disediakan.</p>
             <div class="qr-code">
-                <p><strong>Atau scan QR Code di bawah ini untuk cetak tiket:</strong></p>
+                <p><strong>Jika pembayaran berhasil, scan QR Code di bawah ini untuk mencetak tiket:</strong></p>
                 <img src="${qrCodeUrl}" alt="QR Code" width="200" height="200" />
             </div>
         </div>

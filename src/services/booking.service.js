@@ -3,9 +3,6 @@ import { Error400, Error403, Error404, Error409 } from "../utils/customError.js"
 import * as VoucherService from './voucher.service.js';
 import { encodeBookingCode } from "../utils/hashids.js";
 import { getIoInstance } from "../configs/websocket.js";
-import { getTotalPriceForEachPassengerInSegment , getTotalPriceForEachPassengerInSegments } from "../utils/mapping.js";
-import { formatedDate , formatedDateAndYear } from "../utils/formatTime.js";
-import jwt from 'jsonwebtoken';
 
 export const getBookings = async (userId) => {
   const bookings = await prisma.booking.findMany({
@@ -99,25 +96,66 @@ export const getBookings = async (userId) => {
   }
 
   const bookingsWithHash = await Promise.all(
-    bookings.map(async (booking) => {
-      const code = await encodeBookingCode(booking.id);
-      let urlTicket = null;
-      if(booking.status == "Issued") {
-      const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-      urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
-    }
-      
-      return {
-        ...booking,
-        bookingCode: code,
-        urlTicket,
-      };
-    })
+    bookings.map(async (booking) => ({
+      ...booking,
+      bookingCode: await encodeBookingCode(booking.id),
+    }))
   );
 
   const bookingsWithMapping = getTotalPriceForEachPassengerInSegments(bookingsWithHash)
-
   return bookingsWithMapping
+};
+
+const getTotalPriceForEachPassengerInSegments = (bookings) => {
+  return bookings.map(booking => {
+    let passengerTotalPrices = {};
+
+    booking.segments.forEach(segment => {
+      const passengerId = segment.passengerId;
+
+      if (!passengerTotalPrices[passengerId]) {
+        passengerTotalPrices[passengerId] = 0;
+      }
+
+      passengerTotalPrices[passengerId] += segment.flight.price;
+    });
+
+    const firstPrice = Object.values(passengerTotalPrices)[0];
+
+    const adultTotalPrice = firstPrice * booking.passengerCount.adult;
+    const childTotalPrice = firstPrice * booking.passengerCount.child;
+
+    return {
+      ...booking,
+      adultTotalPrice,
+      childTotalPrice
+    };
+  });
+};
+
+const getTotalPriceForEachPassengerInSegment = (booking) => {
+  let passengerTotalPrices = {};
+
+  booking.segments.forEach(segment => {
+    const passengerId = segment.passengerId;
+
+    if (!passengerTotalPrices[passengerId]) {
+      passengerTotalPrices[passengerId] = 0;
+    }
+
+    passengerTotalPrices[passengerId] += segment.flight.price;
+  });
+
+  const firstPrice = Object.values(passengerTotalPrices)[0];
+
+  const adultTotalPrice = firstPrice * booking.passengerCount.adult;
+  const childTotalPrice = firstPrice * booking.passengerCount.child;
+
+  return {
+    ...booking,
+    adultTotalPrice,
+    childTotalPrice
+  };
 };
 
 export const getBooking = async (userId, id) => {
@@ -213,17 +251,7 @@ export const getBooking = async (userId, id) => {
     throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
   }
 
-  const code = await encodeBookingCode(booking.id);
-  let urlTicket = null;
-
-  if(booking.status == "Issued") {
-  const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-  urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
-}
-
-  booking.bookingCode = code;
-  booking.urlTicket = urlTicket;
-
+  booking.bookingCode = await encodeBookingCode(booking.id);
 
   const bookingWithMapping = getTotalPriceForEachPassengerInSegment(booking)
 
@@ -405,6 +433,43 @@ export const storeBooking = async (userId, data) => {
   booking.bookingCode = await encodeBookingCode(booking.id);
 
   return booking;
+};
+
+const formatedDateAndYear = async (isoString) => {
+  const dateObj = new Date(isoString);
+  const options = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'UTC'
+  };
+  const formattedDate = dateObj.toLocaleDateString('id-ID', options);
+  // const waktu = tanggalObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
+
+  return formattedDate;
+};
+
+const formatedDate = async (isoString) => {
+  const dateObj = new Date(isoString);
+
+  const options = {
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+    hour: '2-digit',
+    minute: '2-digit'
+  };
+
+  const formattedParts = dateObj.toLocaleDateString('id-ID', options).split(' ');
+
+  const [day, month] = formattedParts;
+
+  const hour = dateObj.getUTCHours().toString().padStart(2, '0');
+  const minute = dateObj.getUTCMinutes().toString().padStart(2, '0');
+
+  return `${day} ${month}, ${hour}:${minute}`;
 };
 
 export const updateStatusBooking = async (data, id) => {
@@ -645,26 +710,43 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
   }
 
   const bookingsByDateWithHash = await Promise.all(
-    bookingsByDate.map(async (booking) => {
-      const code = await encodeBookingCode(booking.id);
-      let urlTicket = null;
-
-      if(booking.status == "Issued") {
-      const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-      urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
-    }
-      
-      return {
-        ...booking,
-        bookingCode: code,
-        urlTicket,
-      };
-    })
+    bookingsByDate.map(async (booking) => ({
+      ...booking,
+      bookingCode: await encodeBookingCode(booking.id),
+    }))
   );
 
   const bookingsByDateWithMapping = getTotalPriceForEachPassengerInSegments(bookingsByDateWithHash)
 
   return bookingsByDateWithMapping;
+};
+
+export const scanQrcode = async (id) => {
+  const booking = await prisma.booking.findUnique({
+    where: {
+      id: parseInt(id),
+      status: "Issued",
+    },
+  });
+
+  if (!booking) {
+    throw new Error403("Akses ditolak, pembayaran diperlukan.");
+  }
+
+  if (booking.isScan == true) {
+    throw new Error409("Tiket ini sudah dicetak sebelumnya. Tidak dapat mencetak tiket yang sama lebih dari sekali.");
+  }
+
+  //implementasi cetak tiket
+  const updatedBooking = await prisma.booking.update({
+    where: {
+      id: parseInt(id),
+      status: "Issued",
+    },
+    data: { isScan: true },
+  });
+
+  return updatedBooking;
 };
 
 export const getTicket = async (id) => {
@@ -758,19 +840,12 @@ export const getTicket = async (id) => {
     throw new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.');
   }
 
-  const latestDepartureTime = booking.segments.reduce((latest, segment) => {
-    const currentDepartureTime = new Date(segment.flight.departureTime);
-    const latestDepartureTime = new Date(latest.flight.departureTime);
-  
-    return currentDepartureTime > latestDepartureTime ? segment : latest;
-  }).flight.departureTime;
-
   if (booking.status != "Issued") {
     throw new Error403("Akses ditolak, pembayaran diperlukan.");
   }
 
-  if (latestDepartureTime < new Date()) {
-    throw new Error403("Maaf, akses tidak dapat dilakukan. Tiket Anda sudah melewati batas waktu penggunaan.");
+  if (booking.isScan == true) {
+    throw new Error409("Tiket ini sudah dicetak sebelumnya. Tidak dapat mencetak tiket yang sama lebih dari sekali.");
   }
 
   booking.bookingCode = await encodeBookingCode(booking.id);

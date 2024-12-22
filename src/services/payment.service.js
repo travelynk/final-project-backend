@@ -1,17 +1,11 @@
 import { coreApi, snap } from "../configs/midtransClient.js";
 import prisma from "../configs/database.js";
-// import nodemailer from "nodemailer";
-// import { generateQrPng } from '../utils/qrcode.js';
-// import { imagekit } from '../utils/imagekit.js';
-// import { encodeBookingCode } from '../utils/hashids.js';
-// import jwt from 'jsonwebtoken';
 import { createNotification } from "../services/notification.service.js";
 import { vaNumberPaymentEmail } from "../views/send.email.payment.js";
 import { gopayPaymentEmail } from "../views/send.email.payment.js";
 import { cardPaymentEmail } from "../views/send.email.payment.js";
 import { cancelPaymentEmail } from "../views/send.email.payment.js";
 import { paymentStatusEmail } from "../views/send.email.payment.js";
-
 import { sendPaymentEmail } from '../utils/sendPaymentEmail.js';
 import { generateQrCode } from '../utils/generateQrcode.js';
 
@@ -52,7 +46,6 @@ export const createDebitPayment = async (bookingId, bank) => {
         "N/A"; // Tambahkan expired date (24 jam setelah transaksi dibuat)
 
     // Generate QR Code setelah pembayaran sukses
-    // await generateQrcode(bookingId);
     const qrCodeUrl = await generateQrCode(bookingId);
 
 
@@ -69,12 +62,6 @@ export const createDebitPayment = async (bookingId, bank) => {
     });
 
     // // Kirim email setelah pembayaran berhasil
-    // await sendPaymentEmail(
-    //     booking.user.email,
-    //     "Menunggu Pembayaran",
-    //     vaNumberPaymentEmail(bank, booking.totalPrice, chargeResponse.order_id, virtualAccount, expiredDate, updatedBooking.urlQrcode)
-    // );
-
     await sendPaymentEmail(
         booking.user.email,
         "Menunggu Pembayaran",
@@ -220,7 +207,6 @@ export const createGoPayPayment = async (bookingId) => {
 
     const chargeResponse = await coreApi.charge(paymentData);
 
-//dikomen
     const gopayDeepLink = chargeResponse.actions.find(
         (action) => action.name === "deeplink-redirect"
     )?.url || "N/A"; // URL deep link untuk redirect pembayaran
@@ -231,7 +217,6 @@ export const createGoPayPayment = async (bookingId) => {
         ).toLocaleString()
         : "N/A"; // Expired Date (24 jam setelah transaksi dibuat)
 
-        //dikomen
     // URL untuk generasi QR Code
     const gopayQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
         gopayDeepLink
@@ -348,52 +333,3 @@ export const createCardPayment = async (bookingId, cardToken) => {
     
     return chargeResponse;
 };
-
-// Fungsi untuk mengirim email notifikasi pembayaran
-// export const sendPaymentEmail = async (email, subject, htmlContent) => {
-//     // Konfigurasi transporter nodemailer
-//     const transporter = nodemailer.createTransport({
-//         host: "smtp.gmail.com",
-//         port: 465,
-//         secure: true, // Gunakan SSL
-//         auth: {
-//             user: process.env.EMAIL_USER,
-//             pass: process.env.EMAIL_PASS,
-//         },
-//     });
-
-//     // Data email
-//     const mailData = {
-//         from: process.env.EMAIL_USER,
-//         to: email,
-//         subject: subject,
-//         html: htmlContent,
-//     };
-
-//     // Kirim email
-//     const info = await transporter.sendMail(mailData);
-
-//     return { messageId: info.messageId };
-// };
-
-// export const generateQrcode = async (id) => {
-//     const code = await encodeBookingCode(id);
-//     const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-//     const url = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
-
-//     const qr = await generateQrPng(url);
-
-//     const qrCode = await imagekit.upload({
-//         fileName: "testing",
-//         file: qr.toString('base64')
-//     });
-
-//     const updatedBooking = await prisma.booking.update({
-//         where: {
-//             id: parseInt(id),
-//         },
-//         data: { urlQrcode: qrCode.url },
-//     });
-
-//     return updatedBooking
-// };

@@ -98,24 +98,6 @@ export const getBookingsByDate = async (req, res, next) => {
     }
 };
 
-export const scanQrcode = async (req, res, next) => {
-    try {
-        const { token } = req.query;
-
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET_FORGET);
-
-        const { code } = decodedToken;
-
-        const id = await decodeBookingCode(code);
-
-        const updatedBooking = await BookingService.scanQrcode(id);
-
-        response.res200('Berhasil', updatedBooking, res);
-    } catch (error) {
-        next(error)
-    }
-};
-
 export const getTicket = async (req, res) => {
     try {
 
@@ -141,5 +123,17 @@ export const getTicket = async (req, res) => {
             },
         });
         
+    }
+};
+
+export const updateTotalBooking = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const updatedBooking = await BookingService.updateTotalBooking(id, req.body);
+
+        response.res200('Berhasil', updatedBooking, res);
+    } catch (error) {
+        next(error)
     }
 };

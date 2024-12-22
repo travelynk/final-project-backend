@@ -25,7 +25,7 @@ export const createNotification = async (req, res, next) => {
             message
         );
 
-        response.res200("Notifikasi berhasil dibuat", result, res);
+        response.res201("Notifikasi berhasil dibuat", result, res);
     } catch (error) {
         next(error);
     }
@@ -50,10 +50,9 @@ export const getNotifications = async (req, res, next) => {
 // Update notification read status
 export const updateNotificationReadStatus = async (req, res, next) => {
     try {
-        const { id } = req.params; 
-        const userId = req.user.id;
+        const { id } = req.params;
 
-        const result = await NotificationService.updateNotificationReadStatus(parseInt(id), userId);
+        const result = await NotificationService.updateNotificationReadStatus(parseInt(id));
 
         response.res200('Status notifikasi berhasil diperbarui.', result.notification, res);
     } catch (error) {
@@ -65,9 +64,8 @@ export const updateNotificationReadStatus = async (req, res, next) => {
 export const deleteNotification = async (req, res, next) => {
     try {
         const { id } = req.params; 
-        const userId = req.user.id;
 
-        const result = await NotificationService.deleteNotification(parseInt(id), userId);
+        const result = await NotificationService.deleteNotification(parseInt(id));
 
         response.res200('Notifikasi berhasil dihapus.', result.notification, res);
     } catch (error) {

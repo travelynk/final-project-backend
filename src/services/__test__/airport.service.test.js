@@ -112,19 +112,32 @@ describe('Airport Service', () => {
 
     describe('destroy', () => {
         test('should delete one airport', async () => {
+            prisma.airport.findUnique.mockResolvedValue(data);
             prisma.airport.delete.mockResolvedValue(data);
 
-            const airport = await airportService.destroy(1);
+            const airport = await airportService.destroy(45);
 
             expect(airport).toEqual(data);
             expect(prisma.airport.delete).toHaveBeenCalledTimes(1);
             expect(prisma.airport.delete).toHaveBeenCalledWith({
                 where: {
+                    id: 45
+                }
+            });
+        });
+
+        test('should throw error when airport not found', async () => {
+            prisma.airport.findUnique.mockResolvedValue(null);
+
+            await expect(airportService.destroy(1)).rejects.toThrow('Bandara tidak ditemukan');
+            expect(prisma.airport.findUnique).toHaveBeenCalledTimes(1);
+            expect(prisma.airport.findUnique).toHaveBeenCalledWith({
+                where: {
                     id: 1
                 }
             });
         });
+
     });
-        
 
 });

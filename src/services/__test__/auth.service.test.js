@@ -1,5 +1,5 @@
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
-import { login, verifyOtp, sendOtp, register, resetPassword, sendResetPasswordEmail } from "../auth.service.js";
+import { login, verifyOtp, sendOtp, register, resetPassword, sendResetPasswordEmail, googleAuthorizeUrl, googleOauthCallback } from "../auth.service.js";
 import prisma from "../../configs/database";
 import { Error400, Error401, Error404, Error409 } from "../../utils/customError";
 import { generateOTP, generateSecret, verifyOTP } from "../../utils/otp";
@@ -7,13 +7,16 @@ import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
 import { sendOtpEmail } from '../../views/send.otp.js';
+import { authorizationUrl, google, oauth2Client } from "../../configs/googleOauth.js";
 
-
-jest.mock("../../configs/database", () => ({
-    user: {
-        findUnique: jest.fn(),
-        update: jest.fn(),
-        create: jest.fn(),
+jest.mock('../../configs/database.js', () => ({
+    __esModule: true,
+    default: {
+        user: {
+            findUnique: jest.fn(),
+            create: jest.fn(),
+            update: jest.fn(),
+        },
     },
 }));
 
@@ -39,6 +42,20 @@ jest.mock("jsonwebtoken", () => ({
     verify: jest.fn(),
 }));
 
+jest.mock('../../configs/googleOauth.js', () => ({
+    __esModule: true,
+    google: {
+        oauth2: jest.fn().mockReturnValue({
+            userinfo: { get: jest.fn() },
+        }),
+    },
+    oauth2Client: {
+        getToken: jest.fn(),
+        setCredentials: jest.fn(),
+    },
+    authorizationUrl: "https://example.com/oauth2/authorize",
+}));
+
 describe("Auth Service", () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -55,45 +72,48 @@ describe("Auth Service", () => {
         };
         const mockData = {
             email: "test@example.com",
-            password: "password123", 
+            password: "password123",
         };
 
         it("should return token and user info when login success", async () => {
             prisma.user.findUnique.mockResolvedValue(mockUser);
             bcrypt.compare.mockResolvedValue(true);
             jwt.sign.mockReturnValue("mockToken");
-        
+
             const result = await login(mockData);
-            
+
             expect(prisma.user.findUnique).toHaveBeenCalledWith({
-                where: { email: mockData.email },
+                where: { 
+                    email: mockData.email,
+                    deletedAt: null,
+                },
                 include: { profile: true },
             });
 
             expect(bcrypt.compare).toHaveBeenCalledWith(mockData.password, mockUser.password);
 
             expect(jwt.sign).toHaveBeenCalledWith(
-              { id: mockUser.id, role: mockUser.role },
-              process.env.JWT_SECRET,
-              { expiresIn: "1d" }
+                { id: mockUser.id, role: mockUser.role },
+                process.env.JWT_SECRET,
+                { expiresIn: "1d" }
             );
 
             expect(result).toEqual({
-              token: "mockToken",
-              user: { email: mockUser.email, role: mockUser.role, name: mockUser.profile.fullName },
+                token: "mockToken",
+                user: { userId: mockUser.id, email: mockUser.email, role: mockUser.role, name: mockUser.profile.fullName },
             });
         });
-  
+
         it("should throw Error400 if email or password are not filled", async () => {
             await expect(login({ email: null, password: "password123" })).rejects.toThrowError(Error400);
-            await expect(login({ email: "test@example.com", password: null })).rejects.toThrowError(Error400);        
+            await expect(login({ email: "test@example.com", password: null })).rejects.toThrowError(Error400);
         });
-      
+
         it("should throw Error400 if user email is not found", async () => {
-          prisma.user.findUnique.mockResolvedValue(null);
-      
-          await expect(login(mockData)).rejects.toThrowError(Error400);
-          await expect(login(mockData)).rejects.toThrow("Email tidak valid!");
+            prisma.user.findUnique.mockResolvedValue(null);
+
+            await expect(login(mockData)).rejects.toThrowError(Error400);
+            await expect(login(mockData)).rejects.toThrow("Email tidak valid!");
         });
 
         it("should throw Error401 if user is not verified", async () => {
@@ -105,22 +125,22 @@ describe("Auth Service", () => {
         });
 
         it("should throw Error400 if password is incorrect", async () => {
-          prisma.user.findUnique.mockResolvedValue(mockUser);
-          bcrypt.compare.mockResolvedValue(false);
-      
-          await expect(login(mockData)).rejects.toThrowError(Error400);
-          await expect(login(mockData)).rejects.toThrow("Kata sandi tidak valid!");
+            prisma.user.findUnique.mockResolvedValue(mockUser);
+            bcrypt.compare.mockResolvedValue(false);
+
+            await expect(login(mockData)).rejects.toThrowError(Error400);
+            await expect(login(mockData)).rejects.toThrow("Kata sandi tidak valid!");
         });
 
         it("should throw Error500 if an unexpected error occurs", async () => {
             prisma.user.findUnique.mockRejectedValue(new Error("Database error"));
-      
+
             await expect(login(mockData)).rejects.toThrow("Internal Server Error");
         });
 
     });
-  
-   describe('register', () => {
+
+    describe('register', () => {
         it("should register a user and send OTP", async () => {
             const data = { email: "newuser@example.com", password: "password123", fullName: "it User", phone: "1234567890" };
 
@@ -261,11 +281,11 @@ describe("Auth Service", () => {
                 error.name = "JsonWebTokenError";
                 throw error;
             });
-    
+
             await expect(
                 resetPassword("invalidToken", { newPassword: "newPassword123" })
             ).rejects.toThrow(Error401);
-    
+
             await expect(
                 resetPassword("invalidToken", { newPassword: "newPassword123" })
             ).rejects.toThrow("Token tidak valid atau telah kedaluwarsa. Silakan minta email reset kata sandi yang baru.");
@@ -296,7 +316,12 @@ describe("Auth Service", () => {
 
             const result = await sendResetPasswordEmail("test@example.com");
 
-            expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: "test@example.com" } });
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({ 
+                where: { 
+                    email: "test@example.com",
+                    deletedAt: null
+                } 
+            });
             expect(jwt.sign).toHaveBeenCalledWith({ email: "test@example.com" }, process.env.JWT_SECRET_FORGET, { expiresIn: "1h" });
             expect(sendMailMock).toHaveBeenCalledWith(expect.objectContaining({
                 to: "test@example.com",
@@ -312,4 +337,114 @@ describe("Auth Service", () => {
             await expect(sendResetPasswordEmail("unknown@example.com")).rejects.toThrow("User not found");
         });
     });
+
+    describe("googleAuthorizeUrl", () => {
+        it("should return google authorization URL", async () => {
+            const result = await googleAuthorizeUrl();
+            expect(result).toBe(authorizationUrl);
+        });
+    });
+
+    describe("googleOauthCallback", () => {
+        const mockGoogleUserData = {
+            email: "test@example.com",
+            verified_email: true,
+            name: "Test User",
+        };
+
+        const mockUnverifiedUser = {
+            id: 1,
+            email: "test@example.com",
+            verified: false,
+            profile: { fullName: "Test User", role: "buyer" },
+        };
+    
+        const mockUser = {
+            id: 1,
+            email: "test@example.com",
+            verified: true,
+            role: "buyer",
+            profile: { fullName: "Test User", role: "buyer" },
+        };
+
+        const mockToken = "mock-jwt-token";
+
+        it("should create a new user if not exists", async () => {
+            oauth2Client.getToken.mockResolvedValue({ tokens: { access_token: "mock-access-token" } });
+            google.oauth2().userinfo.get.mockResolvedValue({ data: mockGoogleUserData });
+            prisma.user.findUnique.mockResolvedValue(null);
+            prisma.user.create.mockResolvedValue(mockUser);
+            jest.spyOn(jwt, 'sign').mockReturnValue(mockToken);
+
+            const result = await googleOauthCallback("mock-code");
+
+            expect(oauth2Client.getToken).toHaveBeenCalledWith("mock-code");
+            expect(oauth2Client.setCredentials).toHaveBeenCalledWith({ access_token: "mock-access-token" });
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({
+                 where: { 
+                    email: "test@example.com",
+                    deletedAt: null,
+                },
+                 include: { profile: true },
+                });
+            expect(prisma.user.create).toHaveBeenCalled();
+            expect(result).toEqual({
+                token: mockToken,
+                user: { email: "test@example.com", role: "buyer", name: "Test User" },
+            });
+        });
+
+        it("should return existing user if already exists", async () => {
+            oauth2Client.getToken.mockResolvedValue({ tokens: { access_token: "mock-access-token" } });
+            google.oauth2().userinfo.get.mockResolvedValue({ data: mockGoogleUserData });
+            prisma.user.findUnique.mockResolvedValue(mockUser);
+            jest.spyOn(jwt, 'sign').mockReturnValue(mockToken);
+
+            const result = await googleOauthCallback("mock-code");
+
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({ 
+                where: { 
+                    email: "test@example.com",
+                    deletedAt: null,
+                },
+                include: { profile: true },
+            });
+            expect(prisma.user.create).not.toHaveBeenCalled();
+            expect(result).toEqual({
+                token: mockToken,
+                user: { email: "test@example.com", role: "buyer", name: "Test User" },
+            });
+        });
+
+        it("should update user verification if not verified", async () => {
+            oauth2Client.getToken.mockResolvedValue({ tokens: { access_token: "mock-access-token" } });
+            google.oauth2().userinfo.get.mockResolvedValue({ data: mockGoogleUserData });
+            prisma.user.findUnique.mockResolvedValue(mockUnverifiedUser);
+            prisma.user.update.mockResolvedValue({ ...mockUnverifiedUser, verified: true });
+            jest.spyOn(jwt, 'sign').mockReturnValue(mockToken);
+    
+            const result = await googleOauthCallback("mock-code");
+    
+            expect(prisma.user.update).toHaveBeenCalledWith({
+                where: { 
+                    email: "test@example.com"
+                },
+                data: { verified: true },
+            });
+            expect(result).toEqual({
+                token: mockToken,
+                user: { email: "test@example.com", name: "Test User" },
+            });
+        });
+
+        it("should throw error if email is not verified", async () => {
+            oauth2Client.getToken.mockResolvedValue({ tokens: { access_token: "mock-access-token" } });
+            google.oauth2().userinfo.get.mockResolvedValue({
+                data: { email: "test@example.com", verified_email: false },
+            });
+
+            await expect(googleOauthCallback("mock-code")).rejects.toThrow("Email tidak valid atau belum diverifikasi");
+        });
+    });
+
 });

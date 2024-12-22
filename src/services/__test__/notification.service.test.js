@@ -145,7 +145,7 @@ describe("Notification Service", () => {
 
           expect(result.notification).toEqual(mockNotification);
           expect(prisma.notification.update).toHaveBeenCalledWith({
-                where: { id: 1, userId: 123 },
+                where: { id: 1 },
                 data: { isRead: true },
             });
         });
@@ -180,10 +180,34 @@ describe("Notification Service", () => {
 
           expect(result.notification).toEqual(mockNotification);
           expect(prisma.notification.update).toHaveBeenCalledWith({
-              where: { id: 1, userId: 123 },
+              where: { id: 1 },
               data: { isDeleted: true },
           });
       });
+
+      it("should delete a notification", async () => {
+        const mockNotification = {
+          id: 1,
+          userId: 123,
+          type: "Info",
+          title: "Flight Schedule is Changed!",
+          message: "click here to see the detail.",
+          createdAt: new Date(),
+          isDeleted: false,
+          isRead: true,
+        };
+
+        prisma.notification.findUnique.mockResolvedValueOnce(mockNotification);
+        prisma.notification.update.mockResolvedValue(mockNotification);
+
+        const result = await deleteNotification(1, 123, "admin");
+
+        expect(result.notification).toEqual(mockNotification);
+        expect(prisma.notification.update).toHaveBeenCalledWith({
+            where: { id: 1 },
+            data: { isDeleted: true },
+        });
+    });
 
       it("should throw Error404 if notification not found", async () => {
           prisma.notification.findUnique.mockResolvedValueOnce(null);

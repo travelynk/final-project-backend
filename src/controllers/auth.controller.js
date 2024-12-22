@@ -145,7 +145,7 @@ export const googleOauthCallback = async (req, res) => {
               <body>
                 <script>
                   // Kirim error ke parent window
-                  window.opener.postMessage({ error: '${error.message}' }, '*');
+                  window.opener.postMessage({ error: "${error.message}" }, '*');
                   window.close(); // Tutup popup
                 </script>
               </body>

@@ -3,7 +3,7 @@ import Joi from 'joi';
 export const notification = Joi.object({
   userId: Joi.number().optional(),  
   type: Joi.string()
-      .valid('Promotion', 'Info')
+      .valid('Promotion', 'Info', 'General')
       .required()
       .messages({
         'string.base': 'Tipe notifikasi harus berupa teks.',

@@ -10,6 +10,9 @@ jest.mock("../../utils/response.js");
 jest.mock("../../validations/flight.validation.js", () => ({
     flightSchema: {
         validate: jest.fn()
+    },
+    querySchema: {
+        validate: jest.fn()
     }
 }));
 
@@ -228,6 +231,61 @@ describe("Flight Controller", () => {
 
             expect(next).toHaveBeenCalledWith(error);
         });
+    });
+
+    describe("getAvailableFlight", () => {
+        test("should return available flight", async () => {
+            req.query = {
+                rf: "1.2",
+                dt: "2021-08-01T00:00:00.000Z.2021-08-01T01:00:00.000Z",
+                ps: "1.2",
+                sc: "Economy"
+            };
+            FlightValidation.querySchema.validate.mockReturnValue({ value: req.query });
+            FlightService.getAvailableFlight.mockResolvedValue([data]);
+
+            await FlightController.getAvailableFlight(req, res, next);
+
+            expect(FlightValidation.querySchema.validate).toHaveBeenCalledTimes(1);
+            expect(FlightValidation.querySchema.validate).toHaveBeenCalledWith(req.query);
+            expect(FlightService.getAvailableFlight).toHaveBeenCalledTimes(1);
+            expect(res200).toHaveBeenCalledWith(
+                "Berhasil mengambil data penerbangan yang tersedia",
+                [data],
+                res
+            );
+        });
+
+        test('calls next with Error400 if validation fails', async () => {
+            // Mock validasi gagal
+            const validationError = { details: [{ message: 'Validation error' }] };
+            FlightValidation.querySchema.validate.mockReturnValue({ error: validationError });
+
+            await FlightController.getAvailableFlight(req, res, next);
+
+            expect(FlightService.getAvailableFlight).not.toHaveBeenCalled();
+            expect(res200).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalledTimes(1);
+            expect(next.mock.calls[0][0]).toBeInstanceOf(Error400);
+            expect(next.mock.calls[0][0].message).toBe('Validation error');
+        });
+
+        test("should return error", async () => {
+            req.query = {
+                rf: "1.2",
+                dt: "2021-08-01T00:00:00.000Z.2021-08-01T01:00:00.000Z",
+                ps: "1.2",
+                sc: "Economy"
+            };
+            const error = new Error("error message");
+            FlightValidation.querySchema.validate.mockReturnValue({ value: req.query });
+            FlightService.getAvailableFlight.mockRejectedValue(error);
+
+            await FlightController.getAvailableFlight(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(error);
+        });
+
     });
 
 });

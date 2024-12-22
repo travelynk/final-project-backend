@@ -56,7 +56,8 @@ export const getOne = async (id) => {
 export const update = async (id, data) => {
     const user = await prisma.user.update({
         where: {
-            id: parseInt(id)
+            id: parseInt(id),
+            deletedAt: null
         },
         data
     });
@@ -66,4 +67,18 @@ export const update = async (id, data) => {
         email: user.email,
         role: user.role,
     };
+};
+
+export const destroy = async (id) => {
+    await prisma.user.update({
+        where: {
+            id: parseInt(id),
+            deletedAt: null
+        },
+        data: {
+            deletedAt: new Date()
+        }
+    })
+    
+    return;
 };

@@ -15,7 +15,10 @@ export const login = async ({ email, password }) => {
         }
 
         const user = await prisma.user.findUnique({
-            where: { email },
+            where: { 
+                email,
+                deletedAt: null
+            },
             include: { profile: true },
         });
 
@@ -38,9 +41,16 @@ export const login = async ({ email, password }) => {
             { expiresIn: '1d' }
         );
 
+        const userData = {
+            userId: user.id,
+            email: user.email,
+            role: user.role,
+            name: user.profile.fullName,
+        };
+
         return {
             token,
-            user: { email: user.email, role: user.role, name: user.profile.fullName },
+            user: userData,
         };
     } catch (error) {
         if (error instanceof Error400 || error instanceof Error401) {
@@ -91,7 +101,10 @@ export const verifyOtp = async (data) => {
     const { email, otp } = data;
 
     const user = await prisma.user.findUnique({
-        where: { email },
+        where: { 
+            email,
+            deletedAt: null
+        },
     });
 
     if (!user) {
@@ -114,7 +127,10 @@ export const verifyOtp = async (data) => {
 
 export const sendOtp = async (email) => {
     const user = await prisma.user.findUnique({
-        where: { email },
+        where: { 
+            email,
+            deletedAt: null
+        },
     });
 
     if (!user) {
@@ -122,15 +138,6 @@ export const sendOtp = async (email) => {
     };
 
     const otp = generateOTP(user.otpSecret);
-
-    // const transporter = nodemailer.createTransport({
-    //     host: "smtp.mailtrap.io",
-    //     port: 2525,
-    //     auth: {
-    //         user: process.env.MAILTRAP_USER,
-    //         pass: process.env.MAILTRAP_PASS,
-    //     },
-    // });
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -153,14 +160,19 @@ export const sendOtp = async (email) => {
     return "Email untuk memverifikasi akun Anda telah dikirim.";
 };
 
-// Reset password function, using token to update password
 export const resetPassword = async (token, password) => {
     try {
         // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET_FORGET);
         const { email } = decoded;
 
-        const user = await prisma.user.findUnique({ where: { email } });
+        const user = await prisma.user.findUnique({ 
+            where: { 
+                email,
+                deletedAt: null
+            } 
+        });
+
         if (!user) {
             throw new Error404("Akun pengguna tidak di temukan");
         }
@@ -185,9 +197,14 @@ export const resetPassword = async (token, password) => {
     }
 };
 
-// New function to send a reset password email
 export const sendResetPasswordEmail = async (email) => {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ 
+        where: {
+            email,
+            deletedAt: null 
+        } 
+    });
+
     if (!user) {
         throw new Error404("User not found");
     }
@@ -252,13 +269,34 @@ export const googleOauthCallback = async (code) => {
     }
 
     const email = data.email;
-    const user = await prisma.user.findUnique({ 
-        where: { email },
+    let user = await prisma.user.findUnique({ 
+        where: { 
+            email,
+            deletedAt: null
+        },
         include: { profile: true }
     });
 
     if (!user) {
-        throw new Error404("Pengguna tidak ditemukan");
+        const secret = generateSecret();
+        const password = Math.random().toString(36).slice(-10);
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        user = await prisma.user.create({
+            data: {
+                email,
+                password: hashedPassword,
+                role: "buyer",
+                otpSecret: secret,
+                verified: true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                profile: {
+                    create: { fullName: data.name, phone: "628", gender: "Laki-laki" },
+                },
+            },
+            include: { profile: true },
+        });
     } else {
         if (!user.verified) {
             await prisma.user.update({

@@ -7,7 +7,7 @@ import prisma from "../configs/database.js";
 export const generateQrCode = async (id) => {
     const code = await encodeBookingCode(id);
     const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-    const url = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
+    const url = `${process.env.DOMAIN_URL}/bookings/ticket?token=${resetToken}`;
 
     const qr = await generateQrPng(url);
 

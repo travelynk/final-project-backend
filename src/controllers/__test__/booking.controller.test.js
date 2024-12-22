@@ -170,45 +170,16 @@ describe('Booking Controller', () => {
         });
     });
 
-    describe('scanQrcode', () => {
-        test('should scan QR code successfully', async () => {
-            const updatedBooking = { id: 1 };
-            jwt.verify.mockReturnValue({ code: 'hashedCode' });
-            decodeBookingCode.mockResolvedValue(1);
-            BookingService.scanQrcode.mockResolvedValue(updatedBooking);
-
-            req.query = { token: 'fakeToken' };
-
-            await BookingController.scanQrcode(req, res, next);
-
-            expect(response.res200).toHaveBeenCalledWith('Berhasil', updatedBooking, res);
-        });
-
-        test('should handle token errors', async () => {
-            jwt.verify.mockImplementation(() => { throw new Error('Invalid token'); });
-            req.query = { token: 'fakeToken' };
-
-            await BookingController.scanQrcode(req, res, next);
-
-            expect(next).toHaveBeenCalledWith(expect.any(Error));
-        });
-    });
-
     describe('getTicket', () => {
         test('should render ticket page', async () => {
             const mockTicket = { id: 1, flight: 'A123' };
             jwt.verify.mockReturnValue({ code: 'hashedCode' });
             decodeBookingCode.mockResolvedValue(1);
             BookingService.getTicket.mockResolvedValue(mockTicket);
-            process.env.DOMAIN_URL = 'http://localhost';
-
-            req.query = { token: 'fakeToken' };
 
             await BookingController.getTicket(req, res);
 
             expect(res.render).toHaveBeenCalledWith('tickets', {
-                token: 'fakeToken',
-                domainUrl: 'http://localhost',
                 data: mockTicket,
             });
         });

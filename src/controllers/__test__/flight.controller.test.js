@@ -288,4 +288,29 @@ describe("Flight Controller", () => {
 
     });
 
+    describe ("getFavoriteFlights", () => {
+        test("should return favorite flights", async () => {
+            req.params = { id: 1 };
+            FlightService.getFavoriteFlights.mockResolvedValue([data]);
+
+            await FlightController.getFavoriteFlights(req, res, next);
+
+            expect(FlightService.getFavoriteFlights).toHaveBeenCalledTimes(1);
+            expect(res200).toHaveBeenCalledWith(
+                "Berhasil mengambil data penerbangan dengan destinasi favorit",
+                [data],
+                res
+            );
+        });
+
+        test("should return error", async () => {
+            req.params = { id: 1 };
+            const error = new Error("error message");
+            FlightService.getFavoriteFlights.mockRejectedValue(error);
+
+            await FlightController.getFavoriteFlights(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(error);
+        });
+    });
 });

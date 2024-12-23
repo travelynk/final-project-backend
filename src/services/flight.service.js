@@ -385,12 +385,12 @@ export const getFavoriteFlights = async () => {
         const cityCounts = uniqueFlights.reduce((acc, { city, country }) => {
             const cityKey = `${city.code}-${city.name}`;
             if (!acc[cityKey]) {
-                acc[cityKey] = { 
-                    code: city.code, 
-                    name: city.name, 
+                acc[cityKey] = {
+                    code: city.code,
+                    name: city.name,
                     countryName: country.name,
                     countryRegion: country.region,
-                    total: 0 
+                    total: 0
                 };
             }
             acc[cityKey].total += 1;
@@ -409,12 +409,12 @@ export const getFavoriteFlights = async () => {
         console.log(city)
         const cityKey = `${city.code}-${city.name}`;
         if (!acc[cityKey]) {
-            acc[cityKey] = { 
-                code: city.code, 
+            acc[cityKey] = {
+                code: city.code,
                 name: city.name,
                 countryName: city.countryName,
                 countryRegion: city.countryRegion,
-                total: 0 
+                total: 0
             };
         }
         acc[cityKey].total += city.total;

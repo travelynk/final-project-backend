@@ -1,9 +1,9 @@
 import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
-import { 
-    createNotification, 
-    getNotifications, 
-    updateNotificationReadStatus, 
-    deleteNotification
+import {
+  createNotification,
+  getNotifications,
+  updateNotificationReadStatus,
+  deleteNotification
 } from '../../controllers/notification.controller.js';
 import * as response from '../../utils/response.js';
 import * as NotificationService from '../../services/notification.service.js';
@@ -45,7 +45,7 @@ describe("Notification Controller", () => {
   describe("createNotification", () => {
     it("should create a user-spesific notification and return 200", async () => {
       mockReq.body = { type: "info", title: "Test Title", message: "Test Message" };
-            
+
       const mockNotification = {
         id: 1,
         userId: 123,
@@ -60,7 +60,7 @@ describe("Notification Controller", () => {
 
       await createNotification(mockReq, mockRes, mockNext);
 
-      expect(NotificationService.createNotification).toHaveBeenCalledWith( 
+      expect(NotificationService.createNotification).toHaveBeenCalledWith(
         123,
         "info",
         "Test Title",
@@ -72,7 +72,7 @@ describe("Notification Controller", () => {
     it("should create a user-general notification and return 201", async () => {
       mockReq.user.role = "admin";
       mockReq.body = { type: "info", title: "Test Title", message: "Test Message" };
-            
+
       const mockNotification = {
         id: 1,
         userId: null,
@@ -87,7 +87,7 @@ describe("Notification Controller", () => {
 
       await createNotification(mockReq, mockRes, mockNext);
 
-      expect(NotificationService.createNotification).toHaveBeenCalledWith( 
+      expect(NotificationService.createNotification).toHaveBeenCalledWith(
         null,
         "info",
         "Test Title",
@@ -97,59 +97,59 @@ describe("Notification Controller", () => {
     });
 
     it("should create a general notification when userId is null", async () => {
-        mockReq.user.id = null;
-        mockReq.body = { 
-          type: "info", 
-          title: "General Announcement", 
-          message: "This is a system-wide message"
-        };
-    
-        const mockNotification = {
-            id: 1,
-            userId: null, 
-            type: "info",
-            title: "General Announcement",
-            message: "This is a system-wide message",
-        };
-    
-        NotificationService.createNotification.mockResolvedValue(mockNotification);
-    
-        await createNotification(mockReq, mockRes, mockNext);
-    
-        expect(NotificationService.createNotification).toHaveBeenCalledWith(
-            null,
-            "info",
-            "General Announcement",
-            "This is a system-wide message"
-        );
-        expect(response.res201).toHaveBeenCalledWith(
-            "Notifikasi berhasil dibuat",
-            mockNotification,
-            mockRes
-        );
+      mockReq.user.id = null;
+      mockReq.body = {
+        type: "info",
+        title: "General Announcement",
+        message: "This is a system-wide message"
+      };
+
+      const mockNotification = {
+        id: 1,
+        userId: null,
+        type: "info",
+        title: "General Announcement",
+        message: "This is a system-wide message",
+      };
+
+      NotificationService.createNotification.mockResolvedValue(mockNotification);
+
+      await createNotification(mockReq, mockRes, mockNext);
+
+      expect(NotificationService.createNotification).toHaveBeenCalledWith(
+        null,
+        "info",
+        "General Announcement",
+        "This is a system-wide message"
+      );
+      expect(response.res201).toHaveBeenCalledWith(
+        "Notifikasi berhasil dibuat",
+        mockNotification,
+        mockRes
+      );
     });
 
     it("should call next with Error400 if validation error", async () => {
-        const validationError = { details: [{ message: "Validation error" }] };
-        notification.validate.mockReturnValue({ error: validationError });
+      const validationError = { details: [{ message: "Validation error" }] };
+      notification.validate.mockReturnValue({ error: validationError });
 
-        await createNotification(mockReq, mockRes, mockNext);
+      await createNotification(mockReq, mockRes, mockNext);
 
-        expect(NotificationService.createNotification).not.toHaveBeenCalled();
-        expect(response.res201).not.toHaveBeenCalled();
-        expect(mockNext).toHaveBeenCalledTimes(1);
-        expect(mockNext.mock.calls[0][0]).toBeInstanceOf(Error400);
-        expect(mockNext.mock.calls[0][0].message).toBe("Validation error");
+      expect(NotificationService.createNotification).not.toHaveBeenCalled();
+      expect(response.res201).not.toHaveBeenCalled();
+      expect(mockNext).toHaveBeenCalledTimes(1);
+      expect(mockNext.mock.calls[0][0]).toBeInstanceOf(Error400);
+      expect(mockNext.mock.calls[0][0].message).toBe("Validation error");
     });
 
     it("should call next with error if service throws an error", async () => {
-        const serviceError = new Error("Service error");
-        notification.validate.mockResolvedValue({ value: mockReq.body });
-        NotificationService.createNotification.mockRejectedValue(serviceError);
+      const serviceError = new Error("Service error");
+      notification.validate.mockResolvedValue({ value: mockReq.body });
+      NotificationService.createNotification.mockRejectedValue(serviceError);
 
-        await createNotification(mockReq, mockRes, mockNext);
+      await createNotification(mockReq, mockRes, mockNext);
 
-        expect(mockNext).toHaveBeenCalledWith(serviceError);
+      expect(mockNext).toHaveBeenCalledWith(serviceError);
     });
 
   });

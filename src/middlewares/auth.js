@@ -18,7 +18,7 @@ export const authMiddleware = async (req, res, next) => {
             id: decoded.id,
             role: decoded.role,
         };
-    
+
         req.user = payload;
         next();
     } catch (error) {
@@ -27,7 +27,7 @@ export const authMiddleware = async (req, res, next) => {
         } else if (error.name === 'JsonWebTokenError') {
             next(new Error401('Invalid token. Please log in again.'));
         } else {
-            next(error); 
+            next(error);
         }
     }
 };

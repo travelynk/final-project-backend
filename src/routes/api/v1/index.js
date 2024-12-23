@@ -16,7 +16,6 @@ import notificationRoute from './notification.route.js';
 import userRouter from './user.route.js';
 import { authMiddleware } from '../../../middlewares/auth.js';
 
-
 export default (app) => {
     const router = Router();
 
@@ -31,7 +30,7 @@ export default (app) => {
     countryRouter(router);
     flightRoute(router);
     bookingRouter(router);
-    
+
     router.use(authMiddleware);
 
     profileRouter(router);

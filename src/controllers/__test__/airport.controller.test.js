@@ -11,7 +11,7 @@ jest.mock("../../utils/response.js");
 jest.mock("../../validations/airport.validation.js", () => ({
     payload: {
         validate: jest.fn()
-      }
+    }
 }));
 
 describe("Airport Controller", () => {
@@ -91,7 +91,7 @@ describe("Airport Controller", () => {
             expect(next).toHaveBeenCalledWith(new Error404("Data bandara tidak ditemukan"));
         });
     });
-    
+
     describe("storeAirport", () => {
         test('calls res201 on successful data creation', async () => {
             // Mock validasi dan service berhasil
@@ -99,22 +99,22 @@ describe("Airport Controller", () => {
             const storedData = { id: 1, ...validatedValue };
             AirportValidation.payload.validate.mockReturnValue({ value: validatedValue });
             AirportService.store.mockResolvedValue(storedData);
-        
+
             await AirportController.storeAirport(req, res, next);
 
             expect(AirportService.store).toHaveBeenCalledWith(validatedValue);
             expect(res201).toHaveBeenCalledWith(
-              'Berhasil menambahkan data bandara',
-              storedData,
-              res
+                'Berhasil menambahkan data bandara',
+                storedData,
+                res
             );
-          });
+        });
 
-          test('calls next with Error400 if validation fails', async () => {
+        test('calls next with Error400 if validation fails', async () => {
             // Mock validasi gagal
             const validationError = { details: [{ message: 'Validation error' }] };
             AirportValidation.payload.validate.mockReturnValue({ error: validationError });
-        
+
             await AirportController.storeAirport(req, res, next);
 
             expect(AirportService.store).not.toHaveBeenCalled();
@@ -122,19 +122,19 @@ describe("Airport Controller", () => {
             expect(next).toHaveBeenCalledTimes(1);
             expect(next.mock.calls[0][0]).toBeInstanceOf(Error400);
             expect(next.mock.calls[0][0].message).toBe('Validation error');
-          });
-        
-          test('calls next with an error if AirportService.store throws an error', async () => {
+        });
+
+        test('calls next with an error if AirportService.store throws an error', async () => {
             // Mock validasi berhasil, tapi service gagal
             const validatedValue = { name: 'Bandara A', code: 'BAA' };
             const serviceError = new Error('Service error');
             AirportValidation.payload.validate.mockReturnValue({ value: validatedValue });
             AirportService.store.mockRejectedValue(serviceError);
-        
+
             await AirportController.storeAirport(req, res, next);
-        
+
             expect(next).toHaveBeenCalledWith(serviceError);
-          });
+        });
 
     });
 
@@ -162,7 +162,7 @@ describe("Airport Controller", () => {
             // Mock validasi gagal
             const validationError = { details: [{ message: 'Validation error' }] };
             AirportValidation.payload.validate.mockReturnValue({ error: validationError });
-        
+
             await AirportController.updateAirport(req, res, next);
 
             expect(AirportService.update).not.toHaveBeenCalled();
@@ -170,7 +170,7 @@ describe("Airport Controller", () => {
             expect(next).toHaveBeenCalledTimes(1);
             expect(next.mock.calls[0][0]).toBeInstanceOf(Error400);
             expect(next.mock.calls[0][0].message).toBe('Validation error');
-          });
+        });
 
         test("should return error", async () => {
             req.params = { id: 1 };

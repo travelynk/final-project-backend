@@ -6,7 +6,7 @@ import { Error400, Error404 } from '../utils/customError.js';
 export const getTerminals = async (req, res, next) => {
     try {
         const terminals = await TerminalService.getAll();
-        
+
         res200('Berhasil mengambil semua data terminal', terminals, res);
     } catch (error) {
         next(error);

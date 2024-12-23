@@ -1,6 +1,5 @@
 import Joi from "joi";
 
-// Schema untuk createPayment
 export const createPaymentSchema = Joi.object({
     bookingId: Joi.number().integer().required().messages({
         "number.base": "Booking ID harus berupa angka.",
@@ -14,7 +13,6 @@ export const createPaymentSchema = Joi.object({
     }),
 });
 
-// Schema untuk cancelPayment
 export const cancelPaymentSchema = Joi.object({
     transactionId: Joi.string().min(3).required().messages({
         "string.base": "Transaction ID harus berupa teks.",
@@ -23,7 +21,6 @@ export const cancelPaymentSchema = Joi.object({
     }),
 });
 
-// Schema untuk checkPaymentStatus
 export const checkPaymentStatusSchema = Joi.object({
     transactionId: Joi.string().min(3).required().messages({
         "string.base": "Transaction ID harus berupa teks.",
@@ -32,7 +29,6 @@ export const checkPaymentStatusSchema = Joi.object({
     }),
 });
 
-// Schema untuk createGoPayPayment
 export const createGoPayPaymentSchema = Joi.object({
     bookingId: Joi.number().integer().required().messages({
         "number.base": "Booking ID harus berupa angka.",
@@ -41,7 +37,6 @@ export const createGoPayPaymentSchema = Joi.object({
     }),
 });
 
-// Schema untuk createCreditCardPayment
 export const createCreditCardPaymentSchema = Joi.object({
     bookingId: Joi.number().integer().required().messages({
         "number.base": "Booking ID harus berupa angka.",

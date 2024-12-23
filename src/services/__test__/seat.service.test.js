@@ -1,10 +1,10 @@
 import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
 import * as SeatService from '../../services/seat.service.js';
-import prisma from '../../configs/database.js'; 
+import prisma from '../../configs/database.js';
 import { Error404 } from '../../utils/customError.js';
 
 jest.mock('../../configs/database.js', () => ({
-  __esModule: true, 
+  __esModule: true,
   default: {
     flightSeats: {
       findMany: jest.fn(),

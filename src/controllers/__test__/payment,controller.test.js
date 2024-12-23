@@ -198,7 +198,7 @@ describe('Payment Controller', () => {
 
             await createCreditCardPayment(req, res, next);
 
-           
+
             expect(response.res200).toHaveBeenCalledWith(
                 'Pembayaran berhasil dibuat',
                 {

@@ -6,12 +6,9 @@ import { Error400 } from '../utils/customError.js';
 
 export const getSeatsByFlightID = async (req, res, next) => {
     try {
-
         const { error, value } = SeatValidation.getSeatsByFlightID.validate(req.params);
 
-        if (error) {
-            throw new Error400(error.message);
-        };
+        if (error) throw new Error400(error.message);
 
         const { flightId } = value;
 

@@ -288,7 +288,7 @@ describe("Flight Controller", () => {
 
     });
 
-    describe ("getFavoriteFlights", () => {
+    describe("getFavoriteFlights", () => {
         test("should return favorite flights", async () => {
             req.params = { id: 1 };
             FlightService.getFavoriteFlights.mockResolvedValue([data]);

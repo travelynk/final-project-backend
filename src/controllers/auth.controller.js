@@ -50,7 +50,6 @@ export const resetPassword = async (req, res, next) => {
     }
 };
 
-// New endpoint to send a reset password email
 export const sendResetPasswordEmail = async (req, res, next) => {
     try {
         const { error, value } = AuthValidation.sendOtp.validate(req.body);

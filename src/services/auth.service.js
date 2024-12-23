@@ -15,7 +15,7 @@ export const login = async ({ email, password }) => {
         }
 
         const user = await prisma.user.findUnique({
-            where: { 
+            where: {
                 email,
                 deletedAt: null
             },
@@ -101,7 +101,7 @@ export const verifyOtp = async (data) => {
     const { email, otp } = data;
 
     const user = await prisma.user.findUnique({
-        where: { 
+        where: {
             email,
             deletedAt: null
         },
@@ -127,7 +127,7 @@ export const verifyOtp = async (data) => {
 
 export const sendOtp = async (email) => {
     const user = await prisma.user.findUnique({
-        where: { 
+        where: {
             email,
             deletedAt: null
         },
@@ -166,11 +166,11 @@ export const resetPassword = async (token, password) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_FORGET);
         const { email } = decoded;
 
-        const user = await prisma.user.findUnique({ 
-            where: { 
+        const user = await prisma.user.findUnique({
+            where: {
                 email,
                 deletedAt: null
-            } 
+            }
         });
 
         if (!user) {
@@ -198,11 +198,11 @@ export const resetPassword = async (token, password) => {
 };
 
 export const sendResetPasswordEmail = async (email) => {
-    const user = await prisma.user.findUnique({ 
+    const user = await prisma.user.findUnique({
         where: {
             email,
-            deletedAt: null 
-        } 
+            deletedAt: null
+        }
     });
 
     if (!user) {
@@ -269,8 +269,8 @@ export const googleOauthCallback = async (code) => {
     }
 
     const email = data.email;
-    let user = await prisma.user.findUnique({ 
-        where: { 
+    let user = await prisma.user.findUnique({
+        where: {
             email,
             deletedAt: null
         },

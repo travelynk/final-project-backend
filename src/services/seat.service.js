@@ -16,4 +16,3 @@ export const getSeatsByFlightID = async (flightId) => {
   };
   return seats;
 }
-

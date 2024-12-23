@@ -14,7 +14,7 @@ jest.mock('../../configs/database.js', () => ({
             delete: jest.fn(),
         },
         bookingSegments: {
-            findMany: jest.fn(), 
+            findMany: jest.fn(),
         },
     },
 }));
@@ -29,8 +29,8 @@ describe('Flight Service', () => {
             flightNum: 'GA4004',
             departureTerminalId: 9,
             arrivalTerminalId: 11,
-            departureTime: "2024-12-18T08:30:00.000Z",  
-            arrivalTime: "2024-12-18T10:00:00.000Z",  
+            departureTime: "2024-12-18T08:30:00.000Z",
+            arrivalTime: "2024-12-18T10:00:00.000Z",
             estimatedDuration: 1.5,
             seatClass: 'Economy',
             seatCapacity: 6,
@@ -140,8 +140,8 @@ describe('Flight Service', () => {
                 seatCapacity: data.seatCapacity,
                 facility: data.facility,
                 price: data.price,
-            });            
-            
+            });
+
             expect(prisma.flight.findUnique).toHaveBeenCalledTimes(1);
             expect(prisma.flight.findUnique).toHaveBeenCalledWith({
                 where: {
@@ -291,38 +291,6 @@ describe('Flight Service', () => {
     });
 
     describe('getAvailableFlight', () => {
-        // test('should return available flights', async () => {
-        //     const data = {
-        //         route: ['JKT', 'JOG'],
-        //         seatClass: 'Economy',
-        //         schedule: ['2024-12-13T11:30:00.000Z'],
-        //         passengers: 1
-        //     };
-
-        //     prisma.flight.findMany.mockResolvedValue([data]);
-
-        //     const result = await FlightService.getAvailableFlight(data);
-
-        //     expect(result).toEqual({ outboundFlights: [data], returnFlights: [] });
-        //     expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
-        // });
-
-        // test('should return available flights with return schedule', async () => {
-        //     const data = {
-        //         route: ['JKT', 'JOG'],
-        //         seatClass: 'Economy',
-        //         schedule: ['2024-12-13T11:30:00.000Z', '2024-12-13T12:00:00.000Z'],
-        //         passengers: 1
-        //     };
-
-        //     prisma.flight.findMany.mockResolvedValue([data]);
-
-        //     const result = await FlightService.getAvailableFlight(data);
-
-        //     expect(result).toEqual({ outboundFlights: [data], returnFlights: [data] });
-        //     expect(prisma.flight.findMany).toHaveBeenCalledTimes(2);
-        // });
-
         test('should return empty array', async () => {
             const data = {
                 route: ['JKT', 'JOG'],
@@ -341,17 +309,6 @@ describe('Flight Service', () => {
     });
 
     describe('getFavoriteFlight', () => {
-        // test('should return favorite flights', async () => {
-        //     prisma.flight.findMany.mockResolvedValue([data]);
-        //     prisma.bookingSegments.findMany.mockResolvedValue([{ bookingId: 1, flightId: 8 }]);
-
-        //     const result = await FlightService.getFavoriteFlights();
-
-        //     expect(result).toEqual([data]);
-        //     expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
-        //     expect(prisma.bookingSegments.findMany).toHaveBeenCalledTimes(1);
-        // });
-
         test('should return empty array when no flights are found', async () => {
             prisma.flight.findMany.mockResolvedValue([]);
             prisma.bookingSegments.findMany.mockResolvedValue([]);

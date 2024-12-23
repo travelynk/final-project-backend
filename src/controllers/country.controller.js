@@ -17,7 +17,7 @@ export const getCountry = async (req, res, next) => {
   try {
     const country = await CountryService.getOne(req.params.code);
 
-    if(!country) throw new Error404('Data negara tidak ditemukan');
+    if (!country) throw new Error404('Data negara tidak ditemukan');
 
     res200("Berhasil mengambil satu data negara", country, res);
   } catch (error) {
@@ -28,14 +28,14 @@ export const getCountry = async (req, res, next) => {
 export const storeCountry = async (req, res, next) => {
   try {
     const { error, value } = CountryValidation.payload.validate(req.body);
-    
+
     if (error) throw new Error400(`${error.details[0].message}`);
-    
+
     const country = await CountryService.store(value);
 
     res201("Berhasil menambahkan data negara baru", country, res);
   } catch (error) {
-    if(error.code === 'P2002') return next(new Error400('Kode negara sudah digunakan'));
+    if (error.code === 'P2002') return next(new Error400('Kode negara sudah digunakan'));
     next(error);
   }
 };
@@ -50,7 +50,7 @@ export const updateCountry = async (req, res, next) => {
 
     res200("Berhasil mengubah data negara", country, res);
   } catch (error) {
-    if(error.code === 'P2002') return next(new Error400('Kode negara sudah digunakan'));
+    if (error.code === 'P2002') return next(new Error400('Kode negara sudah digunakan'));
     next(error);
   }
 };

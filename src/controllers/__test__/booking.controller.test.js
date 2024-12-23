@@ -115,33 +115,33 @@ describe('Booking Controller', () => {
             const paramsError = new Error('Params validation error');
             BookingValidation.updateStatusBookingParams.validate.mockReturnValue({ error: paramsError });
             BookingValidation.updateStatusBookingBody.validate.mockReturnValue({ value: {} }); // Body valid
-    
+
             await BookingController.updateStatusBooking(req, res, next);
-    
+
             expect(next).toHaveBeenCalledWith(expect.any(Error400));
             expect(next.mock.calls[0][0].message).toBe('Params validation error');
         });
-    
+
         test('should handle body validation error', async () => {
             const bodyError = new Error('Body validation error');
             BookingValidation.updateStatusBookingParams.validate.mockReturnValue({ value: { id: 'valid-id' } }); // Params valid
             BookingValidation.updateStatusBookingBody.validate.mockReturnValue({ error: bodyError });
-    
+
             await BookingController.updateStatusBooking(req, res, next);
-    
+
             expect(next).toHaveBeenCalledWith(expect.any(Error400));
             expect(next.mock.calls[0][0].message).toBe('Body validation error');
         });
-    
+
         test('should handle both params and body validation errors', async () => {
             const paramsError = new Error('Params validation error');
             const bodyError = new Error('Body validation error');
-    
+
             BookingValidation.updateStatusBookingParams.validate.mockReturnValue({ error: paramsError });
             BookingValidation.updateStatusBookingBody.validate.mockReturnValue({ error: bodyError });
-    
+
             await BookingController.updateStatusBooking(req, res, next);
-    
+
             expect(next).toHaveBeenCalledWith(expect.any(Error400));
             expect(next.mock.calls[0][0].message).toBe('Params validation error, Body validation error');
         });

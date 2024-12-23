@@ -6,10 +6,10 @@ export const initializeWebSocket = (server) => {
     io = new Server(server, {
         cors: {
             origin: "*",
-            allowedHeaders: ["my-custom-header"], 
+            allowedHeaders: ["my-custom-header"],
         }
     });
-    
+
     io.on('connection', (socket) => {
         console.log('User connected:', socket.id);
 

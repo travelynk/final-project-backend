@@ -42,7 +42,6 @@ describe("User Service", () => {
         },
     ];
 
-    // Test getAll
     describe("getAll", () => {
         it("should return all users with their profiles", async () => {
             prisma.user.findMany.mockResolvedValue(mockUsers);
@@ -58,7 +57,6 @@ describe("User Service", () => {
         });
     });
 
-    // Test getOne
     describe("getOne", () => {
         it("should return a user with their profile", async () => {
             prisma.user.findUnique.mockResolvedValue(mockUsers[1]);
@@ -87,7 +85,6 @@ describe("User Service", () => {
         });
     });
 
-    // Test update
     describe("update", () => {
         it("should update a user's role", async () => {
             const mockUpdateUser = {

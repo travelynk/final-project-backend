@@ -66,7 +66,7 @@ export const destroy = async (code) => {
     });
 
     if (!city) throw new Error404("Kota tidak ditemukan");
-    
+
     return await prisma.city.delete({
         where: {
             code

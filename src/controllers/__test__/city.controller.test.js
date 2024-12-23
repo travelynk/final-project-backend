@@ -183,10 +183,10 @@ describe("City Controller", () => {
 
         test("should return error", async () => {
             req.params = { id: 1 };
-            req.body = { 
+            req.body = {
                 "name": "Jakartas",
                 "countryCode": "ID"
-             };
+            };
             const error = new Error("error message");
             CityValidation.updatePayload.validate.mockReturnValue({ value: req.body });
             CityService.update.mockRejectedValue(error);

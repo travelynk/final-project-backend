@@ -7,7 +7,6 @@ jest.mock('node-qr-image', () => ({
     imageSync: jest.fn(), // Mock fungsi imageSync sebagai jest.fn()
 }));
 
-
 describe('generateQrPng', () => {
 
     beforeEach(() => {

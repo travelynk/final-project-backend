@@ -3,16 +3,16 @@ import prisma from '../../configs/database.js';
 import * as terminalService from '../terminal.service.js';
 
 jest.mock('../../configs/database.js', () => ({
-    __esModule: true,
-    default: {
-        terminal: {
-            findMany: jest.fn(),
-            findUnique: jest.fn(),
-            create: jest.fn(),
-            update: jest.fn(),
-            delete: jest.fn(),
-        },
+  __esModule: true,
+  default: {
+    terminal: {
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     },
+  },
 }));
 
 describe("Terminal Service", () => {

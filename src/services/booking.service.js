@@ -3,8 +3,8 @@ import { Error400, Error403, Error404, Error409 } from "../utils/customError.js"
 import * as VoucherService from './voucher.service.js';
 import { encodeBookingCode } from "../utils/hashids.js";
 import { getIoInstance } from "../configs/websocket.js";
-import { getTotalPriceForEachPassengerInSegment , getTotalPriceForEachPassengerInSegments } from "../utils/mapping.js";
-import { formatedDate , formatedDateAndYear } from "../utils/formatTime.js";
+import { getTotalPriceForEachPassengerInSegment, getTotalPriceForEachPassengerInSegments } from "../utils/mapping.js";
+import { formatedDate, formatedDateAndYear } from "../utils/formatTime.js";
 import jwt from 'jsonwebtoken';
 
 export const getBookings = async (userId) => {
@@ -102,11 +102,11 @@ export const getBookings = async (userId) => {
     bookings.map(async (booking) => {
       const code = await encodeBookingCode(booking.id);
       let urlTicket = null;
-      if(booking.status == "Issued") {
-      const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-      urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
-    }
-      
+      if (booking.status == "Issued") {
+        const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
+        urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
+      }
+
       return {
         ...booking,
         bookingCode: code,
@@ -216,10 +216,10 @@ export const getBooking = async (userId, id) => {
   const code = await encodeBookingCode(booking.id);
   let urlTicket = null;
 
-  if(booking.status == "Issued") {
-  const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-  urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
-}
+  if (booking.status == "Issued") {
+    const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
+    urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
+  }
 
   booking.bookingCode = code;
   booking.urlTicket = urlTicket;
@@ -649,11 +649,11 @@ export const getBookingsByDate = async (userId, startDate, endDate) => {
       const code = await encodeBookingCode(booking.id);
       let urlTicket = null;
 
-      if(booking.status == "Issued") {
-      const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-      urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
-    }
-      
+      if (booking.status == "Issued") {
+        const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
+        urlTicket = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
+      }
+
       return {
         ...booking,
         bookingCode: code,
@@ -761,7 +761,7 @@ export const getTicket = async (id) => {
   const latestDepartureTime = booking.segments.reduce((latest, segment) => {
     const currentDepartureTime = new Date(segment.flight.departureTime);
     const latestDepartureTime = new Date(latest.flight.departureTime);
-  
+
     return currentDepartureTime > latestDepartureTime ? segment : latest;
   }).flight.departureTime;
 
@@ -796,7 +796,7 @@ export const updateTotalBooking = async (id, data) => {
   if (booking.status == "Issued") {
     throw new Error400('Status Booking sudah tidak bisa diubah karena sudah dilakukan pembayaran.');
   };
-  
+
   const voucher = await VoucherService.getVoucherByCode(voucherCode, totalPrice);
 
   if (!voucher) {
@@ -805,10 +805,10 @@ export const updateTotalBooking = async (id, data) => {
 
   const updatedBooking = await prisma.booking.update({
     where: { id: parseInt(id) },
-    data: { 
+    data: {
       totalPrice,
       voucherCode
-     },
+    },
   });
 
   return updatedBooking;

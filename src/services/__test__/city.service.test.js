@@ -76,7 +76,7 @@ describe('City Service', () => {
             expect(prisma.city.findUnique).toHaveBeenCalledTimes(1);
             expect(prisma.city.findUnique).toHaveBeenCalledWith({
                 where: {
-                    code:"AMQ"
+                    code: "AMQ"
                 },
                 include: {
                     airports: true

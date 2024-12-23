@@ -122,7 +122,7 @@ export const getTicket = async (req, res) => {
                 status: error.statusCode,
             },
         });
-        
+
     }
 };
 

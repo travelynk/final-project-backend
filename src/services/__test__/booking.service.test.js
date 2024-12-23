@@ -219,61 +219,6 @@ describe('Booking Service', () => {
         });
     });
 
-    //describe('getBookingsByDate', () => {
-    //     const mockUserId = 1;
-    //     const mockStartDate = '2024-01-01';
-    //     const mockEndDate = '2024-12-31';
-
-    //     it('should return bookings by date range', async () => {
-    //         // Mock booking data
-    //         const mockBookings = [
-    //             {
-    //                 id: 1,
-    //                 userId: mockUserId,
-    //                 createdAt: new Date('2024-06-15'),
-    //                 status: 'Confirmed',
-    //                 segments: [],
-    //                 payments: [],
-    //             },
-    //         ];
-
-    //         // Mock prisma.booking.findMany
-    //         prisma.booking.findMany.mockResolvedValue(mockBookings);
-
-    //         // Mock encodeBookingCode
-    //         encodeBookingCode.mockResolvedValue('BOOKING_CODE_1');
-
-    //         // Mock getTotalPriceForEachPassengerInSegments
-    //         const mockTotalPriceMapping = mockGetTotalPriceForEachPassengerInSegments(mockBookings);
-
-    //         // Call the service method
-    //         const result = await BookingService.getBookingsByDate(mockUserId, mockStartDate, mockEndDate);
-
-    //         // Verifications
-    //         expect(prisma.booking.findMany).toHaveBeenCalledWith({
-    //             where: {
-    //                 userId: mockUserId,
-    //                 createdAt: {
-    //                     gte: new Date(mockStartDate),
-    //                     lte: new Date(mockEndDate),
-    //                 },
-    //             },
-    //             include: expect.any(Object),
-    //         });
-    //         expect(encodeBookingCode).toHaveBeenCalledWith(1);
-    //         expect(result).toEqual(mockTotalPriceMapping);
-    //     });
-
-    //     it('should throw an error if no bookings are found', async () => {
-    //         // Mock empty result from prisma.booking.findMany
-    //         prisma.booking.findMany.mockResolvedValue([]);
-
-    //         await expect(BookingService.getBookingsByDate(mockUserId, mockStartDate, mockEndDate)).rejects.toThrowError(
-    //             new Error404('Mohon maaf, kami tidak dapat menemukan data booking yang sesuai dengan pencarian Anda.')
-    //         );
-    //     });
-    // });
-
     describe('getTotalPriceForEachPassengerInSegments', () => {
 
         beforeEach(() => {
@@ -466,9 +411,6 @@ describe('Booking Service', () => {
             );
         });
     });
-
-
-
 
 });
 

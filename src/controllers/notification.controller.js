@@ -3,7 +3,6 @@ import * as NotificationService from '../services/notification.service.js';
 import { notification } from '../validations/notification.validator.js';
 import { Error400, Error404 } from '../utils/customError.js';
 
-// Create a new notification
 export const createNotification = async (req, res, next) => {
     try {
         const { type, title, message } = req.body;
@@ -15,7 +14,7 @@ export const createNotification = async (req, res, next) => {
         }
 
         // Use `userId` if provided, otherwise default to the logged-in user's ID
-        const  userId = req.user?.role === 'buyer' ? req.user?.id : null;
+        const userId = req.user?.role === 'buyer' ? req.user?.id : null;
 
         // Call the service with the targetUserId (null for general notifications)
         const result = await NotificationService.createNotification(
@@ -31,12 +30,11 @@ export const createNotification = async (req, res, next) => {
     }
 };
 
-// Get all notifications for a user
 export const getNotifications = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const notifications = await NotificationService.getNotificationsByUserId(userId);
-        
+
         if (!notifications.length) {
             throw new Error404('Tidak ada notifikasi yang ditemukan untuk pengguna ini.');
         }
@@ -47,7 +45,6 @@ export const getNotifications = async (req, res, next) => {
     }
 };
 
-// Update notification read status
 export const updateNotificationReadStatus = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -60,10 +57,9 @@ export const updateNotificationReadStatus = async (req, res, next) => {
     }
 };
 
-// Update notification delete status
 export const deleteNotification = async (req, res, next) => {
     try {
-        const { id } = req.params; 
+        const { id } = req.params;
 
         const result = await NotificationService.deleteNotification(parseInt(id));
 

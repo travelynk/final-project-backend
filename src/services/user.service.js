@@ -79,6 +79,6 @@ export const destroy = async (id) => {
             deletedAt: new Date()
         }
     })
-    
+
     return;
 };

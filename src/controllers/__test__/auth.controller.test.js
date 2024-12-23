@@ -220,7 +220,7 @@ describe('Auth Controller', () => {
             req.body = { newPassword: 'new-password' };
 
             jest.spyOn(AuthValidation.resetPassword, 'validate').mockReturnValue({ error: null, value: req.body });
-            
+
             await resetPassword(req, res, next);
 
             expect(next).toHaveBeenCalledWith(new Error400('Token diperlukan'));

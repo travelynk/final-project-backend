@@ -21,7 +21,7 @@ describe("Terminal Controller", () => {
             body: {
                 "name": "Terminal 1As",
                 "airportId": "1",
-                "category" : "Internasional"
+                "category": "Internasional"
             }
         };
         res = {};

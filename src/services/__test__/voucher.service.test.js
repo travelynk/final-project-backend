@@ -324,20 +324,20 @@ describe("Voucher Service", () => {
             minPurchase: 50,
             maxVoucher: 10,
         });
-    
+
         prisma.booking.count.mockResolvedValue(0);
         prisma.booking.findFirst.mockResolvedValue(null);
-    
+
         // Menggunakan totalPrice yang lebih kecil dari nilai voucher
         const result = await VoucherService.getVoucherByCode("FIXED_OVERDISCOUNT", 100);
-    
+
         // Memastikan harga total di-update menjadi 0
         expect(result.updatedTotalPrice).toBe(0);
-    
+
         // Memastikan hasil sesuai dengan voucher
         expect(result).toMatchObject({
             code: "FIXED_OVERDISCOUNT",
         });
     });
-    
+
 });

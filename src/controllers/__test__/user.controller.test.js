@@ -17,8 +17,8 @@ describe("User Controller", () => {
         res = {};
         next = jest.fn();
         data = {
-            "id": 1, 
-            "email": "newuser@example.com", 
+            "id": 1,
+            "email": "newuser@example.com",
             "role": "buyer"
         };
     });
@@ -27,7 +27,7 @@ describe("User Controller", () => {
         jest.clearAllMocks();
     });
 
-    describe("getUsers", () => {   
+    describe("getUsers", () => {
         it("should return all users", async () => {
             UserService.getAll.mockResolvedValue([data]);
 
@@ -90,7 +90,7 @@ describe("User Controller", () => {
         it("should update the user's role if validation passes", async () => {
             req.params = { id: 1 };
             req.body = { role: 'admin' };
-            
+
             UserValidation.schemaUpdateRole.validate.mockReturnValue({ value: req.body });
             UserService.update.mockResolvedValue(data);
 
@@ -116,7 +116,7 @@ describe("User Controller", () => {
 
         it("should return error 404 if user not found", async () => {
             req.params = { id: 99 };
-            req.body= { role: "admin" };
+            req.body = { role: "admin" };
 
             UserValidation.schemaUpdateRole.validate.mockReturnValue({ error: null, value: req.body });
             UserService.update.mockRejectedValue({ code: "P2025" });

@@ -1,314 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail Tiket Pesawat - Travelynk</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1e90ff, #6a11cb);
-            margin: 0;
-            padding: 0;
-            color: #34495e;
-        }
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #1e90ff, #6a11cb);
+        margin: 0;
+        padding: 0;
+        color: #34495e;
+      }
 
+      .container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 0px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        color: #34495e;
+      }
+
+      .brand-text {
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+        font-weight: 700;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, #1e90ff, #6a11cb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin: -8px;
+        transition: transform 0.3s ease, color 0.3s ease;
+      }
+
+      .logo-img {
+        width: 60px;
+        height: auto;
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover .brand-text {
+        color: #1e90ff;
+        transform: scale(1.05);
+      }
+
+      .logo:hover .logo-img {
+        transform: scale(1.05);
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        color: #34495e;
+        margin-bottom: 20px;
+      }
+
+      .ticket {
+        border: 1px solid #e1eaf4;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background: linear-gradient(to right, #ffffff, #f8faff);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+      }
+
+      .ticket:hover {
+        transform: scale(1.03);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .ticket h2 {
+        font-size: 1.8rem;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #e1eaf4;
+        padding-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .ticket .flight-icon {
+        font-size: 1.5rem;
+        color: #1e90ff;
+      }
+
+      .ticket .kelas {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #ffffff;
+        background: linear-gradient(135deg, #1e90ff, #6a11cb);
+        padding: 5px 10px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+
+      .ticket p {
+        font-size: 1rem;
+        margin: 10px 0;
+        line-height: 1.5;
+      }
+
+      .label {
+        font-weight: 600;
+        color: #1e90ff;
+      }
+
+      .flight-details {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #34495e;
+      }
+
+      .flight-details p {
+        margin: 0;
+        font-size: 1.8rem;
+      }
+
+      .print-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        border: none;
+        border-radius: 50%;
+        width: 70px;
+        height: 70px;
+        cursor: pointer;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      .print-button:hover {
+        transform: scale(1.15);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      }
+
+      .print-button span {
+        font-size: 2rem;
+        color: #ffffff;
+        line-height: 1;
+      }
+
+      @media (max-width: 600px) {
         .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 30px;
-            background: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .logo {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 0px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            color: #34495e;
-        }
-
-        .brand-text {
-            font-size: 2.5rem;
-            letter-spacing: 2px;
-            font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #1e90ff, #6a11cb);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin: -8px;
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
-
-        .logo-img {
-            width: 60px;
-            height: auto;
-            transition: transform 0.3s ease;
-        }
-
-
-        .logo:hover .brand-text {
-            color: #1e90ff;
-            transform: scale(1.05);
-        }
-
-        .logo:hover .logo-img {
-            transform: scale(1.05);
+          padding: 20px;
+          margin: 15px;
         }
 
         h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            color: #34495e;
-            margin-bottom: 20px;
-        }
-
-        .ticket {
-            border: 1px solid #e1eaf4;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #ffffff, #f8faff);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-        }
-
-        .ticket:hover {
-            transform: scale(1.03);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+          font-size: 1.8rem;
         }
 
         .ticket h2 {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #e1eaf4;
-            padding-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ticket .flight-icon {
-            font-size: 1.5rem;
-            color: #1e90ff;
-        }
-
-        .ticket .kelas {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #ffffff;
-            background: linear-gradient(135deg, #1e90ff, #6a11cb);
-            padding: 5px 10px;
-            border-radius: 10px;
-            margin-bottom: 15px;
+          font-size: 1.5rem;
         }
 
         .ticket p {
-            font-size: 1rem;
-            margin: 10px 0;
-            line-height: 1.5;
-        }
-
-        .label {
-            font-weight: 600;
-            color: #1e90ff;
-        }
-
-        .flight-details {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 0;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #34495e;
-        }
-
-        .flight-details p {
-            margin: 0;
-            font-size: 1.8rem;
+          font-size: 0.9rem;
         }
 
         .print-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            border: none;
-            border-radius: 50%;
-            width: 70px;
-            height: 70px;
-            cursor: pointer;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
+          width: 60px;
+          height: 60px;
+        }
+      }
+
+      @media print {
+        body {
+          background: #ffffff;
+          color: #000;
         }
 
-        .print-button:hover {
-            transform: scale(1.15);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        .container {
+          box-shadow: none;
+          margin: 0;
+          padding: 0;
+          max-width: 100%;
         }
 
-        .print-button span {
-            font-size: 2rem;
-            color: #ffffff;
-            line-height: 1;
+        h1 {
+          font-size: 2rem;
+          color: #000;
         }
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-                margin: 15px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .ticket h2 {
-                font-size: 1.5rem;
-            }
-
-            .ticket p {
-                font-size: 0.9rem;
-            }
-
-            .print-button {
-                width: 60px;
-                height: 60px;
-            }
+        .ticket {
+          border: 1px solid #000;
+          background: #ffffff;
+          box-shadow: none;
+          page-break-inside: avoid;
         }
 
-        @media print {
-            body {
-                background: #ffffff;
-                color: #000;
-            }
-
-            .container {
-                box-shadow: none;
-                margin: 0;
-                padding: 0;
-                max-width: 100%;
-            }
-
-            h1 {
-                font-size: 2rem;
-                color: #000;
-            }
-
-            .ticket {
-                border: 1px solid #000;
-                background: #ffffff;
-                box-shadow: none;
-                page-break-inside: avoid;
-            }
-
-
-            .flight-details {
-                border-top: 1px dashed #000;
-            }
-
-            .ticket:hover {
-                transform: none;
-                box-shadow: none;
-            }
-
-            .print-button {
-                display: none;
-            }
-
-            .logo {
-                display: none;
-            }
+        .flight-details {
+          border-top: 1px dashed #000;
         }
+
+        .ticket:hover {
+          transform: none;
+          box-shadow: none;
+        }
+
+        .print-button {
+          display: none;
+        }
+
+        .logo {
+          display: none;
+        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <div class="logo">
-            <span class="brand-text">Tr</span>
-            <img src="https://ik.imagekit.io/9kbraeia1/logo_travevlynk-removebg-preview.png?updatedAt=1734802867138"
-                alt="Travelynk Logo" class="logo-img">
-            <span class="brand-text">velynk</span>
+      <div class="logo">
+        <span class="brand-text">Tr</span>
+        <img
+          src="https://ik.imagekit.io/9kbraeia1/logo_travevlynk-removebg-preview.png?updatedAt=1734802867138"
+          alt="Travelynk Logo"
+          class="logo-img"
+        />
+        <span class="brand-text">velynk</span>
+      </div>
+      <h1>Detail Tiket Anda</h1>
+
+      <% data.segments.forEach((segment, index)=> { %>
+      <div class="ticket">
+        <h2>
+          <span class="flight-icon"
+            >&#9992; <%= segment.flight.airline.name %></span
+          >
+          <span class="kelas"> <%= segment.flight.seatClass %> </span>
+        </h2>
+        <p>
+          <span class="label">Nama Penumpang:</span>
+          <%= segment.passenger.fullName %>
+        </p>
+        <p>
+          <span class="label">Nomor Tiket:</span>
+          <%= data.bookingCode %>
+        </p>
+        <p>
+          <span class="label">Penerbangan:</span>
+          <%= segment.flight.departureTerminal.airport.name %> (<%=
+          segment.flight.departureTerminal.airport.code %>) - <%=
+          segment.flight.arrivalTerminal.airport.name %> (<%=
+          segment.flight.arrivalTerminal.airport.code %>)
+        </p>
+        <p>
+          <span class="label">Tanggal:</span>
+          <%= new Date(segment.flight.departureTime).toLocaleDateString('en-GB',
+          { year: 'numeric' , month: 'long' , day: 'numeric' , timeZone: 'UTC'
+          }) %>
+        </p>
+        <p>
+          <span class="label">Jam Berangkat:</span>
+          <%= new Date(segment.flight.departureTime).toLocaleTimeString('en-GB',
+          { hour: '2-digit' , minute: '2-digit' , timeZone: 'UTC' }) %>
+        </p>
+        <p>
+          <span class="label">Nomor Kursi:</span>
+          <%= segment.flightSeat.position %>
+        </p>
+        <p>
+          <span class="label">Terminal:</span>
+          <%= segment.flight.departureTerminal.name %>
+        </p>
+
+        <div class="flight-details">
+          <p>
+            <%= segment.flight.departureTerminal.airport.code %> ---- &#9992;
+            ---- <%= segment.flight.arrivalTerminal.airport.code %>
+          </p>
         </div>
-        <h1>Detail Tiket Anda</h1>
+      </div>
+      <% }); %>
 
-        <% data.segments.forEach((segment, index)=> { %>
-            <div class="ticket">
-                <h2>
-                    <span class="flight-icon">&#9992; <%= segment.flight.airline.name %></span>
-                    <span class="kelas">
-                        <%= segment.flight.seatClass %>
-                    </span>
-                </h2>
-                <p><span class="label">Nama Penumpang:</span>
-                    <%= segment.passenger.fullName %>
-                </p>
-                <p><span class="label">Nomor Tiket:</span>
-                    <%= data.bookingCode %>
-                </p>
-                <p><span class="label">Penerbangan:</span>
-                    <%= segment.flight.departureTerminal.airport.name %> (<%=
-                            segment.flight.departureTerminal.airport.code %>) -
-                            <%= segment.flight.arrivalTerminal.airport.name %> (<%=
-                                    segment.flight.arrivalTerminal.airport.code %>)
-                </p>
-                <p><span class="label">Tanggal:</span>
-                    <%= new Date(segment.flight.departureTime).toLocaleDateString('en-GB', { year: 'numeric' ,
-                        month: 'long' , day: 'numeric' , timeZone: 'UTC' }) %>
-                </p>
-                <p><span class="label">Jam Berangkat:</span>
-                    <%= new Date(segment.flight.departureTime).toLocaleTimeString('en-GB', { hour: '2-digit' ,
-                        minute: '2-digit' , timeZone: 'UTC' }) %>
-                </p>
-                <p><span class="label">Nomor Kursi:</span>
-                    <%= segment.flightSeat.position %>
-                </p>
-                <p><span class="label">Terminal:</span>
-                    <%= segment.flight.departureTerminal.name %>
-                </p>
-
-                <div class="flight-details">
-                    <p>
-                        <%= segment.flight.departureTerminal.airport.code %> ---- &#9992; ---- <%=
-                                segment.flight.arrivalTerminal.airport.code %>
-                    </p>
-                </div>
-            </div>
-            <% }); %>
-
-                <button class="print-button" onclick="printPage()">
-                    <span>🖨️</span>
-                </button>
+      <button class="print-button" onclick="printPage()">
+        <span>🖨️</span>
+      </button>
     </div>
 
     <script>
-        function printPage() {
-            window.print();
-        }
+      function printPage() {
+        window.print();
+      }
 
-        window.onload = function() {
-            printPage();
-            window.onafterprint = function() {
-                window.history.back();
-            };
+      window.onload = function () {
+        printPage();
+        window.onafterprint = function () {
+          window.history.back();
         };
+      };
     </script>
-</body>
-
+  </body>
 </html>

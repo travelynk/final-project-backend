@@ -5,7 +5,7 @@ import { Error404 } from "../utils/customError.js";
 export const createNotification = async (userId, type, title, message) => {
     const notification = await prisma.notification.create({
         data: {
-            userId: userId || null,  
+            userId: userId || null,
             type,
             title,
             message,
@@ -25,8 +25,8 @@ export const getNotificationsByUserId = async (userId) => {
                 { isDeleted: false },
                 {
                     OR: [
-                        { userId }, 
-                        { userId: null }     
+                        { userId },
+                        { userId: null }
                     ]
                 }
             ]
@@ -45,7 +45,7 @@ export const updateNotificationReadStatus = async (notificationId) => {
     if (!existingNotification) {
         throw new Error404('Notifikasi tidak ditemukan.');
     }
-    
+
     const notification = await prisma.notification.update({
         where: { id: notificationId },
         data: { isRead: true },
@@ -59,11 +59,11 @@ export const deleteNotification = async (notificationId) => {
     const existingNotification = await prisma.notification.findUnique({
         where: { id: notificationId },
     });
-    
+
     if (!existingNotification) {
         throw new Error404('Notifikasi tidak ditemukan.');
     }
-    
+
     let notification;
 
     notification = await prisma.notification.update({
@@ -71,6 +71,6 @@ export const deleteNotification = async (notificationId) => {
         data: { isDeleted: true },
     });
 
-    
+
     return { notification, message: 'Notifikasi berhasil dihapus.' };
 };

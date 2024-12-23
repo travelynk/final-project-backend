@@ -6,7 +6,7 @@ import { Error400, Error404 } from '../utils/customError.js';
 export const getUsers = async (req, res, next) => {
     try {
         const users = await UserService.getAll();
-        
+
         res200('Berhasil mengambil semua data user', users, res);
     } catch (error) {
         next(error);

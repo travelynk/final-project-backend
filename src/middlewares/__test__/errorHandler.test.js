@@ -113,7 +113,7 @@ describe('Error Handler Middleware', () => {
             expect(console.log).toHaveBeenCalledTimes(1);
 
             expect(console.log).toHaveBeenCalledWith(err.message);
-            
+
         });
 
     });

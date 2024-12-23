@@ -83,7 +83,7 @@ describe("Auth Service", () => {
             const result = await login(mockData);
 
             expect(prisma.user.findUnique).toHaveBeenCalledWith({
-                where: { 
+                where: {
                     email: mockData.email,
                     deletedAt: null,
                 },
@@ -316,11 +316,11 @@ describe("Auth Service", () => {
 
             const result = await sendResetPasswordEmail("test@example.com");
 
-            expect(prisma.user.findUnique).toHaveBeenCalledWith({ 
-                where: { 
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({
+                where: {
                     email: "test@example.com",
                     deletedAt: null
-                } 
+                }
             });
             expect(jwt.sign).toHaveBeenCalledWith({ email: "test@example.com" }, process.env.JWT_SECRET_FORGET, { expiresIn: "1h" });
             expect(sendMailMock).toHaveBeenCalledWith(expect.objectContaining({
@@ -358,7 +358,7 @@ describe("Auth Service", () => {
             verified: false,
             profile: { fullName: "Test User", role: "buyer" },
         };
-    
+
         const mockUser = {
             id: 1,
             email: "test@example.com",
@@ -381,12 +381,12 @@ describe("Auth Service", () => {
             expect(oauth2Client.getToken).toHaveBeenCalledWith("mock-code");
             expect(oauth2Client.setCredentials).toHaveBeenCalledWith({ access_token: "mock-access-token" });
             expect(prisma.user.findUnique).toHaveBeenCalledWith({
-                 where: { 
+                where: {
                     email: "test@example.com",
                     deletedAt: null,
                 },
-                 include: { profile: true },
-                });
+                include: { profile: true },
+            });
             expect(prisma.user.create).toHaveBeenCalled();
             expect(result).toEqual({
                 token: mockToken,
@@ -402,8 +402,8 @@ describe("Auth Service", () => {
 
             const result = await googleOauthCallback("mock-code");
 
-            expect(prisma.user.findUnique).toHaveBeenCalledWith({ 
-                where: { 
+            expect(prisma.user.findUnique).toHaveBeenCalledWith({
+                where: {
                     email: "test@example.com",
                     deletedAt: null,
                 },
@@ -422,11 +422,11 @@ describe("Auth Service", () => {
             prisma.user.findUnique.mockResolvedValue(mockUnverifiedUser);
             prisma.user.update.mockResolvedValue({ ...mockUnverifiedUser, verified: true });
             jest.spyOn(jwt, 'sign').mockReturnValue(mockToken);
-    
+
             const result = await googleOauthCallback("mock-code");
-    
+
             expect(prisma.user.update).toHaveBeenCalledWith({
-                where: { 
+                where: {
                     email: "test@example.com"
                 },
                 data: { verified: true },

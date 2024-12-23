@@ -9,5 +9,4 @@ export default (router) => {
     router.get(prefix + '/:transactionId', paymentController.checkPaymentStatus);
     router.post(prefix + '/gopay', paymentController.createGoPayPayment);
     router.post(prefix + '/credit-card', paymentController.createCreditCardPayment);
-
 };

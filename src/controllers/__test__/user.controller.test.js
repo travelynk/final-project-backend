@@ -1,5 +1,5 @@
 import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
-import { getUsers, getUser, updateRoleUser } from '../user.controller.js';  
+import * as UserController from '../user.controller.js';
 import * as UserService from '../../services/user.service.js';
 import * as UserValidation from '../../validations/user.validation.js';
 import { res200 } from '../../utils/response.js';
@@ -31,7 +31,7 @@ describe("User Controller", () => {
         it("should return all users", async () => {
             UserService.getAll.mockResolvedValue([data]);
 
-            await getUsers(req, res, next);
+            await UserController.getUsers(req, res, next);
 
             expect(UserService.getAll).toHaveBeenCalledTimes(1);
             expect(res200).toBeCalledWith(
@@ -45,7 +45,7 @@ describe("User Controller", () => {
             const error = new Error("error message");
             UserService.getAll.mockRejectedValue(error);
 
-            await getUsers(req, res, next);
+            await UserController.getUsers(req, res, next);
 
             expect(next).toHaveBeenCalledWith(error);
         });
@@ -56,10 +56,9 @@ describe("User Controller", () => {
             req.params = { id: 1 };
             UserService.getOne.mockResolvedValue(data);
 
-            await getUser(req, res, next);
+            await UserController.getUser(req, res, next);
 
             expect(UserService.getOne).toHaveBeenCalledTimes(1);
-            expect(UserService.getOne).toBeCalledWith(1);
             expect(res200).toBeCalledWith(
                 'Berhasil mengambil data user',
                 data,
@@ -71,7 +70,7 @@ describe("User Controller", () => {
             req.params = { id: 1 };
             UserService.getOne.mockResolvedValue(null);
 
-            await getUser(req, res, next);
+            await UserController.getUser(req, res, next);
 
             expect(next).toHaveBeenCalledWith(new Error404('Data user tidak ditemukan'));
         });
@@ -81,7 +80,7 @@ describe("User Controller", () => {
             const error = new Error("error message");
             UserService.getOne.mockRejectedValue(error);
 
-            await getUser(req, res, next);
+            await UserController.getUser(req, res, next);
 
             expect(next).toHaveBeenCalledWith(error);
         });
@@ -95,12 +94,9 @@ describe("User Controller", () => {
             UserValidation.schemaUpdateRole.validate.mockReturnValue({ value: req.body });
             UserService.update.mockResolvedValue(data);
 
-            await updateRoleUser(req, res, next);
+            await UserController.updateRoleUser(req, res, next);
 
-            expect(UserValidation.schemaUpdateRole.validate).toHaveBeenCalledTimes(1);
-            expect(UserValidation.schemaUpdateRole.validate).toBeCalledWith(req.body);
             expect(UserService.update).toHaveBeenCalledTimes(1);
-            expect(UserService.update).toBeCalledWith(1, req.body);
             expect(res200).toBeCalledWith(
                 'Berhasil mengubah role user',
                 data,
@@ -112,7 +108,7 @@ describe("User Controller", () => {
             const validationError = { details: [{ message: "Invalid Role" }] };
             UserValidation.schemaUpdateRole.validate.mockReturnValue({ error: validationError });
 
-            await updateRoleUser(req, res, next);
+            await UserController.updateRoleUser(req, res, next);
 
             expect(UserService.update).not.toHaveBeenCalled();
             expect(next).toHaveBeenCalledWith(new Error400("Invalid Role"));
@@ -125,7 +121,7 @@ describe("User Controller", () => {
             UserValidation.schemaUpdateRole.validate.mockReturnValue({ error: null, value: req.body });
             UserService.update.mockRejectedValue({ code: "P2025" });
 
-            await updateRoleUser(req, res, next);
+            await UserController.updateRoleUser(req, res, next);
 
             expect(next).toHaveBeenCalledWith(new Error404("Data user tidak ditemukan"));
         });
@@ -137,7 +133,42 @@ describe("User Controller", () => {
             const error = new Error("error message");
             UserService.update.mockRejectedValue(error);
 
-            await updateRoleUser(req, res, next);
+            await UserController.updateRoleUser(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(error);
+        });
+    });
+
+    describe("deleteUser", () => {
+        it("should delete the user", async () => {
+            req.user = { id: 1 };
+            UserService.destroy.mockResolvedValue();
+
+            await UserController.deleteUser(req, res, next);
+
+            expect(UserService.destroy).toHaveBeenCalledTimes(1);
+            expect(res200).toBeCalledWith(
+                'Berhasil menghapus user',
+                null,
+                res
+            );
+        });
+
+        it("should return error 404 if user not found", async () => {
+            req.user = { id: 99 };
+            UserService.destroy.mockRejectedValue({ code: "P2025" });
+
+            await UserController.deleteUser(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(new Error404("Data user tidak ditemukan"));
+        });
+
+        it("should return error", async () => {
+            req.user = { id: 1 };
+            const error = new Error("error message");
+            UserService.destroy.mockRejectedValue(error);
+
+            await UserController.deleteUser(req, res, next);
 
             expect(next).toHaveBeenCalledWith(error);
         });

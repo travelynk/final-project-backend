@@ -91,8 +91,8 @@ export const querySchema = joi.object({
                 return helpers.message('Jadwal tidak valid!');
             }
 
-            if (dateObjects.some((date) => date < today || isNaN(date))) {
-                return helpers.message('Semua tanggal harus lebih besar dari hari ini!');
+            if (dateObjects.some((date) => date <= today || isNaN(date))) {
+                return helpers.message('Tanggal harus lebih besar dari hari ini!');
             }
 
             if (schedule.length === 2) {

@@ -1,11 +1,7 @@
 import { coreApi, snap } from "../configs/midtransClient.js";
 import prisma from "../configs/database.js";
 import { createNotification } from "../services/notification.service.js";
-import { vaNumberPaymentEmail } from "../views/send.email.payment.js";
-import { gopayPaymentEmail } from "../views/send.email.payment.js";
-import { cardPaymentEmail } from "../views/send.email.payment.js";
-import { cancelPaymentEmail } from "../views/send.email.payment.js";
-import { paymentStatusEmail } from "../views/send.email.payment.js";
+import * as FormatEmail from "../utils/formatPaymentEmail.js";
 import { sendPaymentEmail } from '../utils/sendPaymentEmail.js';
 import { generateQrCode } from '../utils/generateQrcode.js';
 
@@ -40,14 +36,12 @@ export const createDebitPayment = async (bookingId, bank) => {
 
     const chargeResponse = await coreApi.charge(paymentData);
 
-    //const virtualAccount = chargeResponse.va_numbers[0]?.va_number || "N/A"; // Ambil VA Number dari response
     const expiredDate = chargeResponse.transaction_time ?
         new Date(new Date(chargeResponse.transaction_time).getTime() + 24 * 60 * 60 * 1000).toLocaleString() :
         "N/A"; // Tambahkan expired date (24 jam setelah transaksi dibuat)
 
     // Generate QR Code setelah pembayaran sukses
     const qrCodeUrl = await generateQrCode(bookingId);
-
 
     await prisma.payment.create({
         data: {
@@ -65,7 +59,7 @@ export const createDebitPayment = async (bookingId, bank) => {
     await sendPaymentEmail(
         booking.user.email,
         "Menunggu Pembayaran",
-        vaNumberPaymentEmail(bank, booking.totalPrice, chargeResponse.order_id, chargeResponse.va_numbers[0]?.va_number || "N/A", expiredDate, qrCodeUrl)
+        FormatEmail.vaNumberPaymentEmail(bank, booking.totalPrice, chargeResponse.order_id, chargeResponse.va_numbers[0]?.va_number || "N/A", expiredDate, qrCodeUrl)
     );
 
     // Tambahkan notifikasi menggunakan createNotification dari notification.service.js
@@ -109,7 +103,7 @@ export const cancelPayment = async (transactionId) => {
     await sendPaymentEmail(
         currentPayment.booking.user.email,
         "Pembayaran Dibatalkan",
-        cancelPaymentEmail(transactionId)
+        FormatEmail.cancelPaymentEmail(transactionId)
     );
 
     const message = `Pembayaran untuk pemesanan dengan nomor transaksi ${transactionId} telah dibatalkan.`;
@@ -136,7 +130,6 @@ export const checkPaymentStatus = async (transactionId) => {
     if (transactionStatus.transaction_status === "pending") {
         statusFormatted = "Pending";
         message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} sedang menunggu pembayaran.`;
-
     } else if (["settlement", "capture"].includes(transactionStatus.transaction_status)) {
         statusFormatted = "Settlement";
         message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} telah berhasil.`;
@@ -147,7 +140,7 @@ export const checkPaymentStatus = async (transactionId) => {
             data: { status: "Issued" },
         });
         await createNotification(currentPayment.booking.userId, "Payment", "Status Pembayaran Diperbarui", message);
-    } else if (["cancel", "expire"].includes(transactionStatus.transaction_status)) {
+    } else if (transactionStatus.transaction_status === "cancel") {
         statusFormatted = "Cancelled";
         message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} dibatalkan.`;
 
@@ -172,7 +165,7 @@ export const checkPaymentStatus = async (transactionId) => {
     await sendPaymentEmail(
         currentPayment.booking.user.email,
         "Status Pembayaran Diperbarui",
-        paymentStatusEmail(transactionId, statusFormatted)
+        FormatEmail.paymentStatusEmail(transactionId, statusFormatted)
     );
 
     return transactionStatus;
@@ -244,7 +237,7 @@ export const createGoPayPayment = async (bookingId) => {
     await sendPaymentEmail(
         booking.user.email,
         "Menunggu Pembayaran GoPay",
-        gopayPaymentEmail(booking.totalPrice, chargeResponse.order_id, expiredDate, gopayDeepLink, gopayQrCodeUrl, infoQrCodeUrl)
+        FormatEmail.gopayPaymentEmail(booking.totalPrice, chargeResponse.order_id, expiredDate, gopayDeepLink, gopayQrCodeUrl, infoQrCodeUrl)
     );
 
     const message = `Pembayaran Anda untuk pemesanan dengan reference number ${chargeResponse.order_id} telah diterima dan menunggu konfirmasi. Silakan lakukan pembayaran melalui GoPay sebelum ${expiredDate}.`;
@@ -317,19 +310,21 @@ export const createCardPayment = async (bookingId, cardToken) => {
     }
 
     // // Kirim email setelah pembayaran berhasil dibuat
+    const emailContent = FormatEmail.cardPaymentEmail(
+        booking.totalPrice,
+        chargeResponse.order_id,
+        chargeResponse.transaction_status,
+        qrCodeUrl
+    );
+
     await sendPaymentEmail(
         booking.user.email,
         "Pembayaran Kartu Kredit Berhasil Dibuat",
-        cardPaymentEmail(
-            booking.totalPrice,
-            chargeResponse.order_id,
-            chargeResponse.transaction_status,
-            qrCodeUrl
-        )
+        emailContent
     );
 
     const message = `Pembayaran Anda untuk pemesanan dengan nomor booking ${bookingId} telah berhasil.`;
     await createNotification(booking.userId, "Payment", "Pembayaran Berhasil", message);
-    
+
     return chargeResponse;
 };

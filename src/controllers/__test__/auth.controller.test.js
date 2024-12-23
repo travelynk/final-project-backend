@@ -47,14 +47,14 @@ describe('Auth Controller', () => {
             );
         });
 
-        it('should return 400 for validation error', async () => {
+        it('should throw 400 for validation error', async () => {
             jest.spyOn(AuthValidation.login, 'validate').mockReturnValue({
                 error: { details: [{ message: 'Validation error' }] },
             });
 
             await login(req, res, next);
 
-            expect(response.res400).toHaveBeenCalledWith('Validation error', res);
+            expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
 
         it('should return 401 for invalid email or password', async () => {
@@ -216,22 +216,25 @@ describe('Auth Controller', () => {
             expect(response.res200).toHaveBeenCalledWith('Password reset successful', null, res);
         });
 
-        it('should return 400 for missing token', async () => {
+        it('should throw 400 for missing token', async () => {
             req.body = { newPassword: 'new-password' };
 
-            await resetPassword(req, res);
+            jest.spyOn(AuthValidation.resetPassword, 'validate').mockReturnValue({ error: null, value: req.body });
+            
+            await resetPassword(req, res, next);
 
-            expect(response.res400).toHaveBeenCalledWith('Token diperlukan', res);
+            expect(next).toHaveBeenCalledWith(new Error400('Token diperlukan'));
+
         });
 
-        it('should return 400 for validation error', async () => {
+        it('should throw 400 for validation error', async () => {
             jest.spyOn(AuthValidation.resetPassword, 'validate').mockReturnValue({
                 error: { details: [{ message: 'Validation error' }] },
             });
 
-            await resetPassword(req, res);
+            await resetPassword(req, res, next);
 
-            expect(response.res400).toHaveBeenCalledWith('Validation error', res);
+            expect(next).toHaveBeenCalledWith(new Error400('Validation error'));
         });
 
         it('should return 500 for internal server error', async () => {

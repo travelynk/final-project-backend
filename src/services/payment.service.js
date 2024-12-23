@@ -140,6 +140,13 @@ export const checkPaymentStatus = async (transactionId) => {
             data: { status: "Issued" },
         });
         await createNotification(currentPayment.booking.userId, "Payment", "Status Pembayaran Diperbarui", message);
+
+        // Kirim email dengan status pembayaran
+        await sendPaymentEmail(
+            currentPayment.booking.user.email,
+            "Status Pembayaran Diperbarui",
+            FormatEmail.paymentStatusEmail(transactionId, statusFormatted)
+        );
     } else if (transactionStatus.transaction_status === "cancel") {
         statusFormatted = "Cancelled";
         message = `Pembayaran Anda untuk pemesanan dengan nomor transaksi ${transactionId} dibatalkan.`;
@@ -160,13 +167,6 @@ export const checkPaymentStatus = async (transactionId) => {
         where: { transactionId },
         data: { status: statusFormatted },
     });
-
-    // Kirim email dengan status pembayaran
-    await sendPaymentEmail(
-        currentPayment.booking.user.email,
-        "Status Pembayaran Diperbarui",
-        FormatEmail.paymentStatusEmail(transactionId, statusFormatted)
-    );
 
     return transactionStatus;
 };

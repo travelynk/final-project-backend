@@ -255,7 +255,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"fulan@gmail.com\",\r\n    \"password\": \"password123\"\r\n}",
+							"raw": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"password123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -281,7 +281,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\": \"fulan@gmail.com\",\r\n    \"password\": \"password123\"\r\n}",
+									"raw": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"password123\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -308,20 +308,24 @@
 									"value": "Express"
 								},
 								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
 									"key": "Content-Type",
 									"value": "application/json; charset=utf-8"
 								},
 								{
 									"key": "Content-Length",
-									"value": "276"
+									"value": "292"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"114-xitmQMUG6OJC2gsqY0sDX/WdBHY\""
+									"value": "W/\"124-giVzYLYAr7WbV4KRZik+9nrWfnA\""
 								},
 								{
 									"key": "Date",
-									"value": "Tue, 03 Dec 2024 02:48:58 GMT"
+									"value": "Fri, 20 Dec 2024 03:37:51 GMT"
 								},
 								{
 									"key": "Connection",
@@ -333,7 +337,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Login Success\"\n    },\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImJ1eWVyIiwiaWF0IjoxNzMzMTk0MTM4LCJleHAiOjE3MzMyODA1Mzh9.5VHaFFTciV_4L_2PsT_or836iuw7jKgDqH-5QYuVDJk\",\n        \"user\": {\n            \"email\": \"fulan@gmail.com\",\n            \"role\": \"buyer\"\n        }\n    }\n}"
+							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Login berhasil\"\n    },\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzM0NjY1ODcxLCJleHAiOjE3MzQ3NTIyNzF9.ufwdCyCEawqjtmrT4PdjKhSjGesvF6zPUj2VHgUNah4\",\n        \"user\": {\n            \"email\": \"admin@gmail.com\",\n            \"role\": \"admin\",\n            \"name\": \"Admin\"\n        }\n    }\n}"
 						},
 						{
 							"name": "400",
@@ -2155,6 +2159,107 @@
 					]
 				},
 				{
+					"name": "Get Favorite Destination",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/flights/destination/favorites",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"flights",
+								"destination",
+								"favorites"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/flights/destination/favorites",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"flights",
+										"destination",
+										"favorites"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "4931"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1343-QSycXue5NL+QD3fCKSd8SwGGskU\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 21 Dec 2024 07:25:44 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Berhasil mengambil data penerbangan favorit\"\n    },\n    \"data\": [\n        {\n            \"city\": \"Denpasar - Bali\",\n            \"country\": \"Indonesia\",\n            \"region\": \"Asia\",\n            \"totalVisited\": 34,\n            \"flights\": [\n                {\n                    \"id\": 27,\n                    \"airline\": {\n                        \"name\": \"AirAsia Indonesia\",\n                        \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                    },\n                    \"departure\": {\n                        \"city\": {\n                            \"code\": \"SUB\",\n                            \"name\": \"Surabaya\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-21 15:00\"\n                    },\n                    \"arrival\": {\n                        \"city\": {\n                            \"code\": \"DPS\",\n                            \"name\": \"Denpasar - Bali\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-21 16:00\"\n                    },\n                    \"seatClass\": \"Economy\",\n                    \"facility\": \"Wifi\",\n                    \"price\": 900000\n                },\n                {\n                    \"id\": 39,\n                    \"airline\": {\n                        \"name\": \"Garuda Indonesia\",\n                        \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                    },\n                    \"departure\": {\n                        \"city\": {\n                            \"code\": \"JKT\",\n                            \"name\": \"Jakarta\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-22 13:45\"\n                    },\n                    \"arrival\": {\n                        \"city\": {\n                            \"code\": \"DPS\",\n                            \"name\": \"Denpasar - Bali\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-22 16:45\"\n                    },\n                    \"seatClass\": \"Economy\",\n                    \"facility\": \"Wifi\",\n                    \"price\": 950000\n                },\n                {\n                    \"id\": 76,\n                    \"airline\": {\n                        \"name\": \"AirAsia Indonesia\",\n                        \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                    },\n                    \"departure\": {\n                        \"city\": {\n                            \"code\": \"JOG\",\n                            \"name\": \"Yogyakarta-Java Island\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-27 18:00\"\n                    },\n                    \"arrival\": {\n                        \"city\": {\n                            \"code\": \"DPS\",\n                            \"name\": \"Denpasar - Bali\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-27 19:30\"\n                    },\n                    \"seatClass\": \"Economy\",\n                    \"facility\": \"Snack\",\n                    \"price\": 1500000\n                }\n            ]\n        },\n        {\n            \"city\": \"Yogyakarta-Java Island\",\n            \"country\": \"Indonesia\",\n            \"region\": \"Asia\",\n            \"totalVisited\": 24,\n            \"flights\": [\n                {\n                    \"id\": 98,\n                    \"airline\": {\n                        \"name\": \"AirAsia Indonesia\",\n                        \"image\": \"https://images.flightroutes.com/airlines/100/QZ_100px.png\"\n                    },\n                    \"departure\": {\n                        \"city\": {\n                            \"code\": \"JKT\",\n                            \"name\": \"Jakarta\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-30 13:30\"\n                    },\n                    \"arrival\": {\n                        \"city\": {\n                            \"code\": \"JOG\",\n                            \"name\": \"Yogyakarta-Java Island\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-30 15:00\"\n                    },\n                    \"seatClass\": \"Economy\",\n                    \"facility\": \"Snack\",\n                    \"price\": 800000\n                },\n                {\n                    \"id\": 77,\n                    \"airline\": {\n                        \"name\": \"Garuda Indonesia\",\n                        \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                    },\n                    \"departure\": {\n                        \"city\": {\n                            \"code\": \"SUB\",\n                            \"name\": \"Surabaya\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-27 16:00\"\n                    },\n                    \"arrival\": {\n                        \"city\": {\n                            \"code\": \"JOG\",\n                            \"name\": \"Yogyakarta-Java Island\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-27 16:45\"\n                    },\n                    \"seatClass\": \"Economy\",\n                    \"facility\": \"Wifi\",\n                    \"price\": 1250000\n                }\n            ]\n        },\n        {\n            \"city\": \"Surabaya\",\n            \"country\": \"Indonesia\",\n            \"region\": \"Asia\",\n            \"totalVisited\": 23,\n            \"flights\": [\n                {\n                    \"id\": 46,\n                    \"airline\": {\n                        \"name\": \"Lion Air\",\n                        \"image\": \"https://images.flightroutes.com/airlines/100/JT_100px.png\"\n                    },\n                    \"departure\": {\n                        \"city\": {\n                            \"code\": \"JKT\",\n                            \"name\": \"Jakarta\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-23 14:00\"\n                    },\n                    \"arrival\": {\n                        \"city\": {\n                            \"code\": \"SUB\",\n                            \"name\": \"Surabaya\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-23 15:00\"\n                    },\n                    \"seatClass\": \"Economy\",\n                    \"facility\": \"Snack\",\n                    \"price\": 700000\n                }\n            ]\n        },\n        {\n            \"city\": \"Jakarta\",\n            \"country\": \"Indonesia\",\n            \"region\": \"Asia\",\n            \"totalVisited\": 13,\n            \"flights\": [\n                {\n                    \"id\": 40,\n                    \"airline\": {\n                        \"name\": \"Garuda Indonesia\",\n                        \"image\": \"https://images.flightroutes.com/airlines/100/GA_100px.png\"\n                    },\n                    \"departure\": {\n                        \"city\": {\n                            \"code\": \"DPS\",\n                            \"name\": \"Denpasar - Bali\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-22 15:30\"\n                    },\n                    \"arrival\": {\n                        \"city\": {\n                            \"code\": \"JKT\",\n                            \"name\": \"Jakarta\",\n                            \"image\": \"https://ik.imagekit.io/travelynk/Destination/destination.webp?updatedAt=1734751254710\"\n                        },\n                        \"country\": {\n                            \"country\": \"Indonesia\",\n                            \"region\": \"Asia\"\n                        },\n                        \"schedule\": \"2024-12-22 17:10\"\n                    },\n                    \"seatClass\": \"Economy\",\n                    \"facility\": \"Snack\",\n                    \"price\": 2000000\n                }\n            ]\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
 					"name": "Get Flight",
 					"request": {
 						"auth": {
@@ -2742,13 +2847,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/bookings/26",
+							"raw": "{{host}}/bookings/24",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"bookings",
-								"26"
+								"24"
 							]
 						}
 					},
@@ -2925,6 +3030,111 @@
 							"header": [],
 							"cookie": [],
 							"body": "{\r\n    \"status\": {\r\n        \"code\": 200,\r\n        \"message\": \"Berhasil\"\r\n    },\r\n    \"data\": {\r\n        \"id\": 81,\r\n        \"userId\": 1,\r\n        \"roundTrip\": true,\r\n        \"totalPrice\": 1335,\r\n        \"tax\": 11,\r\n        \"voucherCode\": null,\r\n        \"urlQrcode\": null,\r\n        \"isScan\": false,\r\n        \"status\": \"Issued\",\r\n        \"createdAt\": \"2024-12-09T04:54:09.416Z\",\r\n        \"updatedAt\": \"2024-12-09T04:55:39.220Z\",\r\n        \"bookingCode\": \"kRwq6lMZ2\"\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Total Price",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"vouherCode\": \"ORAA123\",\r\n    \"totalPrice\": 150000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/bookings/total/157",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"bookings",
+								"total",
+								"157"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"vouherCode\": \"ORAA123\",\r\n    \"totalPrice\": 150000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/bookings/total/157",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"bookings",
+										"total",
+										"157"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "270"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"10e-NA8Z4G/GBzxanQbqV+ud5GIelfM\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 20 Dec 2024 03:36:06 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Berhasil\"\n    },\n    \"data\": {\n        \"id\": 157,\n        \"userId\": 3,\n        \"roundTrip\": false,\n        \"totalPrice\": 150000,\n        \"tax\": 11,\n        \"voucherCode\": null,\n        \"urlQrcode\": null,\n        \"isScan\": false,\n        \"status\": \"Cancelled\",\n        \"createdAt\": \"2024-12-20T02:46:46.706Z\",\n        \"updatedAt\": \"2024-12-20T03:36:06.724Z\"\n    }\n}"
 						}
 					]
 				}
@@ -7404,6 +7614,174 @@
 								{
 									"key": "Date",
 									"value": "Sun, 15 Dec 2024 18:39:05 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": false,\n    \"message\": \"Data user tidak ditemukan\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/destroy",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"destroy"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"role\": \"admin\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/users/2",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"2"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "71"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"47-l/CCbolQ4oHSYaIXzsMM1BKjNrg\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 21 Dec 2024 01:09:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": {\n        \"code\": 200,\n        \"message\": \"Berhasil menghapus user\"\n    },\n    \"data\": null\n}"
+						},
+						{
+							"name": "404",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"role\": \"admin\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/users/3",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"3"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "66"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"42-I8SH+SOaF9Mmb7p1UTiXIH/TD40\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 21 Dec 2024 01:11:30 GMT"
 								},
 								{
 									"key": "Connection",

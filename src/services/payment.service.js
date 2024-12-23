@@ -1,16 +1,13 @@
 import { coreApi, snap } from "../configs/midtransClient.js";
 import prisma from "../configs/database.js";
-import nodemailer from "nodemailer";
-import { generateQrPng } from '../utils/qrcode.js';
-import { imagekit } from '../utils/imagekit.js';
-import { encodeBookingCode } from '../utils/hashids.js';
-import jwt from 'jsonwebtoken';
 import { createNotification } from "../services/notification.service.js";
-// import { vaNumberPaymentEmail } from "../views/send.email.payment.js";
-// import { gopayPaymentEmail } from "../views/send.email.payment.js";
-// import { cardPaymentEmail } from "../views/send.email.payment.js";
-// import { cancelPaymentEmail } from "../views/send.email.payment.js";
-// import { paymentStatusEmail } from "../views/send.email.payment.js";
+import { vaNumberPaymentEmail } from "../views/send.email.payment.js";
+import { gopayPaymentEmail } from "../views/send.email.payment.js";
+import { cardPaymentEmail } from "../views/send.email.payment.js";
+import { cancelPaymentEmail } from "../views/send.email.payment.js";
+import { paymentStatusEmail } from "../views/send.email.payment.js";
+import { sendPaymentEmail } from '../utils/sendPaymentEmail.js';
+import { generateQrCode } from '../utils/generateQrcode.js';
 
 export const createDebitPayment = async (bookingId, bank) => {
     const booking = await prisma.booking.findUnique({
@@ -43,13 +40,14 @@ export const createDebitPayment = async (bookingId, bank) => {
 
     const chargeResponse = await coreApi.charge(paymentData);
 
-    // const virtualAccount = chargeResponse.va_numbers[0]?.va_number || "N/A"; // Ambil VA Number dari response
+    //const virtualAccount = chargeResponse.va_numbers[0]?.va_number || "N/A"; // Ambil VA Number dari response
     const expiredDate = chargeResponse.transaction_time ?
         new Date(new Date(chargeResponse.transaction_time).getTime() + 24 * 60 * 60 * 1000).toLocaleString() :
         "N/A"; // Tambahkan expired date (24 jam setelah transaksi dibuat)
 
     // Generate QR Code setelah pembayaran sukses
-    await generateQrcode(bookingId);
+    const qrCodeUrl = await generateQrCode(bookingId);
+
 
     await prisma.payment.create({
         data: {
@@ -64,11 +62,11 @@ export const createDebitPayment = async (bookingId, bank) => {
     });
 
     // // Kirim email setelah pembayaran berhasil
-    // await sendPaymentEmail(
-    //     booking.user.email,
-    //     "Menunggu Pembayaran",
-    //     vaNumberPaymentEmail(bank, booking.totalPrice, chargeResponse.order_id, virtualAccount, expiredDate, updatedBooking.urlQrcode)
-    // );
+    await sendPaymentEmail(
+        booking.user.email,
+        "Menunggu Pembayaran",
+        vaNumberPaymentEmail(bank, booking.totalPrice, chargeResponse.order_id, chargeResponse.va_numbers[0]?.va_number || "N/A", expiredDate, qrCodeUrl)
+    );
 
     // Tambahkan notifikasi menggunakan createNotification dari notification.service.js
     const message = `Pembayaran Anda untuk pemesanan dengan reference number ${chargeResponse.order_id} telah diterima dan menunggu konfirmasi. Silakan lakukan pembayaran sebelum ${expiredDate}.`;
@@ -107,12 +105,12 @@ export const cancelPayment = async (transactionId) => {
         data: { status: "Cancelled" },
     });
 
-    // // Kirim email setelah pembayaran dibatalkan
-    // await sendPaymentEmail(
-    //     currentPayment.booking.user.email,
-    //     "Pembayaran Dibatalkan",
-    //     cancelPaymentEmail(transactionId)
-    // );
+    // Kirim email setelah pembayaran dibatalkan
+    await sendPaymentEmail(
+        currentPayment.booking.user.email,
+        "Pembayaran Dibatalkan",
+        cancelPaymentEmail(transactionId)
+    );
 
     const message = `Pembayaran untuk pemesanan dengan nomor transaksi ${transactionId} telah dibatalkan.`;
     await createNotification(currentPayment.booking.userId, "Payment", "Pembayaran Dibatalkan", message);
@@ -170,12 +168,12 @@ export const checkPaymentStatus = async (transactionId) => {
         data: { status: statusFormatted },
     });
 
-    // // Kirim email dengan status pembayaran
-    // await sendPaymentEmail(
-    //     currentPayment.booking.user.email,
-    //     "Status Pembayaran Diperbarui",
-    //     paymentStatusEmail(transactionId, statusFormatted)
-    // );
+    // Kirim email dengan status pembayaran
+    await sendPaymentEmail(
+        currentPayment.booking.user.email,
+        "Status Pembayaran Diperbarui",
+        paymentStatusEmail(transactionId, statusFormatted)
+    );
 
     return transactionStatus;
 };
@@ -209,10 +207,9 @@ export const createGoPayPayment = async (bookingId) => {
 
     const chargeResponse = await coreApi.charge(paymentData);
 
-
-    // const gopayDeepLink = chargeResponse.actions.find(
-    //     (action) => action.name === "deeplink-redirect"
-    // )?.url || "N/A"; // URL deep link untuk redirect pembayaran
+    const gopayDeepLink = chargeResponse.actions.find(
+        (action) => action.name === "deeplink-redirect"
+    )?.url || "N/A"; // URL deep link untuk redirect pembayaran
 
     const expiredDate = chargeResponse.transaction_time
         ? new Date(
@@ -221,14 +218,14 @@ export const createGoPayPayment = async (bookingId) => {
         : "N/A"; // Expired Date (24 jam setelah transaksi dibuat)
 
     // URL untuk generasi QR Code
-    // const gopayQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
-    //     gopayDeepLink
-    // )}&size=200x200`;
+    const gopayQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
+        gopayDeepLink
+    )}&size=200x200`;
 
     // Generate QR Code tambahan untuk informasi pemesanan
-    // const infoQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
-    //     `https://yourapp.com/booking/${bookingId}`
-    // )}&size=200x200`;
+    const infoQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
+        `https://yourapp.com/booking/${bookingId}`
+    )}&size=200x200`;
 
 
     await prisma.payment.create({
@@ -243,12 +240,12 @@ export const createGoPayPayment = async (bookingId) => {
         },
     });
 
-    // // Kirim email setelah pembayaran berhasil
-    // await sendPaymentEmail(
-    //     booking.user.email,
-    //     "Menunggu Pembayaran GoPay",
-    //     gopayPaymentEmail(booking.totalPrice, chargeResponse.order_id, expiredDate, gopayDeepLink, gopayQrCodeUrl, infoQrCodeUrl)
-    // );
+    // Kirim email setelah pembayaran berhasil
+    await sendPaymentEmail(
+        booking.user.email,
+        "Menunggu Pembayaran GoPay",
+        gopayPaymentEmail(booking.totalPrice, chargeResponse.order_id, expiredDate, gopayDeepLink, gopayQrCodeUrl, infoQrCodeUrl)
+    );
 
     const message = `Pembayaran Anda untuk pemesanan dengan reference number ${chargeResponse.order_id} telah diterima dan menunggu konfirmasi. Silakan lakukan pembayaran melalui GoPay sebelum ${expiredDate}.`;
     await createNotification(booking.userId, "Payment", "Menunggu Pembayaran GoPay", message);
@@ -290,7 +287,8 @@ export const createCardPayment = async (bookingId, cardToken) => {
     const chargeResponse = await coreApi.charge(paymentData);
 
     // Generate QR Code
-    const updatedBooking = await generateQrcode(bookingId);
+    // const updatedBooking = await generateQrCode(bookingId);
+    const qrCodeUrl = await generateQrCode(bookingId);
 
     // Buat pembayaran di database
     const payment = await prisma.payment.create({
@@ -306,7 +304,7 @@ export const createCardPayment = async (bookingId, cardToken) => {
     });
 
     // Update status booking dan pembayaran jika berhasil
-    if (updatedBooking && chargeResponse.transaction_status === "capture") {
+    if (chargeResponse.transaction_status === "capture") {
         await prisma.booking.update({
             where: { id: bookingId },
             data: { status: "Issued" },
@@ -319,68 +317,19 @@ export const createCardPayment = async (bookingId, cardToken) => {
     }
 
     // // Kirim email setelah pembayaran berhasil dibuat
-    // await sendPaymentEmail(
-    //     booking.user.email,
-    //     "Pembayaran Kartu Kredit Berhasil Dibuat",
-    //     cardPaymentEmail(
-    //         booking.totalPrice,
-    //         chargeResponse.order_id,
-    //         chargeResponse.transaction_status,
-    //         updatedBooking.urlQrcode
-    //     )
-    // );
+    await sendPaymentEmail(
+        booking.user.email,
+        "Pembayaran Kartu Kredit Berhasil Dibuat",
+        cardPaymentEmail(
+            booking.totalPrice,
+            chargeResponse.order_id,
+            chargeResponse.transaction_status,
+            qrCodeUrl
+        )
+    );
 
     const message = `Pembayaran Anda untuk pemesanan dengan nomor booking ${bookingId} telah berhasil.`;
     await createNotification(booking.userId, "Payment", "Pembayaran Berhasil", message);
     
     return chargeResponse;
-};
-
-// Fungsi untuk mengirim email notifikasi pembayaran
-export const sendPaymentEmail = async (email, subject, htmlContent) => {
-    // Konfigurasi transporter nodemailer
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true, // Gunakan SSL
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
-    });
-
-    // Data email
-    const mailData = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: subject,
-        html: htmlContent,
-    };
-
-    // Kirim email
-    const info = await transporter.sendMail(mailData);
-
-    return { messageId: info.messageId };
-};
-
-export const generateQrcode = async (id) => {
-    const code = await encodeBookingCode(id);
-    const resetToken = jwt.sign({ code }, process.env.JWT_SECRET_FORGET);
-    const url = `${process.env.DOMAIN_URL}/api/v1/bookings/ticket?token=${resetToken}`;
-
-    const qr = await generateQrPng(url);
-
-    const qrCode = await imagekit.upload({
-        fileName: "testing",
-        file: qr.toString('base64')
-    });
-
-    const updatedBooking = await prisma.booking.update({
-        where: {
-            id: parseInt(id),
-        },
-        data: { urlQrcode: qrCode.url },
-    });
-
-    return updatedBooking
 };

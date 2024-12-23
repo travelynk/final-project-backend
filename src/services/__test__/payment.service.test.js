@@ -2,7 +2,7 @@ import { jest, describe, it, expect, afterEach } from "@jest/globals";
 import prisma from "../../configs/database.js";
 import { coreApi, snap } from "../../configs/midtransClient.js";
 import {
-  // createDebitPayment,
+  createDebitPayment,
   cancelPayment,
   checkPaymentStatus,
   createGoPayPayment,
@@ -14,7 +14,7 @@ import {
 jest.mock("../../configs/database.js", () => ({
   booking: { findUnique: jest.fn(), update: jest.fn() },
   payment: { create: jest.fn(), update: jest.fn(), findUnique: jest.fn() },
-  notification: { create: jest.fn() }, // Tambahkan mock untuk notification
+  notification: { create: jest.fn() },
 }));
 
 jest.mock("../../configs/midtransClient.js", () => ({
@@ -24,8 +24,8 @@ jest.mock("../../configs/midtransClient.js", () => ({
   },
 }));
 
-jest.mock("../../utils/qrcode.js", () => ({
-  generateQrPng: jest.fn().mockResolvedValue(Buffer.from("mockQRCode")),
+jest.mock("../../utils/generateQrcode.js", () => ({
+  generateQrCode: jest.fn().mockResolvedValue("https://example.com/qrcode.png"),
 }));
 
 jest.mock("../../utils/imagekit.js", () => ({
@@ -60,69 +60,92 @@ jest.mock("../../configs/websocket.js", () => ({
 afterEach(() => jest.clearAllMocks());
 
 describe("Payment Service Tests", () => {
+    describe("createDebitPayment", () => {
+    it("should throw error if booking not found", async () => {
+      prisma.booking.findUnique.mockResolvedValue(null);
+      await expect(createDebitPayment(1, "bca")).rejects.toThrow("Pemesanan tidak ditemukan");
+    });
 
-  // describe("createDebitPayment", () => {
-  //   it("should throw error if booking not found", async () => {
-  //     prisma.booking.findUnique.mockResolvedValue(null);
-  //     await expect(createDebitPayment(1, "bca")).rejects.toThrow("Pemesanan tidak ditemukan");
-  //   });
+    it("should create debit payment successfully", async () => {
+      const mockBooking = {
+        id: 1,
+        totalPrice: 700000,
+        user: { email: "test@example.com", profile: { fullName: "Test User" } },
+      };
 
-  //   it("should create debit payment successfully", async () => {
-  //     const mockBooking = {
-  //       id: 1,
-  //       totalPrice: 700000,
-  //       user: { email: "test@example.com", profile: { fullName: "Test User" } },
-  //     };
+      const mockUpdatedBooking = {
+        ...mockBooking,
+        status: "Pending",
+        urlQrcode: "https://example.com/qrcode.png",
+      };
 
-  //     const mockUpdatedBooking = {
-  //       ...mockBooking,
-  //       status: "Pending",
-  //       urlQrcode: "https://example.com/qrcode.png",
-  //     };
+      const mockChargeResponse = {
+        transaction_id: "txn_789",
+        order_id: "order_789",
+        gross_amount: "700000",
+        va_numbers: [{bank:"bni", va_number:"123"}],
+        transaction_time: "2024-12-10T12:00:00Z"
+      };
 
-  //     const mockChargeResponse = {
-  //       transaction_id: "txn_789",
-  //       order_id: "order_789",
-  //       gross_amount: "700000",
-  //       va_numbers: [],
-  //     };
+      prisma.booking.findUnique.mockResolvedValue(mockBooking);
+      prisma.booking.update.mockResolvedValue(mockUpdatedBooking);
+      coreApi.charge.mockResolvedValue(mockChargeResponse);
 
-  //     prisma.booking.findUnique.mockResolvedValue(mockBooking);
-  //     prisma.booking.update.mockResolvedValue(mockUpdatedBooking);
-  //     coreApi.charge.mockResolvedValue(mockChargeResponse);
+      prisma.payment.create.mockResolvedValue();
 
-  //     prisma.payment.create.mockResolvedValue();
+      const response = await createDebitPayment(1, "BNI");
 
-  //     const response = await createDebitPayment(1, "BNI");
+      expect(prisma.booking.findUnique).toHaveBeenCalledWith({
+        where: { id: 1 },
+        include: { payments: true, user: { include: { profile: true } } },
+      });
 
-  //     expect(prisma.booking.findUnique).toHaveBeenCalledWith({
-  //       where: { id: 1 },
-  //       include: { payments: true, user: { include: { profile: true } } },
-  //     });
+      //  expect(prisma.booking.update).toHaveBeenCalledWith({
+      //    where: { id: 1 },
+      //    data: { urlQrcode: "https://example.com/qrcode.png" },
+      //  });
 
-  //     expect(prisma.booking.update).toHaveBeenCalledWith({
-  //       where: { id: 1 },
-  //       data: { "urlQrcode": "https://mock-imagekit.io/path/to/image" },
-  //     });
 
-  //     expect(coreApi.charge).toHaveBeenCalled();
-  //     expect(prisma.payment.create).toHaveBeenCalled();
-  //     expect(response).toEqual(mockChargeResponse);
-  //   });
+      expect(coreApi.charge).toHaveBeenCalledWith( expect.objectContaining({
+        payment_type: 'bank_transfer',
+         bank_transfer: {
+          bank: 'BNI'
+        },
+        transaction_details: {
+           order_id: expect.stringContaining(`BOOKING-1-`),
+          gross_amount: 700000
+          },
+          customer_details: {
+            email: "test@example.com",
+            first_name: "Test User"
+          },
+          item_details: expect.arrayContaining([
+            expect.objectContaining({
+            id: "BOOKING-1",
+            name: "Flight Booking 1",
+            price: 700000,
+            quantity: 1
+            })
+          ])
+      }));
 
-  //   it("should handle error if coreApi charge fails", async () => {
-  //     const mockBooking = {
-  //       id: 1,
-  //       totalPrice: 700000,
-  //       user: { email: "test@example.com", profile: { fullName: "Test User" } },
-  //     };
+      expect(prisma.payment.create).toHaveBeenCalled();
+      expect(response).toEqual(mockChargeResponse);
+    });
 
-  //     prisma.booking.findUnique.mockResolvedValue(mockBooking);
-  //     coreApi.charge.mockRejectedValue(new Error("Payment gateway error"));
-
-  //     await expect(createDebitPayment(1, "BNI")).rejects.toThrow("Payment gateway error");
-  //   });
-  // });
+      it("should handle error if coreApi charge fails", async () => {
+        const mockBooking = {
+          id: 1,
+          totalPrice: 700000,
+          user: { email: "test@example.com", profile: { fullName: "Test User" } },
+        };
+    
+        prisma.booking.findUnique.mockResolvedValue(mockBooking);
+        coreApi.charge.mockRejectedValue(new Error("Payment gateway error"));
+    
+        await expect(createDebitPayment(1, "BNI")).rejects.toThrow("Payment gateway error");
+      });
+  });
 
   describe("cancelPayment", () => {
     it("should cancel payment successfully", async () => {
@@ -307,7 +330,25 @@ describe("Payment Service Tests", () => {
         where: { id: 1 },
         include: { payments: true, user: { include: { profile: true } } },
       });
-      expect(coreApi.charge).toHaveBeenCalled();
+      expect(coreApi.charge).toHaveBeenCalledWith( expect.objectContaining({
+        payment_type: 'gopay',
+        transaction_details: {
+           order_id: expect.stringContaining(`BOOKING-1-`),
+          gross_amount: 300000
+          },
+        customer_details: {
+          email: "test@example.com",
+          first_name: "Test User"
+        },
+        item_details: expect.arrayContaining([
+          expect.objectContaining({
+          id: "BOOKING-1",
+          name: "Flight Booking 1",
+          price: 300000,
+          quantity: 1
+          })
+        ])
+      }));
       expect(prisma.payment.create).toHaveBeenCalled();
       expect(response).toEqual(mockChargeResponse);
     });
@@ -326,76 +367,90 @@ describe("Payment Service Tests", () => {
     });
   });
 
-  describe("createCardPayment", () => {
-    it("should create card payment successfully", async () => {
-      const mockBooking = {
-        id: 1,
-        totalPrice: 800000,
-        user: { email: "test@example.com", profile: { fullName: "Test User" } },
-      };
+    describe("createCardPayment", () => {
+        it("should throw an error if booking not found", async () => {
+          prisma.booking.findUnique.mockResolvedValue(null);
+          await expect(createCardPayment(1, "validCardToken")).rejects.toThrow("Pemesanan tidak ditemukan");
+        });
 
-      const mockChargeResponse = {
-        transaction_id: "txn_101",
-        order_id: "order_101",
-        gross_amount: "800000",
-        transaction_status: "capture",
-      };
+        it("should create card payment successfully", async () => {
+          const mockBooking = {
+            id: 1,
+            totalPrice: 800000,
+            user: { email: "test@example.com", profile: { fullName: "Test User" } },
+          };
+
+          const mockChargeResponse = {
+            transaction_id: "txn_101",
+            order_id: "order_101",
+            gross_amount: "800000",
+            transaction_status: "capture",
+          };
+
+          prisma.booking.findUnique.mockResolvedValue(mockBooking);
+          prisma.booking.update.mockResolvedValue({
+            ...mockBooking,
+            status: "Pending",
+          });
+
+          coreApi.charge.mockResolvedValue(mockChargeResponse);
+
+          const mockPayment = {
+            id: 1,
+            transactionId: mockChargeResponse.transaction_id,
+            status: "Pending",
+            bookingId: mockBooking.id,
+          };
+
+          prisma.payment.create.mockResolvedValue(mockPayment);
+         prisma.payment.update.mockResolvedValue({...mockPayment, status:"Settlement"})
+
+          const fixedTimestamp = 1734098960934;
+          jest.spyOn(Date, "now").mockReturnValue(fixedTimestamp);
+
+           const response = await createCardPayment(1, "validCardToken");
+
+           expect(coreApi.charge).toHaveBeenCalledWith({
+            payment_type: "credit_card",
+             credit_card: {
+               authentication: false,
+               token_id: "validCardToken",
+             },
+             transaction_details: {
+               gross_amount: 800000,
+               order_id: `BOOKING-1-${fixedTimestamp}`,
+             },
+           });
+
+         expect(prisma.payment.create).toHaveBeenCalledWith({
+             data: expect.objectContaining({
+               transactionId: mockChargeResponse.transaction_id,
+               status: "Pending",
+               bookingId: mockBooking.id,
+             }),
+         });
 
 
-      prisma.booking.findUnique.mockResolvedValue(mockBooking);
-      prisma.booking.update.mockResolvedValue({
-        ...mockBooking,
-        status: "Pending",
-      });
+            expect(prisma.payment.update).toHaveBeenCalledWith({
+               where: { id: 1 },
+               data: { status: "Settlement" },
+            });
 
-
-      coreApi.charge.mockResolvedValue(mockChargeResponse);
-
-
-      const mockPayment = {
-        id: 1,
-        transactionId: mockChargeResponse.transaction_id,
-        status: "Pending",
-        bookingId: mockBooking.id,
-      };
-
-      prisma.payment.create.mockResolvedValue(mockPayment);
-
-      const fixedTimestamp = 1734098960934;
-      jest.spyOn(Date, "now").mockReturnValue(fixedTimestamp);
-
-      const response = await createCardPayment(1, "validCardToken");
-
-      expect(coreApi.charge).toHaveBeenCalledWith({
-        payment_type: "credit_card",
-        credit_card: {
-          authentication: false,
-          token_id: "validCardToken",
-        },
-        transaction_details: {
-          gross_amount: 800000,
-          order_id: `BOOKING-1-${fixedTimestamp}`,
-        },
-      });
-
-      expect(prisma.payment.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({
-          transactionId: mockChargeResponse.transaction_id,
-          status: "Pending",
-          bookingId: mockBooking.id,
-        }),
-      });
-
-      expect(prisma.payment.update).toHaveBeenCalledWith({
-        where: { id: mockPayment.id },
-        data: { status: "Settlement" },
-      });
-
-      expect(response).toEqual(mockChargeResponse);
+           expect(response).toEqual(mockChargeResponse);
+        });
     });
-  });
 
-  describe("createCardToken", () => {
+    describe("createCardToken", () => {
+      it("should throw error if cardToken creation fails", async () => {
+        coreApi.cardToken.mockRejectedValue(new Error("Card token error"));
+          const payload = {
+            card_number: "4811111111111114",
+            card_exp_month: "12",
+            card_exp_year: "2025",
+            card_cvv: "123",
+          };
+          await expect(createCardToken(payload)).rejects.toThrow("Card token error")
+      })
     it("should create card token successfully", async () => {
       const mockCardToken = "mockCardToken";
       coreApi.cardToken.mockResolvedValue({ token_id: mockCardToken });

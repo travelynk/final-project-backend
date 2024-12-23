@@ -14,11 +14,12 @@ export default async function city(prisma) {
     for (const item of data) {
         // console.log(`Menambahkan data ${item.code} ${item.name} ${item.countryCode} ke database...`);
         try {
-            await prisma.city.create({
-                data: {
+            await prisma.city.update({
+                where: {
                     code: item.code,
-                    name: item.name,
-                    countryCode: item.countryCode,
+                },
+                data: {
+                    image: item.image,
                 },
             });
         } catch (error) {

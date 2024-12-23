@@ -24,7 +24,5 @@ app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 apiV1(app);
 
-
-
 app.use(ErrorHandler.handleNotFound);
 app.use(ErrorHandler.handleOther);

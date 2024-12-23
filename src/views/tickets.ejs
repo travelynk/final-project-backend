@@ -301,6 +301,13 @@
         function printPage() {
             window.print();
         }
+
+        window.onload = function() {
+            printPage();
+            window.onafterprint = function() {
+                window.history.back();
+            };
+        };
     </script>
 </body>
 

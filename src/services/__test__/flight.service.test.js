@@ -13,6 +13,9 @@ jest.mock('../../configs/database.js', () => ({
             update: jest.fn(),
             delete: jest.fn(),
         },
+        bookingSegments: {
+            findMany: jest.fn(), 
+        },
     },
 }));
 
@@ -26,11 +29,11 @@ describe('Flight Service', () => {
             flightNum: 'GA4004',
             departureTerminalId: 9,
             arrivalTerminalId: 11,
-            departureTime: "2024 - 12 - 18T08: 30:00.000Z",
-            arrivalTime: "2024 - 12 - 18T10: 10:00.000Z",
+            departureTime: "2024-12-18T08:30:00.000Z",  
+            arrivalTime: "2024-12-18T10:00:00.000Z",  
             estimatedDuration: 1.5,
             seatClass: 'Economy',
-            seatCapacity: 100,
+            seatCapacity: 6,
             facility: 'Snack',
             price: 2000000,
             airline: {
@@ -73,14 +76,42 @@ describe('Flight Service', () => {
     });
 
     describe('getAll', () => {
-        // test('should return all flights', async () => {
-        //     prisma.flight.findMany.mockResolvedValue([data]);
-
-        //     const result = await FlightService.getAll();
-
-        //     expect(result).toEqual([data]);
-        //     expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
-        // });
+        test('should return all flights', async () => {
+            prisma.flight.findMany.mockResolvedValue([data]);
+            const result = await FlightService.getAll();
+            expect(result).toEqual([
+                {
+                    id: data.id,
+                    flightNum: data.flightNum,
+                    airline: {
+                        name: data.airline.name,
+                        image: data.airline.image,
+                    },
+                    departure: {
+                        airport: data.departureTerminal.airport.name,
+                        city: {
+                            code: data.departureTerminal.airport.city.code,
+                            name: data.departureTerminal.airport.city.name,
+                        },
+                        schedule: expect.any(String),
+                        terminal: data.departureTerminal.name,
+                    },
+                    arrival: {
+                        airport: data.arrivalTerminal.airport.name,
+                        city: {
+                            code: data.arrivalTerminal.airport.city.code,
+                            name: data.arrivalTerminal.airport.city.name,
+                        },
+                        schedule: expect.any(String),
+                        terminal: data.arrivalTerminal.name,
+                    },
+                    estimatedDuration: data.estimatedDuration,
+                    facility: data.facility,
+                    price: data.price,
+                },
+            ]);
+            expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
+        });
 
         test('should return empty array', async () => {
             prisma.flight.findMany.mockResolvedValue([]);
@@ -92,74 +123,86 @@ describe('Flight Service', () => {
         });
     });
 
-    // describe('getOne', () => {
-    //     test('should return one flight', async () => {
-    //         prisma.flight.findUnique.mockResolvedValue(data);
+    describe('getOne', () => {
+        test('should return one flight', async () => {
+            prisma.flight.findUnique.mockResolvedValue(data);
 
-    //         const result = await FlightService.getOne(parseInt(data.id));
+            const result = await FlightService.getOne(data.id);
 
-    //         expect(result).toEqual(data);
-    //         expect(prisma.flight.findUnique).toHaveBeenCalledTimes(1);
-    //         expect(prisma.flight.findUnique).toHaveBeenCalledWith({
-    //             where: {
-    //                 id: data.id
-    //             },
-    //             include: {
-    //                 airline: true,
-    //                 departureTerminal: {
-    //                     include: {
-    //                         airport: {
-    //                             include: {
-    //                                 city: true,
-    //                             }
-    //                         }
-    //                     }
-    //                 },
-    //                 arrivalTerminal: {
-    //                     include: {
-    //                         airport: {
-    //                             include: {
-    //                                 city: true,
-    //                             }
-    //                         }
-    //                     }
-    //                 },
-    //             },
-    //         });
-    //     });
-    // });
+            expect(result).toMatchObject({
+                id: data.id,
+                flightNum: data.flightNum,
+                airline: expect.any(Object),
+                departure: expect.any(Object),
+                arrival: expect.any(Object),
+                estimatedDuration: data.estimatedDuration,
+                seatClass: data.seatClass,
+                seatCapacity: data.seatCapacity,
+                facility: data.facility,
+                price: data.price,
+            });            
+            
+            expect(prisma.flight.findUnique).toHaveBeenCalledTimes(1);
+            expect(prisma.flight.findUnique).toHaveBeenCalledWith({
+                where: {
+                    id: data.id
+                },
+                include: {
+                    airline: true,
+                    departureTerminal: {
+                        include: {
+                            airport: {
+                                include: {
+                                    city: true,
+                                }
+                            }
+                        }
+                    },
+                    arrivalTerminal: {
+                        include: {
+                            airport: {
+                                include: {
+                                    city: true,
+                                }
+                            }
+                        }
+                    },
+                },
+            });
+        });
+    });
 
     describe('store', () => {
-        // test('should return created flight', async () => {
-        //     prisma.flight.findFirst.mockResolvedValue(null);
-        //     prisma.flight.create.mockResolvedValue(data);
+        test('should return created flight', async () => {
+            prisma.flight.findFirst.mockResolvedValue(null);
+            prisma.flight.create.mockResolvedValue(data);
 
-        //     const result = await FlightService.store(data);
+            const result = await FlightService.store(data);
 
-        //     expect(result).toEqual(data);
-        //     expect(prisma.flight.findFirst).toHaveBeenCalledTimes(1);
-        //     expect(prisma.flight.create).toHaveBeenCalledTimes(1);
-        //     expect(prisma.flight.create).toHaveBeenCalledWith({
-        //         data: {
-        //             ...data,
-        //             estimatedDuration: 1,
-        //             flightSeats: {
-        //                 createMany: {
-        //                     data: [
-        //                         { position: 1 + 'A' },
-        //                         { position: 1 + 'B' },
-        //                         { position: 1 + 'C' },
-        //                         { position: 1 + 'D' },
-        //                         { position: 1 + 'E' },
-        //                         { position: 1 + 'F' }
-        //                     ]
-        //                 }
-        //             }
-        //         }
-        //     });
-        // });
+            expect(result).toEqual(data);
+            expect(prisma.flight.findFirst).toHaveBeenCalledTimes(1);
+            expect(prisma.flight.create).toHaveBeenCalledTimes(1);
+            expect(prisma.flight.create).toHaveBeenCalledWith({
+                data: {
+                    ...data,
+                    estimatedDuration: data.estimatedDuration,
+                    flightSeats: {
+                        createMany: {
+                            data: [
+                                { position: 1 + 'A' },  // 1A
+                                { position: 1 + 'B' },  // 1B
+                                { position: 1 + 'C' },  // 1C
+                                { position: 1 + 'D' },  // 1D
+                                { position: 1 + 'E' },  // 1E
+                                { position: 1 + 'F' }   // 1F
+                            ]
+                        }
+                    }
+                }
+            });
+        });
 
-        test('should throw error 400', async () => {
+        test('should throw error 400 if the flight already exists', async () => {
             prisma.flight.findFirst.mockResolvedValue(data);
 
             try {
@@ -247,54 +290,77 @@ describe('Flight Service', () => {
 
     });
 
-    // describe('getAvailableFlight', () => {
-    //     test('should return available flights', async () => {
-    //         const data = {
-    //             route: ['JKT', 'JOG'],
-    //             seatClass: 'Economy',
-    //             schedule: ['2024-12-13T11:30:00.000Z'],
-    //             passengers: 1
-    //         };
+    describe('getAvailableFlight', () => {
+        // test('should return available flights', async () => {
+        //     const data = {
+        //         route: ['JKT', 'JOG'],
+        //         seatClass: 'Economy',
+        //         schedule: ['2024-12-13T11:30:00.000Z'],
+        //         passengers: 1
+        //     };
 
-    //         prisma.flight.findMany.mockResolvedValue([data]);
+        //     prisma.flight.findMany.mockResolvedValue([data]);
 
-    //         const result = await FlightService.getAvailableFlight(data);
+        //     const result = await FlightService.getAvailableFlight(data);
 
-    //         expect(result).toEqual({ outboundFlights: [data], returnFlights: [] });
-    //         expect(prisma.flight.findMany).toHaveBeenCalledTimes(2);
-    //     });
+        //     expect(result).toEqual({ outboundFlights: [data], returnFlights: [] });
+        //     expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
+        // });
 
-    //     test('should return available flights with return schedule', async () => {
-    //         const data = {
-    //             route: ['JKT', 'JOG'],
-    //             seatClass: 'Economy',
-    //             schedule: ['2024-12-13T11:30:00.000Z', '2024-12-13T12:00:00.000Z'],
-    //             passengers: 1
-    //         };
+        // test('should return available flights with return schedule', async () => {
+        //     const data = {
+        //         route: ['JKT', 'JOG'],
+        //         seatClass: 'Economy',
+        //         schedule: ['2024-12-13T11:30:00.000Z', '2024-12-13T12:00:00.000Z'],
+        //         passengers: 1
+        //     };
 
-    //         prisma.flight.findMany.mockResolvedValue([data]);
+        //     prisma.flight.findMany.mockResolvedValue([data]);
 
-    //         const result = await FlightService.getAvailableFlight(data);
+        //     const result = await FlightService.getAvailableFlight(data);
 
-    //         expect(result).toEqual({ outboundFlights: [data], returnFlights: [data] });
-    //         expect(prisma.flight.findMany).toHaveBeenCalledTimes(2);
-    //     });
+        //     expect(result).toEqual({ outboundFlights: [data], returnFlights: [data] });
+        //     expect(prisma.flight.findMany).toHaveBeenCalledTimes(2);
+        // });
 
-    //     test('should return empty array', async () => {
-    //         const data = {
-    //             route: ['JKT', 'JOG'],
-    //             seatClass: 'Economy',
-    //             schedule: ['2024-12-13T11:30:00.000Z'],
-    //             passengers: 1
-    //         };
+        test('should return empty array', async () => {
+            const data = {
+                route: ['JKT', 'JOG'],
+                seatClass: 'Economy',
+                schedule: ['2024-12-13T11:30:00.000Z'],
+                passengers: 1
+            };
 
-    //         prisma.flight.findMany.mockResolvedValue([]);
+            prisma.flight.findMany.mockResolvedValue([]);
 
-    //         const result = await FlightService.getAvailableFlight(data);
+            const result = await FlightService.getAvailableFlight(data);
 
-    //         expect(result).toEqual({ outboundFlights: [], returnFlights: [] });
-    //         expect(prisma.flight.findMany).toHaveBeenCalledTimes(2);
-    //     });
-    // });
+            expect(result).toEqual({ outboundFlights: [], returnFlights: [] });
+            expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
+        });
+    });
 
+    describe('getFavoriteFlight', () => {
+        // test('should return favorite flights', async () => {
+        //     prisma.flight.findMany.mockResolvedValue([data]);
+        //     prisma.bookingSegments.findMany.mockResolvedValue([{ bookingId: 1, flightId: 8 }]);
+
+        //     const result = await FlightService.getFavoriteFlights();
+
+        //     expect(result).toEqual([data]);
+        //     expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
+        //     expect(prisma.bookingSegments.findMany).toHaveBeenCalledTimes(1);
+        // });
+
+        test('should return empty array when no flights are found', async () => {
+            prisma.flight.findMany.mockResolvedValue([]);
+            prisma.bookingSegments.findMany.mockResolvedValue([]);
+
+            const result = await FlightService.getFavoriteFlights();
+
+            expect(result).toEqual([]);
+            expect(prisma.flight.findMany).toHaveBeenCalledTimes(1);
+            expect(prisma.bookingSegments.findMany).toHaveBeenCalledTimes(1);
+        });
+    });
 });

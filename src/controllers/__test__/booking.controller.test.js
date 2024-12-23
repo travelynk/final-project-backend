@@ -196,4 +196,27 @@ describe('Booking Controller', () => {
             }));
         });
     });
+
+    describe('updateTotalBooking', () => {
+        test('should update total booking', async () => {
+            const updatedBooking = { id: 1, total: 2 };
+            BookingService.updateTotalBooking.mockResolvedValue(updatedBooking);
+            req.params = { id: 1 };
+            req.body = { total: 2 };
+
+            await BookingController.updateTotalBooking(req, res, next);
+
+            expect(response.res200).toHaveBeenCalledWith('Berhasil', updatedBooking, res);
+        });
+
+        test('should pass errors to next', async () => {
+            const error = new Error('Service Error');
+            BookingService.updateTotalBooking.mockRejectedValue(error);
+
+            await BookingController.updateTotalBooking(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(error);
+        });
+    });
+
 });

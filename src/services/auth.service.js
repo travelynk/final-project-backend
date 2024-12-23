@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { google, oauth2Client, authorizationUrl } from "../configs/googleOauth.js";
-import { sendOtpEmail } from "../views/send.otp.js";
+import { sendOtpEmail } from "../utils/send.otp.js";
 
 export const login = async ({ email, password }) => {
     try {

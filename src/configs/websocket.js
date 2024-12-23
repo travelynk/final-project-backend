@@ -3,17 +3,13 @@ import { Server } from 'socket.io';
 let io;
 
 export const initializeWebSocket = (server) => {
-    // io = new Server(server);
-
     io = new Server(server, {
         cors: {
-            origin: "*", 
-            // methods: ["GET", "POST"],        
+            origin: "*",
             allowedHeaders: ["my-custom-header"], 
         }
     });
     
-
     io.on('connection', (socket) => {
         console.log('User connected:', socket.id);
 

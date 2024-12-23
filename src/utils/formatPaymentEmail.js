@@ -76,7 +76,6 @@ export const vaNumberPaymentEmail = (bank, totalPrice, orderId, virtualAccount, 
 </html>
 `;
 
-
 export const gopayPaymentEmail = (totalPrice, orderId, expiredDate, gopayDeepLink, gopayQrCodeUrl, infoQrCodeUrl) => `
 <!DOCTYPE html>
 <html>
@@ -225,7 +224,6 @@ export const cardPaymentEmail = (totalPrice, orderId, transactionStatus, qrCodeU
 </html>
 `;
 
-
 export const cancelPaymentEmail = (transactionId) => `
 <!DOCTYPE html>
 <html>
@@ -286,7 +284,6 @@ export const cancelPaymentEmail = (transactionId) => `
 </body>
 </html>
 `;
-
 
 export const paymentStatusEmail = (transactionId, statusFormatted) => `
 <!DOCTYPE html>

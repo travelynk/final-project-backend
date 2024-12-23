@@ -8,7 +8,7 @@ export const login = async (req, res, next) => {
         const { error, value } = AuthValidation.login.validate(req.body);
 
         if (error) {
-            return response.res400(`${error.details[0].message}`, res);
+            throw new Error400(`${error.details[0].message}`);
         }
 
         const result = await AuthService.login(value);
@@ -32,13 +32,13 @@ export const resetPassword = async (req, res, next) => {
         const { error, value } = AuthValidation.resetPassword.validate(req.body);
 
         if (error) {
-            return response.res400(`${error.details[0].message}`, res);
+            throw new Error400(`${error.details[0].message}`);
         }
 
         const { token } = req.query; // Token is passed as query parameter
 
         if (!token) {
-            return response.res400('Token diperlukan', res);
+            throw new Error400('Token diperlukan');
         }
 
         // Call service to reset password using token

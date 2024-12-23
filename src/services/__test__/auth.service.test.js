@@ -6,7 +6,7 @@ import { generateOTP, generateSecret, verifyOTP } from "../../utils/otp";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
-import { sendOtpEmail } from '../../views/send.otp.js';
+import { sendOtpEmail } from '../../utils/send.otp.js';
 import { authorizationUrl, google, oauth2Client } from "../../configs/googleOauth.js";
 
 jest.mock('../../configs/database.js', () => ({

@@ -12,7 +12,7 @@ export const app = express();
 const swaggerDocument = JSON.parse(readFileSync(new URL('../docs/api-v1.json', import.meta.url), 'utf-8'));
 
 const corsOptions = {
-    origin: ['https://travelynk.vercel.app', 'http://localhost:5173'],
+    origin: ['https://travelynk.vercel.app', 'http://localhost:5173', 'https://admin-tiketku.padek.tech'],
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
